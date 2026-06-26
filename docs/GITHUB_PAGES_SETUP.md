@@ -20,7 +20,7 @@ https://atlantis379.github.io/medical-records-assistant/privacy-policy.html
 隐私政策页面中仍有一处待替换内容：
 
 ```text
-上架前替换为你的支持邮箱
+hikechina@gmail.com
 ```
 
 请在 Edge 插件市场提交前替换为真实支持邮箱或支持页面。

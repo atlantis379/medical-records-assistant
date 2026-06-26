@@ -60,3 +60,38 @@
 奥司他韦
 恩替卡韦
 替诺福韦
+
+# A??????WHO AWaRe antibiotic book / DailyMed ????????2026-06-26?
+????????
+???????
+?????
+???G
+????
+???
+????B
+amoxicillin clavulanate
+ampicillin sulbactam
+piperacillin tazobactam
+ceftriaxone
+ceftazidime
+cefepime
+meropenem
+imipenem cilastatin
+ertapenem
+vancomycin
+linezolid
+daptomycin
+tigecycline
+polymyxin B
+colistin
+ciprofloxacin
+levofloxacin
+moxifloxacin
+fluconazole
+voriconazole
+posaconazole
+amphotericin B
+caspofungin
+micafungin
+ganciclovir
+oseltamivir

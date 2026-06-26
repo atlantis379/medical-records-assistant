@@ -1,0 +1,56 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>病历助手隐私政策</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; line-height: 1.75; max-width: 920px; margin: 0 auto; padding: 32px 20px 56px; color: #1f2937; }
+    h1, h2 { color: #111827; line-height: 1.3; }
+    h1 { margin-bottom: 0.25rem; }
+    .meta { color: #6b7280; margin-top: 0; }
+    code { background: #f3f4f6; padding: 2px 5px; border-radius: 4px; }
+    .notice { background: #fff7ed; border: 1px solid #fed7aa; padding: 12px 14px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>病历助手隐私政策</h1>
+  <p class="meta">生效日期：2026-06-26　版本：0.10.0</p>
+
+  <p>本隐私政策适用于“病历助手”浏览器扩展及其配套 Windows 本地服务。病历助手用于在医生本机进行语音转写、病历草稿编辑、模板管理、热词管理和提交前核对。</p>
+
+  <p class="notice"><strong>上架前待确认：</strong>请将本页面中的支持邮箱替换为你的真实支持邮箱，并确认公开 URL 可正常访问。</p>
+
+  <h2>1. 我们处理哪些数据</h2>
+  <p>病历助手可能在用户本机处理以下数据：</p>
+  <ul>
+    <li>麦克风音频：用于本地语音识别。</li>
+    <li>病历草稿和用户输入文本：用于编辑、复制、模板填充和提交前核对。</li>
+    <li>模板、热词、设置和多患者草稿分类：用于提升本地录入效率。</li>
+    <li>本地服务状态、授权状态和错误信息：用于显示服务连接、功能状态和排查问题。</li>
+    <li>内测反馈：默认保存在本机服务数据目录，除非用户主动导出并发送给开发者。</li>
+  </ul>
+
+  <h2>2. 数据是否上传到开发者服务器</h2>
+  <p>默认情况下，病历助手不会将音频、病历草稿、模板或热词上传到开发者服务器。语音识别和文本处理通过用户本机的 <code>127.0.0.1</code> 本地服务完成。</p>
+  <p>如果未来提供联网授权、同步或机构管理功能，我们会在启用前更新本隐私政策，并在产品界面中说明数据处理方式。</p>
+
+  <h2>3. 浏览器扩展权限说明</h2>
+  <ul>
+    <li><code>storage</code>：用于在浏览器本地保存设置、模板、草稿、热词配置和内测反馈状态。</li>
+    <li><code>http://127.0.0.1:8765/*</code>：用于连接用户本机安装的病历助手本地服务，完成语音识别、服务健康检查、词库管理、授权状态和本地反馈导出。</li>
+  </ul>
+
+  <h2>4. 数据保存与删除</h2>
+  <p>浏览器扩展保存的数据可通过浏览器扩展管理页面移除扩展后删除。本地服务保存的数据位于用户本机项目或安装目录下的服务数据目录，用户可以通过卸载程序、删除安装目录或清空相应数据文件进行删除。</p>
+
+  <h2>5. 第三方组件</h2>
+  <p>病历助手使用本地语音识别和相关开源组件。第三方许可信息请参见项目中的 <code>THIRD_PARTY_NOTICES.md</code>。</p>
+
+  <h2>6. 医疗用途声明</h2>
+  <p>病历助手仅作为病历输入和核对辅助工具，不替代医生的临床判断、诊断、治疗决策或最终病历审核。提交或复制病历前，医生应根据临床要求进行最终确认。</p>
+
+  <h2>7. 联系我们</h2>
+  <p>如对本隐私政策或数据处理方式有疑问，请联系：<strong>上架前替换为你的支持邮箱</strong>。</p>
+</body>
+</html>

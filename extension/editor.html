@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="app_title">病历助手</title>
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LOCAL CLINICAL DICTATION · V0.10</p>
+        <h1 data-i18n="app_title">病历助手</h1>
+        <p class="subtitle" data-i18n="subtitle">听写、核对、整理，再安全地复制到病历系统。</p>
+      </div>
+      <div class="status-card">
+        <span id="statusDot" class="status-dot"></span>
+        <div><strong id="serviceStatus">正在检查本地服务</strong><small id="serviceDetail">127.0.0.1:8765</small></div>
+      </div>
+    </header>
+
+    <section class="toolbar panel">
+      <label><span data-i18n="ui_language">界面语言</span>
+        <select id="uiLanguageSelect">
+          <option value="zh-CN">中文</option>
+          <option value="en-US">English</option>
+        </select>
+      </label>
+      <label><span data-i18n="dictation_language">听写语言</span>
+        <select id="dictationLanguageSelect">
+          <option value="zh-CN">中文普通话</option>
+          <option value="en-US">English</option>
+        </select>
+      </label>
+      <label><span data-i18n="section_label">病历段落</span>
+        <select id="templateSelect">
+          <option value="">自由听写</option><option value="主诉：">主诉</option><option value="现病史：">现病史</option>
+          <option value="流行病学史：">流行病学史</option><option value="既往史：">既往史</option>
+          <option value="辅助检查：">辅助检查</option><option value="诊疗经过：">诊疗经过</option>
+        </select>
+      </label>
+      <label><span data-i18n="insert_mode">追加方式</span>
+        <select id="insertMode"><option value="append">追加到末尾</option><option value="cursor">插入光标处</option><option value="replace">替换全文</option></select>
+      </label>
+      <button id="insertTemplateButton" type="button" data-i18n="insert_template">插入结构模板</button>
+      <button id="manageTemplatesButton" type="button" data-i18n="manage_templates">管理模板</button>
+      <button id="recordButton" class="record-button" type="button"><span class="mic">●</span><span id="recordLabel">开始听写</span></button>
+    </section>
+
+    <nav class="quick-actions panel" aria-label="草稿工具">
+      <button id="copyButton" class="primary" type="button" data-i18n="copy_all">复制全文</button>
+      <button id="preSubmitCheckButton" type="button" data-i18n="pre_submit_check">提交前核对</button>
+      <button id="snapshotButton" type="button" data-i18n="save_version">保存版本</button>
+      <button id="exportButton" type="button" data-i18n="export_txt">导出 TXT</button>
+      <button id="feedbackButton" type="button" data-i18n="beta_feedback">内测反馈</button>
+      <button id="undoButton" type="button" data-i18n="undo">撤销</button>
+      <button id="clearButton" class="danger-ghost" type="button" data-i18n="clear">清空</button>
+      <label class="autosave-control"><input id="autosaveToggle" type="checkbox"> <span data-i18n="autosave">在本机自动恢复草稿</span></label>
+    </nav>
+
+    <section class="workspace">
+      <nav id="patientBar" class="patient-bar panel" aria-label="患者列表">
+        <div id="patientTabs" class="patient-tabs"></div>
+        <button id="addPatientButton" class="add-patient" type="button" title="新增患者">+</button>
+        <input id="newPatientInput" class="new-patient-input" type="text" maxlength="12" placeholder="床号/姓名" hidden>
+      </nav>
+      <article class="editor-panel panel">
+        <div class="section-heading">
+          <div><h2 data-i18n="draft_title">病历草稿</h2><p id="wordCount">0 字</p></div>
+          <div class="recording-indicators">
+            <canvas id="waveCanvas" width="180" height="36" aria-hidden="true"></canvas>
+            <span id="silenceIndicator" class="silence-indicator" hidden>静音检测中</span>
+            <span id="recordTimer" class="timer">00:00</span>
+          </div>
+        </div>
+        <textarea id="draft" spellcheck="false" placeholder="点击“开始听写”，或直接在这里输入和修改病历内容……"></textarea>
+        <div id="partialDisplay" class="partial-result" hidden></div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </article>
+
+      <aside class="side-panel panel">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="review" type="button"><span data-i18n="review_tab">核对</span> <span id="riskCount">0</span></button>
+          <button class="tab" data-tab="hotwords" type="button" data-i18n="hotwords_tab">热词</button>
+          <button class="tab" data-tab="history" type="button" data-i18n="history_tab">版本</button>
+        </div>
+
+        <section id="reviewPanel" class="tab-panel active">
+          <p class="panel-caption" data-i18n="review_caption">只提示，不自动修改临床含义。</p>
+          <div id="riskList" class="risk-list"><div class="empty-state" data-i18n="risk_empty">识别后，剂量、频次、阴阳性和关键病原体会显示在这里。</div></div>
+          <div class="command-note"><strong data-i18n="voice_commands">可口述命令</strong><span data-i18n="command_note">停顿约0.7秒自动加逗号，约1.4秒自动加句号；也可口述“句号、逗号、换行”。</span></div>
+        </section>
+
+        <section id="hotwordsPanel" class="tab-panel">
+          <p class="panel-caption" data-i18n="hotwords_caption">内置词库会自动启用；下方编辑的是用户自定义热词。</p>
+          <div id="hotwordPackList" class="hotword-pack-list"><div class="empty-state">正在读取词库……</div></div>
+          <div class="side-actions hotword-pack-actions">
+            <button id="exportHotwordsButton" type="button" data-i18n="export_hotwords">导出词库</button>
+            <button id="importHotwordsButton" type="button" data-i18n="import_hotwords">导入词库</button>
+            <input id="importHotwordsInput" type="file" accept=".txt,.json" hidden>
+          </div>
+          <textarea id="hotwordEditor" class="compact-editor" placeholder="肺炎克雷伯菌&#10;哌拉西林他唑巴坦"></textarea>
+          <div class="side-actions"><span id="hotwordCount">0 个</span><button id="saveHotwordsButton" class="primary" type="button" data-i18n="save_hotwords">保存自定义热词</button></div>
+        </section>
+
+        <section id="historyPanel" class="tab-panel">
+          <p class="panel-caption" data-i18n="history_caption">手动保存的版本仅保存在本浏览器中，最多 20 个。</p>
+          <div id="historyList" class="history-list"><div class="empty-state" data-i18n="history_empty">尚未保存版本。</div></div>
+          <button id="clearHistoryButton" class="danger-ghost full-width" type="button" data-i18n="clear_history">清空版本记录</button>
+        </section>
+
+        <div class="privacy-note"><strong data-i18n="privacy_title">隐私说明</strong><span id="privacyText">默认不保存草稿和录音。只有开启自动恢复后，草稿才写入浏览器本地存储。</span></div>
+      </aside>
+    </section>
+
+    <footer><span data-i18n="shortcut_note">快捷键：空格键开始/停止（编辑框未聚焦时）</span><span data-i18n="medical_note">本工具仅辅助录入，提交前请由医生核对。</span></footer>
+
+
+    <dialog id="preSubmitModal" class="modal qc-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 data-i18n="pre_submit_title">提交前核对清单</h3>
+          <button id="closePreSubmitModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div class="modal-body">
+          <p id="preSubmitSummary" class="qc-summary">正在检查……</p>
+          <div id="preSubmitList" class="qc-list"></div>
+          <div class="template-form-actions">
+            <button id="copyAfterCheckButton" class="primary" type="button" data-i18n="copy_after_check">仍要复制全文</button>
+            <button id="closePreSubmitButton" type="button" data-i18n="back_to_edit">返回修改</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="templateModal" class="modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 data-i18n="template_modal_title">管理病历模板</h3>
+          <button id="closeTemplateModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div id="templateManagerView" class="modal-body">
+          <div id="templateList" class="template-list"></div>
+          <button id="addTemplateButton" class="primary full-width" type="button" data-i18n="new_template">+ 新建模板</button>
+        </div>
+        <div id="templateFormView" class="modal-body" hidden>
+          <label><span data-i18n="template_name">模板名称</span><input id="tplName" type="text" maxlength="20" placeholder="例：入院记录"></label>
+          <label><span data-i18n="template_prefix">段落前缀</span><input id="tplPrefix" type="text" maxlength="20" placeholder="例：主诉："></label>
+          <label><span data-i18n="template_body">模板内容</span><textarea id="tplBody" rows="8" placeholder="模板正文，可使用____作为待填项"></textarea></label>
+          <label class="checkbox-label"><input id="tplComposite" type="checkbox"> <span data-i18n="composite_template">组合模板（插入时展开所有段落）</span></label>
+          <div id="tplSections" hidden>
+            <label><span data-i18n="template_sections">包含段落（逗号分隔）</span><input id="tplSectionList" type="text" placeholder="主诉：,现病史：,既往史："></label>
+          </div>
+          <div class="template-form-actions">
+            <button id="saveTemplateBtn" class="primary" type="button" data-i18n="save">保存</button>
+            <button id="cancelTemplateBtn" type="button" data-i18n="cancel">取消</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="feedbackModal" class="modal feedback-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 data-i18n="feedback_title">提交内测反馈</h3>
+          <button id="closeFeedbackModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div class="modal-body feedback-form">
+          <p class="panel-caption" data-i18n="feedback_caption">反馈默认只保存到本机服务，不会上传病历正文。请尽量不要填写患者姓名、身份证号、住院号等敏感信息。</p>
+          <label><span data-i18n="feedback_category">反馈类型</span>
+            <select id="feedbackCategory">
+              <option value="recognition">识别不准确</option>
+              <option value="punctuation">停顿/标点问题</option>
+              <option value="template">模板/病历段落建议</option>
+              <option value="workflow">使用流程建议</option>
+              <option value="bug">故障或卡顿</option>
+              <option value="general">其他</option>
+            </select>
+          </label>
+          <label><span data-i18n="feedback_rating">整体评分</span>
+            <select id="feedbackRating">
+              <option value="5">5 - 很有帮助</option>
+              <option value="4">4 - 基本可用</option>
+              <option value="3">3 - 需要改进</option>
+              <option value="2">2 - 问题较多</option>
+              <option value="1">1 - 暂不可用</option>
+            </select>
+          </label>
+          <label><span data-i18n="feedback_message">反馈内容</span>
+            <textarea id="feedbackMessage" rows="7" maxlength="3000" placeholder="例如：发热五天停顿后没有加逗号；某个药名总是识别错；希望增加入院记录模板……"></textarea>
+          </label>
+          <label><span data-i18n="feedback_contact">联系方式（选填）</span>
+            <input id="feedbackContact" type="text" maxlength="120" placeholder="微信/邮箱/电话，可留空">
+          </label>
+          <details class="diagnostics-box">
+            <summary data-i18n="diagnostics_summary">将随反馈附带的诊断信息</summary>
+            <pre id="feedbackDiagnostics">准备中……</pre>
+          </details>
+          <div class="template-form-actions">
+            <button id="submitFeedbackButton" class="primary" type="button" data-i18n="save_feedback">保存反馈</button>
+            <button id="copyDiagnosticsButton" type="button" data-i18n="copy_diagnostics">复制诊断信息</button>
+            <button id="cancelFeedbackButton" type="button" data-i18n="cancel">取消</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  </main>
+  <script src="editor.js"></script>
+</body>
+</html>

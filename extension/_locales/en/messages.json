@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "病历助手"
+  },
+  "appDescription": {
+    "message": "Local clinical dictation, medical record drafts, templates, hotwords, and pre-submit review."
+  },
+  "actionTitle": {
+    "message": "Open 病历助手"
+  }
+}

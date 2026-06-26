@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "病历助手"
+  },
+  "appDescription": {
+    "message": "本地运行的临床语音输入、病历草稿、模板、热词和提交前核对助手。"
+  },
+  "actionTitle": {
+    "message": "打开病历助手"
+  }
+}

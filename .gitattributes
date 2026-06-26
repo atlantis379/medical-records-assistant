@@ -1,0 +1,45 @@
+﻿# Normalize text files in the repository.
+* text=auto
+
+# Git metadata helpers
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Windows scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Unix/macOS scripts
+*.sh text eol=lf
+
+# Source and docs
+*.py text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.7z binary
+*.rar binary
+*.tar binary
+*.gz binary
+*.exe binary
+*.msi binary
+*.pkg binary
+*.dmg binary
+*.onnx binary
+*.pt binary
+*.bin binary
+*.safetensors binary

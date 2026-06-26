@@ -52,7 +52,7 @@ New-Item -ItemType Directory -Force -Path $stage | Out-Null
 
 Write-Host "Copying project files..."
 Invoke-RoboCopyChecked (Join-Path $ProjectRoot "extension") (Join-Path $stage "extension")
-Invoke-RoboCopyChecked (Join-Path $ProjectRoot "server") (Join-Path $stage "server") @("/XD", "__pycache__", ".pytest_cache", "/XF", "*.pyc", "*.log")
+Invoke-RoboCopyChecked (Join-Path $ProjectRoot "server") (Join-Path $stage "server") @("/XD", "__pycache__", ".pytest_cache", "/XF", "*.pyc", "*.log", "feedback.jsonl")
 if (Test-Path (Join-Path $ProjectRoot "docs")) { Invoke-RoboCopyChecked (Join-Path $ProjectRoot "docs") (Join-Path $stage "docs") }
 if (Test-Path (Join-Path $ProjectRoot "THIRD_PARTY_NOTICES.md")) { Copy-Item -Force (Join-Path $ProjectRoot "THIRD_PARTY_NOTICES.md") (Join-Path $stage "THIRD_PARTY_NOTICES.md") }
 Copy-Item -Force (Join-Path $ProjectRoot "README.md") (Join-Path $stage "README.md")

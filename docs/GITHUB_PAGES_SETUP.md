@@ -5,15 +5,15 @@
 - `docs/index.html`
 - `docs/privacy-policy.html`
 
-建议 GitHub 仓库名：`bingli-assistant`
+建议 GitHub 仓库名：`medical-records-assistant`
 
 如果使用 GitHub Pages，并选择从 `main` 分支的 `/docs` 目录发布，则隐私政策 URL 通常是：
 
 ```text
-https://atlantis379.github.io/bingli-assistant/privacy-policy.html
+https://atlantis379.github.io/medical-records-assistant/privacy-policy.html
 ```
 
-如果仓库名不是 `bingli-assistant`，请把 URL 中的仓库名替换为实际仓库名。
+如果仓库名不是 `medical-records-assistant`，请把 URL 中的仓库名替换为实际仓库名。
 
 ## 上架前必须替换
 
@@ -27,7 +27,7 @@ https://atlantis379.github.io/bingli-assistant/privacy-policy.html
 
 ## GitHub Pages 开启步骤
 
-1. 在 GitHub 创建仓库，例如 `bingli-assistant`。
+1. 在 GitHub 创建仓库，例如 `medical-records-assistant`。
 2. 将本地仓库推送到 GitHub。
 3. 进入仓库 `Settings` → `Pages`。
 4. Source 选择 `Deploy from a branch`。

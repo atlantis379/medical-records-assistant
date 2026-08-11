@@ -44,6 +44,26 @@ ASR_PROFILES = {
 }
 DEFAULT_ASR_PROFILE = os.getenv("ASR_PROFILE", "balanced")
 MODEL_PACKAGE_ROOT = APP_DIR.parent / "models" / "modelscope"
+MODEL_CACHE_ALIASES = {
+    # FunASR accepts short aliases, while ModelScope stores the expanded model ids.
+    "paraformer-zh": [
+        "paraformer-zh",
+        "speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+        "speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+    ],
+    "paraformer-zh-streaming": [
+        "paraformer-zh-streaming",
+        "speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online",
+    ],
+    "fsmn-vad": [
+        "fsmn-vad",
+        "speech_fsmn_vad_zh-cn-16k-common-pytorch",
+    ],
+    "ct-punc": [
+        "ct-punc",
+        "punc_ct-transformer_cn-en-common-vocab471067-large",
+    ],
+}
 
 app = FastAPI(title="病历助手本地服务", version="0.10.0")
 app.add_middleware(
@@ -375,19 +395,23 @@ def model_cache_roots() -> list[Path]:
 def model_cache_candidates(model_name: str) -> list[Path]:
     if not model_name:
         return []
-    owners: list[str] = []
-    leaf = model_name
-    if "/" in model_name:
-        owner, leaf = model_name.split("/", 1)
-        owners.append(owner)
-    owners.extend(["iic", "damo", "modelscope", "FunAudioLLM", "QwenAudio"])
     candidates: list[Path] = []
-    for root in model_cache_roots():
-        for owner in owners:
-            candidates.append(root / "models" / owner / leaf)
-            candidates.append(root / "hub" / "models" / owner / leaf)
-        candidates.append(root / "models" / leaf)
-        candidates.append(root / leaf)
+    aliases = MODEL_CACHE_ALIASES.get(model_name, [model_name])
+    if model_name not in aliases:
+        aliases = [model_name, *aliases]
+    for alias in aliases:
+        owners: list[str] = []
+        leaf = alias
+        if "/" in alias:
+            owner, leaf = alias.split("/", 1)
+            owners.append(owner)
+        owners.extend(["iic", "damo", "modelscope", "FunAudioLLM", "QwenAudio"])
+        for root in model_cache_roots():
+            for owner in owners:
+                candidates.append(root / "models" / owner / leaf)
+                candidates.append(root / "hub" / "models" / owner / leaf)
+            candidates.append(root / "models" / leaf)
+            candidates.append(root / leaf)
     unique: list[Path] = []
     seen: set[str] = set()
     for path in candidates:
@@ -443,7 +467,7 @@ def build_self_check() -> dict:
         {"id": "streaming", "label": "流式识别", "status": "warning" if streaming_model_error else "pass", "detail": streaming_model_error or "未发现流式模型错误。"},
     ]
     if DEVICE == "cpu":
-        checks.append({"id": "performance", "label": "性能模式", "status": "warning", "detail": "当前为 CPU 推理，建议优先使用“快速/均衡”模式测试。"})
+        checks.append({"id": "performance", "label": "性能模式", "status": "pass", "detail": "当前为 CPU 推理，可正常测试；建议优先使用“快速/均衡”模式。"})
     with asr_stats_lock:
         performance = dict(asr_stats)
     warnings = []

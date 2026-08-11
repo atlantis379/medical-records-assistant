@@ -33,6 +33,13 @@
           <option value="en-US">English</option>
         </select>
       </label>
+      <label><span data-i18n="asr_profile">识别模式</span>
+        <select id="asrProfileSelect">
+          <option value="fast">快速</option>
+          <option value="balanced" selected>均衡</option>
+          <option value="accurate">准确优先</option>
+        </select>
+      </label>
       <label><span data-i18n="section_label">病历段落</span>
         <select id="templateSelect">
           <option value="">自由听写</option><option value="主诉：">主诉</option><option value="现病史：">现病史</option>
@@ -77,6 +84,7 @@
         <textarea id="draft" spellcheck="false" placeholder="点击“开始听写”，或直接在这里输入和修改病历内容……"></textarea>
         <div id="partialDisplay" class="partial-result" hidden></div>
         <p id="feedback" class="feedback" aria-live="polite"></p>
+        <p id="qualityHint" class="quality-hint" hidden></p>
       </article>
 
       <aside class="side-panel panel">

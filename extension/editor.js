@@ -1,11 +1,11 @@
 const API_BASE = "http://127.0.0.1:8765";
-const STORAGE = { autosave: "autosave_enabled", draft: "local_draft", history: "draft_history", patients: "patient_slots", uiLanguage: "ui_language", dictationLanguage: "dictation_language" };
+const STORAGE = { autosave: "autosave_enabled", draft: "local_draft", history: "draft_history", patients: "patient_slots", uiLanguage: "ui_language", dictationLanguage: "dictation_language", asrProfile: "asr_profile" };
 const $ = selector => document.querySelector(selector);
 const els = {
   draft: $("#draft"), recordButton: $("#recordButton"), recordLabel: $("#recordLabel"), timer: $("#recordTimer"),
   statusDot: $("#statusDot"), serviceStatus: $("#serviceStatus"), serviceDetail: $("#serviceDetail"),
   templateSelect: $("#templateSelect"), insertMode: $("#insertMode"), insertTemplateButton: $("#insertTemplateButton"),
-  uiLanguageSelect: $("#uiLanguageSelect"), dictationLanguageSelect: $("#dictationLanguageSelect"),
+  uiLanguageSelect: $("#uiLanguageSelect"), dictationLanguageSelect: $("#dictationLanguageSelect"), asrProfileSelect: $("#asrProfileSelect"),
   copyButton: $("#copyButton"), preSubmitCheckButton: $("#preSubmitCheckButton"), snapshotButton: $("#snapshotButton"), exportButton: $("#exportButton"), feedbackButton: $("#feedbackButton"),
   undoButton: $("#undoButton"), clearButton: $("#clearButton"), feedback: $("#feedback"), wordCount: $("#wordCount"),
   riskList: $("#riskList"), riskCount: $("#riskCount"), autosaveToggle: $("#autosaveToggle"),
@@ -13,7 +13,7 @@ const els = {
   hotwordPackList: $("#hotwordPackList"), exportHotwordsButton: $("#exportHotwordsButton"), importHotwordsButton: $("#importHotwordsButton"), importHotwordsInput: $("#importHotwordsInput"),
   historyList: $("#historyList"), clearHistoryButton: $("#clearHistoryButton"), privacyText: $("#privacyText"),
   waveCanvas: $("#waveCanvas"), silenceIndicator: $("#silenceIndicator"),
-  partialDisplay: $("#partialDisplay")
+  partialDisplay: $("#partialDisplay"), qualityHint: $("#qualityHint")
 };
 
 let audioContext, mediaStream, sourceNode, processorNode, silentGain, timerHandle, autosaveTimer;
@@ -30,7 +30,7 @@ const WS_URL = "ws://127.0.0.1:8765/ws/transcribe";
 const I18N = {
   "zh-CN": {
     app_title: "病历助手", subtitle: "听写、核对、整理，再安全地复制到病历系统。",
-    ui_language: "界面语言", dictation_language: "听写语言", section_label: "病历段落", insert_mode: "追加方式",
+    ui_language: "界面语言", dictation_language: "听写语言", asr_profile: "识别模式", section_label: "病历段落", insert_mode: "追加方式",
     insert_template: "插入结构模板", manage_templates: "管理模板", start_recording: "开始听写", stop_recording: "停止并识别",
     copy_all: "复制全文", pre_submit_check: "提交前核对", save_version: "保存版本", export_txt: "导出 TXT", beta_feedback: "内测反馈", undo: "撤销", clear: "清空",
     autosave: "在本机自动恢复草稿", draft_title: "病历草稿", review_tab: "核对", hotwords_tab: "热词", history_tab: "版本",
@@ -47,7 +47,7 @@ const I18N = {
   },
   "en-US": {
     app_title: "病历助手", subtitle: "Dictate, review, organize, then safely copy into the EHR.",
-    ui_language: "Interface", dictation_language: "Dictation", section_label: "Clinical section", insert_mode: "Insert mode",
+    ui_language: "Interface", dictation_language: "Dictation", asr_profile: "Recognition mode", section_label: "Clinical section", insert_mode: "Insert mode",
     insert_template: "Insert template", manage_templates: "Templates", start_recording: "Start dictation", stop_recording: "Stop & transcribe",
     copy_all: "Copy all", pre_submit_check: "Pre-submit check", save_version: "Save version", export_txt: "Export TXT", beta_feedback: "Beta feedback", undo: "Undo", clear: "Clear",
     autosave: "Restore drafts on this computer", draft_title: "Clinical draft", review_tab: "Review", hotwords_tab: "Hotwords", history_tab: "Versions",
@@ -66,16 +66,28 @@ const I18N = {
 let uiLanguage = "zh-CN";
 let dictationLanguage = "zh-CN";
 function tr(key) { return (I18N[uiLanguage] && I18N[uiLanguage][key]) || I18N["zh-CN"][key] || key; }
+function updateAsrProfileLabels() {
+  if (!els.asrProfileSelect) return;
+  const labels = uiLanguage === "en-US"
+    ? { fast: "Fast", balanced: "Balanced", accurate: "Accuracy first" }
+    : { fast: "快速", balanced: "均衡", accurate: "准确优先" };
+  Array.from(els.asrProfileSelect.options).forEach(option => { option.textContent = labels[option.value] || option.value; });
+}
 function applyUILanguage(language) {
   uiLanguage = language === "en-US" ? "en-US" : "zh-CN";
   document.documentElement.lang = uiLanguage;
   document.querySelectorAll("[data-i18n]").forEach(node => { node.textContent = tr(node.dataset.i18n); });
   document.title = tr("app_title");
   els.draft.placeholder = tr("placeholder_draft");
+  updateAsrProfileLabels();
   if (!recording) els.recordLabel.textContent = tr("start_recording");
   els.privacyText.textContent = els.autosaveToggle?.checked ? tr("autosave_on") : tr("autosave_off");
 }
 function currentDictationLanguage() { return els.dictationLanguageSelect?.value === "en-US" ? "en-US" : "zh-CN"; }
+function currentAsrProfile() {
+  const value = els.asrProfileSelect?.value || "balanced";
+  return ["fast", "balanced", "accurate"].includes(value) ? value : "balanced";
+}
 function updateLanguageSpecificUI() {
   dictationLanguage = currentDictationLanguage();
   const isEnglish = dictationLanguage === "en-US";
@@ -297,8 +309,16 @@ async function checkService() {
     const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
     if (!response.ok) throw new Error();
     const data = await response.json();
+    let config = null;
+    try {
+      const configResponse = await fetch(`${API_BASE}/asr/config?profile=${encodeURIComponent(currentAsrProfile())}`, { cache: "no-store" });
+      if (configResponse.ok) config = await configResponse.json();
+    } catch {}
+    const activeHotwords = config?.active_hotwords ?? data.active_hotword_count ?? data.hotword_count ?? 0;
+    const totalHotwords = config?.total_hotwords ?? data.hotword_count ?? activeHotwords;
+    const profileLabel = config?.selected_profile?.label || data.asr_profile?.label || els.asrProfileSelect?.selectedOptions?.[0]?.textContent || currentAsrProfile();
     els.statusDot.className = "status-dot online"; els.serviceStatus.textContent = "本地服务已连接";
-    els.serviceDetail.textContent = `${data.model_loaded ? "模型已加载" : "首次识别时加载"} · ${data.hotword_count ?? 0} 个热词`;
+    els.serviceDetail.textContent = `${data.model_loaded ? "模型已加载" : "首次识别时加载"} · ${profileLabel} · 已启用 ${activeHotwords}/${totalHotwords} 个热词`;
     els.recordButton.disabled = false;
   } catch {
     els.statusDot.className = "status-dot offline"; els.serviceStatus.textContent = "本地服务未启动";
@@ -732,6 +752,24 @@ function drawWaveBar(rms) {
   ctx.fillRect(w - 2, (h - barHeight) / 2, 2, barHeight);
 }
 
+function renderRecognitionHints(result) {
+  if (!els.qualityHint) return;
+  const parts = [];
+  const metrics = result?.metrics || {};
+  const quality = result?.quality || null;
+  const corrections = result?.corrections || [];
+  if (metrics.profile) parts.push(`模式 ${metrics.profile}`);
+  if (Number.isFinite(metrics.realtime_factor)) parts.push(`RTF ${metrics.realtime_factor}`);
+  if (Number.isFinite(metrics.hotword_count)) parts.push(`热词 ${metrics.hotword_count}`);
+  const correctionCount = corrections.reduce((sum, item) => sum + (item.count || 0), 0) || metrics.correction_count || 0;
+  if (correctionCount) parts.push(`已修正常见误识别 ${correctionCount} 处`);
+  if (quality?.rms_dbfs !== null && quality?.rms_dbfs !== undefined) parts.push(`音量 ${quality.rms_dbfs} dBFS`);
+  if (quality?.warnings?.length) parts.push(`提示：${quality.warnings.join("；")}`);
+  els.qualityHint.textContent = parts.join(" · ");
+  els.qualityHint.hidden = parts.length === 0;
+  els.qualityHint.classList.toggle("warning", Boolean(quality?.warnings?.length));
+}
+
 function closeStreamingSocket() {
   if (ws) {
     ws.onopen = null; ws.onmessage = null; ws.onerror = null; ws.onclose = null;
@@ -755,7 +793,7 @@ async function connectStreaming() {
   let finalReceived = false;
 
   ws.onopen = () => {
-    ws.send(JSON.stringify({ sample_rate: 16000, department: "infectious_disease", language: currentDictationLanguage(), chunk_size: [5, 10, 5] }));
+    ws.send(JSON.stringify({ sample_rate: 16000, department: "infectious_disease", language: currentDictationLanguage(), profile: currentAsrProfile() }));
   };
   ws.onmessage = event => {
     let msg;
@@ -768,7 +806,7 @@ async function connectStreaming() {
       els.partialDisplay.textContent = msg.text || "";
       els.partialDisplay.hidden = !msg.text;
     } else if (msg.type === "final") {
-      finalReceived = true; resolveFinal(msg.text || "");
+      finalReceived = true; resolveFinal({ text: msg.text || "", metrics: msg.metrics || null, corrections: msg.corrections || [] });
     } else if (msg.type === "error") {
       const error = new Error(msg.detail || "流式识别失败");
       rejectReady(error); rejectFinal(error);
@@ -818,6 +856,7 @@ async function startRecording() {
     processorNode = audioContext.createScriptProcessor(4096, 1, 1);
     silentGain = audioContext.createGain(); silentGain.gain.value = 0;
     chunks = []; chunkBuffer = [];
+    if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
     silenceFrames = 0; graceFrames = 0; voicedFrames = 0; pauseMarkLevel = 0;
     const frameSeconds = 4096 / audioContext.sampleRate;
     silenceMaxFrames = Math.ceil(3 / frameSeconds);
@@ -916,13 +955,16 @@ async function stopRecording() {
       ws.send(JSON.stringify({ type: "end" }));
       els.recordButton.disabled = true; setFeedback("正在等待最终识别结果……");
       try {
-        const finalText = await Promise.race([
+        const finalResult = await Promise.race([
           streamFinalPromise,
           new Promise((_, reject) => setTimeout(() => reject(new Error("等待最终结果超时")), 8000))
         ]);
         els.partialDisplay.hidden = true;
+        const finalText = typeof finalResult === "string" ? finalResult : (finalResult?.text || "");
         if (finalText) mergeText(finalText);
-        setFeedback("流式识别完成。请核对右侧提醒。");
+        renderRecognitionHints(typeof finalResult === "string" ? null : finalResult);
+        const rtf = finalResult?.metrics?.realtime_factor;
+        setFeedback(`流式识别完成${Number.isFinite(rtf) ? `，RTF ${rtf}` : ""}。请核对右侧提醒。`);
         els.recordButton.disabled = false;
       } catch (error) {
         closeStreamingSocket();
@@ -939,6 +981,7 @@ async function stopRecording() {
 async function batchTranscribe(sampleRate) {
   els.recordButton.disabled = true;
   els.partialDisplay.hidden = true;
+  if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
   setFeedback("正在本地识别，请稍候……");
   const length = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
   const merged = new Float32Array(length);
@@ -948,12 +991,20 @@ async function batchTranscribe(sampleRate) {
   form.append("file", encodeWav(resampleTo16k(merged, sampleRate)), "dictation.wav");
   form.append("department", currentDictationLanguage() === "zh-CN" ? "infectious_disease" : "general");
   form.append("language", currentDictationLanguage());
+  form.append("profile", currentAsrProfile());
   try {
     const response = await fetch(`${API_BASE}/transcribe`, { method: "POST", body: form });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || "识别失败");
     mergeText(data.text);
-    setFeedback(`识别完成，用时 ${data.elapsed_seconds.toFixed(1)} 秒。请核对右侧提醒。`);
+    renderRecognitionHints(data);
+    const rtf = data.metrics?.realtime_factor;
+    const correctionCount = data.metrics?.correction_count || 0;
+    const suffix = [
+      Number.isFinite(rtf) ? `RTF ${rtf}` : "",
+      correctionCount ? `修正 ${correctionCount} 处` : ""
+    ].filter(Boolean).join("，");
+    setFeedback(`识别完成，用时 ${data.elapsed_seconds.toFixed(1)} 秒${suffix ? `（${suffix}）` : ""}。请核对右侧提醒。`);
   } catch (error) { setFeedback(`识别失败：${error.message}`, true); }
   finally { els.recordButton.disabled = false; checkService(); }
 }
@@ -970,7 +1021,8 @@ async function collectFeedbackDiagnostics() {
     license: null,
     draftLength: els.draft.value.length,
     patientCount: patientSlots.length,
-    autosaveEnabled: els.autosaveToggle.checked
+    autosaveEnabled: els.autosaveToggle.checked,
+    asrProfile: currentAsrProfile()
   };
   try {
     const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
@@ -1029,10 +1081,11 @@ async function copyFeedbackDiagnostics() {
 }
 
 async function initialize() {
-  const stored = await storageGet([STORAGE.autosave, STORAGE.uiLanguage, STORAGE.dictationLanguage]);
+  const stored = await storageGet([STORAGE.autosave, STORAGE.uiLanguage, STORAGE.dictationLanguage, STORAGE.asrProfile]);
   els.autosaveToggle.checked = Boolean(stored[STORAGE.autosave]);
   els.uiLanguageSelect.value = stored[STORAGE.uiLanguage] || "zh-CN";
   els.dictationLanguageSelect.value = stored[STORAGE.dictationLanguage] || "zh-CN";
+  if (els.asrProfileSelect) els.asrProfileSelect.value = stored[STORAGE.asrProfile] || "balanced";
   applyUILanguage(els.uiLanguageSelect.value);
   updateLanguageSpecificUI();
   await loadPatientSlots();
@@ -1042,6 +1095,7 @@ async function initialize() {
 
 els.uiLanguageSelect.addEventListener("change", async () => { applyUILanguage(els.uiLanguageSelect.value); await storageSet({ [STORAGE.uiLanguage]: els.uiLanguageSelect.value }); updateLanguageSpecificUI(); loadHotwordPacks(); });
 els.dictationLanguageSelect.addEventListener("change", async () => { await storageSet({ [STORAGE.dictationLanguage]: els.dictationLanguageSelect.value }); updateLanguageSpecificUI(); });
+els.asrProfileSelect?.addEventListener("change", async () => { await storageSet({ [STORAGE.asrProfile]: currentAsrProfile() }); checkService(); setFeedback(`已切换识别模式：${els.asrProfileSelect.selectedOptions[0]?.textContent || currentAsrProfile()}`); });
 els.recordButton.addEventListener("click",()=>recording?stopRecording():startRecording()); els.draft.addEventListener("input",updateDraftMeta);
 els.insertTemplateButton.addEventListener("click",insertStructuredTemplate); els.saveHotwordsButton.addEventListener("click",saveHotwords); els.exportHotwordsButton.addEventListener("click", exportHotwordPacks); els.importHotwordsButton.addEventListener("click", () => els.importHotwordsInput.click()); els.importHotwordsInput.addEventListener("change", event => importHotwordFile(event.target.files?.[0])); els.snapshotButton.addEventListener("click",saveSnapshot); els.preSubmitCheckButton.addEventListener("click", () => renderPreSubmitChecklist(true)); els.exportButton.addEventListener("click",exportText); els.feedbackButton.addEventListener("click", openFeedbackModal);
 document.getElementById("manageTemplatesButton").addEventListener("click", openTemplateManager);

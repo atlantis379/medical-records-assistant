@@ -1,9 +1,12 @@
 import asyncio
+import io
+import json
 import os
 import re
 import tempfile
 import time
 import uuid
+import wave
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
@@ -29,6 +32,14 @@ STREAMING_MODEL_NAME = os.getenv("ASR_STREAMING_MODEL", "paraformer-zh-streaming
 EN_MODEL_NAME = os.getenv("ASR_MODEL_EN", "paraformer-en")
 DEVICE = os.getenv("ASR_DEVICE", "cpu")
 MAX_HOTWORDS = 1000
+CORRECTION_RULE_DIR = APP_DIR / "data" / "correction_rules"
+STREAMING_RMS_THRESHOLD = float(os.getenv("ASR_STREAMING_RMS_THRESHOLD", "0.008"))
+ASR_PROFILES = {
+    "fast": {"id": "fast", "label": "快速", "label_en": "Fast", "batch_size_s": 45, "stream_chunk_size": [0, 8, 4], "encoder_chunk_look_back": 3, "decoder_chunk_look_back": 1, "hotword_limit": 160, "hotword_char_limit": 2600, "description": "低延迟优先，减少上下文和热词数量。"},
+    "balanced": {"id": "balanced", "label": "均衡", "label_en": "Balanced", "batch_size_s": 60, "stream_chunk_size": [5, 10, 5], "encoder_chunk_look_back": 4, "decoder_chunk_look_back": 1, "hotword_limit": 260, "hotword_char_limit": 4200, "description": "兼顾识别速度、准确度和 CPU 占用。"},
+    "accurate": {"id": "accurate", "label": "准确优先", "label_en": "Accuracy first", "batch_size_s": 90, "stream_chunk_size": [5, 12, 6], "encoder_chunk_look_back": 6, "decoder_chunk_look_back": 2, "hotword_limit": 420, "hotword_char_limit": 6800, "description": "更多上下文和热词，CPU 推理会更慢。"},
+}
+DEFAULT_ASR_PROFILE = os.getenv("ASR_PROFILE", "balanced")
 
 app = FastAPI(title="病历助手本地服务", version="0.10.0")
 app.add_middleware(
@@ -48,6 +59,16 @@ streaming_model = None
 streaming_model_lock = Lock()
 streaming_model_error = None
 funasr_runtime_lock = Lock()
+asr_stats_lock = Lock()
+asr_stats = {
+    "batch_requests": 0,
+    "streaming_sessions": 0,
+    "total_audio_seconds": 0.0,
+    "total_inference_seconds": 0.0,
+    "last_batch": None,
+    "last_streaming": None,
+}
+
 
 def read_words_from_file(path: Path) -> list[str]:
     if not path.exists():
@@ -89,20 +110,60 @@ def read_custom_hotwords() -> list[str]:
     return read_words_from_file(HOTWORD_FILE)
 
 
-def read_hotwords() -> list[str]:
-    combined: list[str] = []
+def read_hotword_entries() -> list[dict]:
+    entries: list[dict] = []
+    priority = {"user_custom": 0, "antimicrobials": 1, "pathogens": 2, "infectious_disease": 3, "general_medical": 4}
     for pack in HOTWORD_PACKS:
         if not pack.get("enabled", True):
             continue
         words = read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack)
-        for word in words:
-            if word not in combined:
-                combined.append(word)
+        for order, word in enumerate(words):
+            entries.append({"word": word, "pack_id": pack["id"], "priority": priority.get(pack["id"], 9), "order": order})
+    return entries
+
+
+def read_hotwords() -> list[str]:
+    combined: list[str] = []
+    seen: set[str] = set()
+    for entry in read_hotword_entries():
+        key = entry["word"].casefold()
+        if key not in seen:
+            combined.append(entry["word"])
+            seen.add(key)
     return combined
 
 
-def load_hotwords() -> str:
-    return " ".join(read_hotwords())
+def resolve_asr_profile(value: str | None = None) -> dict:
+    key = (value or DEFAULT_ASR_PROFILE or "balanced").strip().lower()
+    return ASR_PROFILES.get(key, ASR_PROFILES["balanced"])
+
+
+def active_hotwords(profile: dict | None = None, department: str = "infectious_disease") -> list[str]:
+    if department != "infectious_disease":
+        return []
+    cfg = profile or resolve_asr_profile()
+    limit = int(cfg.get("hotword_limit", 260))
+    char_limit = int(cfg.get("hotword_char_limit", 4200))
+    selected: list[str] = []
+    seen: set[str] = set()
+    total_chars = 0
+    entries = sorted(read_hotword_entries(), key=lambda item: (item["priority"], -len(item["word"]), item["order"]))
+    for entry in entries:
+        word = entry["word"].strip()
+        key = word.casefold()
+        if not word or key in seen:
+            continue
+        projected = total_chars + len(word) + 1
+        if len(selected) >= limit or projected > char_limit:
+            break
+        selected.append(word)
+        seen.add(key)
+        total_chars = projected
+    return selected
+
+
+def load_hotwords(profile: dict | None = None, department: str = "infectious_disease") -> str:
+    return " ".join(active_hotwords(profile, department))
 
 
 def write_hotwords(words: list[str]) -> list[str]:
@@ -212,21 +273,161 @@ def normalize_text_for_language(text: str, language: str) -> str:
     return normalize_clinical_text(text)
 
 
+def analyze_wav_quality(audio: bytes) -> dict:
+    quality = {"duration_seconds": 0.0, "sample_rate": None, "channels": None, "sample_width": None, "rms_dbfs": None, "peak_dbfs": None, "clipping_percent": 0.0, "warnings": []}
+    try:
+        with wave.open(io.BytesIO(audio), "rb") as wf:
+            channels = wf.getnchannels()
+            sample_rate = wf.getframerate()
+            sample_width = wf.getsampwidth()
+            frames = wf.getnframes()
+            quality.update({"duration_seconds": round(frames / sample_rate, 3) if sample_rate else 0.0, "sample_rate": sample_rate, "channels": channels, "sample_width": sample_width})
+            raw = wf.readframes(frames)
+    except Exception as exc:
+        quality["warnings"].append(f"无法解析 WAV 音频：{exc}")
+        return quality
+    if quality["duration_seconds"] and quality["duration_seconds"] < 0.8:
+        quality["warnings"].append("录音时间偏短，建议至少 1 秒以上。")
+    if quality["sample_rate"] != 16000:
+        quality["warnings"].append("建议使用 16kHz 单声道录音。")
+    if quality["channels"] != 1:
+        quality["warnings"].append("检测到非单声道音频，已合并声道后分析。")
+    if quality["sample_width"] != 2 or not raw:
+        return quality
+    samples = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    if quality["channels"] and quality["channels"] > 1:
+        samples = samples.reshape(-1, quality["channels"]).mean(axis=1)
+    if samples.size == 0:
+        return quality
+    rms = float(np.sqrt(np.mean(samples * samples)))
+    peak = float(np.max(np.abs(samples)))
+    clipping = float(np.mean(np.abs(samples) >= 0.98) * 100)
+    quality["rms_dbfs"] = round(20 * np.log10(max(rms, 1e-9)), 1)
+    quality["peak_dbfs"] = round(20 * np.log10(max(peak, 1e-9)), 1)
+    quality["clipping_percent"] = round(clipping, 3)
+    if quality["rms_dbfs"] < -38:
+        quality["warnings"].append("录音音量偏低，建议靠近麦克风或调高输入增益。")
+    if quality["rms_dbfs"] > -8:
+        quality["warnings"].append("录音音量偏高，可能导致削波失真。")
+    if clipping > 0.2:
+        quality["warnings"].append("检测到削波/爆音，建议降低麦克风输入音量。")
+    return quality
+
+
+def read_correction_rules() -> list[dict]:
+    rules: list[dict] = []
+    if not CORRECTION_RULE_DIR.exists():
+        return rules
+    for path in sorted(CORRECTION_RULE_DIR.glob("*.json")):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8-sig"))
+        except json.JSONDecodeError:
+            continue
+        items = payload.get("rules", payload if isinstance(payload, list) else [])
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            source = str(item.get("from", "")).strip()
+            target = str(item.get("to", "")).strip()
+            if source and target and source != target:
+                rules.append({"from": source, "to": target, "category": item.get("category", "general"), "source": path.name})
+    return rules
+
+
+def apply_correction_rules(text: str, language: str = "zh-CN") -> tuple[str, list[dict]]:
+    value = text or ""
+    applied: list[dict] = []
+    if not value:
+        return value, applied
+    for rule in read_correction_rules():
+        source = rule["from"]
+        target = rule["to"]
+        if re.fullmatch(r"[A-Za-z0-9+./-]+", source):
+            pattern = re.compile(rf"(?<![A-Za-z0-9]){re.escape(source)}(?![A-Za-z0-9])", re.IGNORECASE)
+            count = 0
+
+            def replace_match(match: re.Match) -> str:
+                nonlocal count
+                if match.group(0) != target:
+                    count += 1
+                return target
+
+            value = pattern.sub(replace_match, value)
+        else:
+            count = value.count(source)
+            if count:
+                value = value.replace(source, target)
+        if count:
+            applied.append({"from": source, "to": target, "count": count, "category": rule.get("category", "general")})
+    return value, applied
+
+
+def record_asr_metric(kind: str, audio_seconds: float, elapsed_seconds: float, detail: dict) -> None:
+    with asr_stats_lock:
+        asr_stats["total_audio_seconds"] += max(0.0, float(audio_seconds or 0.0))
+        asr_stats["total_inference_seconds"] += max(0.0, float(elapsed_seconds or 0.0))
+        if kind == "batch":
+            asr_stats["batch_requests"] += 1
+            asr_stats["last_batch"] = detail
+        elif kind == "streaming":
+            asr_stats["streaming_sessions"] += 1
+            asr_stats["last_streaming"] = detail
+
+
 @app.get("/health")
 def health():
     return {
         "status": "ok", "version": app.version, "model": MODEL_NAME, "device": DEVICE,
         "license_tier": os.getenv("APP_LICENSE_TIER", "free"),
         "model_loaded": model is not None, "hotword_count": len(read_hotwords()),
+        "active_hotword_count": len(active_hotwords(resolve_asr_profile())),
         "streaming_model_loaded": streaming_model is not None,
         "streaming_supported": True,
         "streaming_model_error": streaming_model_error,
-        "build": "medical-vocab-packs-20260624",
+        "build": "asr-quality-performance-20260811",
         "languages": {"ui": ["zh-CN", "en-US"], "dictation": ["zh-CN", "en-US"]},
         "english_model": EN_MODEL_NAME,
         "english_model_loaded": english_model is not None,
         "hotword_pack_count": len(HOTWORD_PACKS),
+        "asr_profile": resolve_asr_profile(),
+        "correction_rule_count": len(read_correction_rules()),
     }
+
+
+@app.get("/asr/config")
+def asr_config(profile: str | None = None):
+    selected_profile = resolve_asr_profile(profile)
+    return {
+        "default_profile": resolve_asr_profile(),
+        "selected_profile": selected_profile,
+        "profiles": list(ASR_PROFILES.values()),
+        "total_hotwords": len(read_hotwords()),
+        "active_hotwords": len(active_hotwords(selected_profile)),
+        "correction_rules": len(read_correction_rules()),
+    }
+
+
+@app.get("/asr/performance")
+def asr_performance():
+    with asr_stats_lock:
+        total_audio = asr_stats["total_audio_seconds"]
+        total_infer = asr_stats["total_inference_seconds"]
+        snapshot = dict(asr_stats)
+    snapshot["average_realtime_factor"] = round(total_infer / total_audio, 3) if total_audio > 0 else None
+    snapshot["profile"] = resolve_asr_profile()
+    return snapshot
+
+
+@app.get("/correction-rules")
+def correction_rules():
+    rules = read_correction_rules()
+    categories: dict[str, int] = {}
+    for rule in rules:
+        category = rule.get("category", "general")
+        categories[category] = categories.get(category, 0) + 1
+    return {"count": len(rules), "categories": categories, "rules": rules}
 
 
 @app.get("/license/status")
@@ -370,35 +571,53 @@ def run_batch_generate(recognizer, kwargs):
         return recognizer.generate(**kwargs)
 
 @app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...), department: str = Form(default="infectious_disease"), language: str = Form(default="zh-CN")):
+async def transcribe(
+    file: UploadFile = File(...),
+    department: str = Form(default="infectious_disease"),
+    language: str = Form(default="zh-CN"),
+    profile: str = Form(default="balanced"),
+):
     if file.content_type not in {"audio/wav", "audio/x-wav", "audio/wave"}:
-        raise HTTPException(status_code=400, detail="当前版本仅接受 WAV 音频")
+        raise HTTPException(status_code=400, detail="仅支持 WAV 音频")
     audio = await file.read()
     if len(audio) < 1024:
-        raise HTTPException(status_code=400, detail="录音过短，请重新听写")
+        raise HTTPException(status_code=400, detail="录音太短，请重新录制")
     if len(audio) > 30 * 1024 * 1024:
-        raise HTTPException(status_code=413, detail="录音过长，请分段听写")
+        raise HTTPException(status_code=413, detail="录音文件过大，请缩短单次录音")
     temp_path = None
     started = time.perf_counter()
+    quality = analyze_wav_quality(audio)
+    cfg = resolve_asr_profile(profile)
     try:
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp:
             temp.write(audio)
             temp_path = temp.name
         resolved_language = resolve_language(language)
         recognizer = await asyncio.to_thread(get_english_model if resolved_language == "en-US" else get_model)
-        kwargs = {"input": temp_path, "batch_size_s": 60}
+        kwargs = {"input": temp_path, "batch_size_s": cfg["batch_size_s"]}
+        hotword_count = 0
         if resolved_language == "zh-CN" and department == "infectious_disease":
-            kwargs["hotword"] = load_hotwords()
+            hotwords = load_hotwords(cfg, department)
+            hotword_count = len(hotwords.split()) if hotwords else 0
+            if hotwords:
+                kwargs["hotword"] = hotwords
         result = await asyncio.to_thread(run_batch_generate, recognizer, kwargs)
         text = result[0].get("text", "") if result else ""
         text = normalize_text_for_language(text, resolved_language)
+        text, corrections = apply_correction_rules(text, resolved_language)
+        text = ensure_terminal_punctuation(text) if resolved_language == "zh-CN" else text
         if not text:
-            raise HTTPException(status_code=422, detail="未识别到有效语音")
-        return {"text": text, "elapsed_seconds": time.perf_counter() - started, "model": EN_MODEL_NAME if resolved_language == "en-US" else MODEL_NAME, "device": DEVICE, "language": resolved_language}
+            raise HTTPException(status_code=422, detail="未识别到有效内容")
+        elapsed = time.perf_counter() - started
+        audio_seconds = float(quality.get("duration_seconds") or 0.0)
+        realtime_factor = round(elapsed / audio_seconds, 3) if audio_seconds > 0 else None
+        metrics = {"elapsed_seconds": elapsed, "audio_seconds": audio_seconds, "realtime_factor": realtime_factor, "profile": cfg["id"], "hotword_count": hotword_count, "correction_count": sum(item["count"] for item in corrections)}
+        record_asr_metric("batch", audio_seconds, elapsed, metrics)
+        return {"text": text, "elapsed_seconds": elapsed, "model": EN_MODEL_NAME if resolved_language == "en-US" else MODEL_NAME, "device": DEVICE, "language": resolved_language, "profile": cfg, "quality": quality, "metrics": metrics, "corrections": corrections}
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"本地识别失败：{exc}") from exc
+        raise HTTPException(status_code=500, detail=f"语音识别失败：{exc}") from exc
     finally:
         if temp_path:
             Path(temp_path).unlink(missing_ok=True)
@@ -469,15 +688,15 @@ async def start_streaming_preload():
         asyncio.create_task(preload_streaming_model())
 
 
-def run_streaming_generate(recognizer, samples, cache, is_final, chunk_size, hotword_str):
+def run_streaming_generate(recognizer, samples, cache, is_final, chunk_size, hotword_str, profile: dict):
     with funasr_runtime_lock:
         return recognizer.generate(
             input=samples,
             cache=cache,
             is_final=is_final,
             chunk_size=chunk_size,
-            encoder_chunk_look_back=4,
-            decoder_chunk_look_back=1,
+            encoder_chunk_look_back=int(profile.get("encoder_chunk_look_back", 4)),
+            decoder_chunk_look_back=int(profile.get("decoder_chunk_look_back", 1)),
             hotword=hotword_str,
         )
 
@@ -493,15 +712,19 @@ async def ws_transcribe(websocket: WebSocket):
             await websocket.send_json({"type": "error", "detail": "English streaming is not enabled yet; use batch dictation."})
             await websocket.close(code=1003)
             return
-        chunk_size = config.get("chunk_size", [5, 10, 5])
-        await websocket.send_json({"type": "status", "status": "loading", "detail": "正在准备流式模型"})
+        cfg = resolve_asr_profile(config.get("profile"))
+        chunk_size = config.get("chunk_size") or cfg["stream_chunk_size"]
+        await websocket.send_json({"type": "status", "status": "loading", "detail": "正在加载流式识别模型", "profile": cfg})
         recognizer = await asyncio.to_thread(get_streaming_model)
-        await websocket.send_json({"type": "ready"})
+        await websocket.send_json({"type": "ready", "profile": cfg})
 
         cache = {}
-        hotword_str = load_hotwords() if department == "infectious_disease" else ""
+        hotword_str = load_hotwords(cfg, department) if department == "infectious_disease" else ""
         full_text = ""
         pause_open = False
+        stream_started = time.perf_counter()
+        audio_seconds = 0.0
+        generate_calls = 0
 
         while True:
             message = await websocket.receive()
@@ -509,7 +732,6 @@ async def ws_transcribe(websocket: WebSocket):
                 break
 
             if "text" in message:
-                import json
                 try:
                     cmd = json.loads(message["text"])
                 except (json.JSONDecodeError, TypeError):
@@ -517,15 +739,8 @@ async def ws_transcribe(websocket: WebSocket):
                 if cmd.get("type") == "pause":
                     duration_ms = max(0, min(int(cmd.get("duration_ms", 0)), 10000))
                     if not pause_open:
-                        result = await asyncio.to_thread(
-                            run_streaming_generate,
-                            recognizer,
-                            np.zeros(1600, dtype=np.float32),
-                            cache,
-                            True,
-                            chunk_size,
-                            hotword_str,
-                        )
+                        result = await asyncio.to_thread(run_streaming_generate, recognizer, np.zeros(1600, dtype=np.float32), cache, True, chunk_size, hotword_str, cfg)
+                        generate_calls += 1
                         if result and result[0].get("text"):
                             full_text += result[0]["text"]
                         cache = {}
@@ -533,22 +748,21 @@ async def ws_transcribe(websocket: WebSocket):
                     punctuated = apply_pause_punctuation(full_text, duration_ms)
                     if punctuated != full_text:
                         full_text = punctuated
-                        await websocket.send_json({"type": "partial", "text": full_text, "pause_punctuation": True})
+                        partial = meaningful_stream_text(full_text)
+                        partial, _ = apply_correction_rules(partial, language)
+                        await websocket.send_json({"type": "partial", "text": partial, "pause_punctuation": True})
                     continue
                 if cmd.get("type") == "end":
-                    result = await asyncio.to_thread(
-                        run_streaming_generate,
-                        recognizer,
-                        np.zeros(1600, dtype=np.float32),
-                        cache,
-                        True,
-                        chunk_size,
-                        hotword_str,
-                    )
+                    result = await asyncio.to_thread(run_streaming_generate, recognizer, np.zeros(1600, dtype=np.float32), cache, True, chunk_size, hotword_str, cfg)
+                    generate_calls += 1
                     if result and result[0].get("text"):
                         full_text += result[0]["text"]
-                    final_text = ensure_terminal_punctuation(meaningful_stream_text(full_text))
-                    await websocket.send_json({"type": "final", "text": final_text})
+                    final_text, corrections = apply_correction_rules(meaningful_stream_text(full_text), language)
+                    final_text = ensure_terminal_punctuation(final_text)
+                    elapsed = time.perf_counter() - stream_started
+                    metrics = {"elapsed_seconds": elapsed, "audio_seconds": round(audio_seconds, 3), "realtime_factor": round(elapsed / audio_seconds, 3) if audio_seconds > 0 else None, "profile": cfg["id"], "hotword_count": len(hotword_str.split()) if hotword_str else 0, "generate_calls": generate_calls, "correction_count": sum(item["count"] for item in corrections)}
+                    record_asr_metric("streaming", audio_seconds, elapsed, metrics)
+                    await websocket.send_json({"type": "final", "text": final_text, "metrics": metrics, "corrections": corrections})
                     break
                 continue
 
@@ -557,22 +771,17 @@ async def ws_transcribe(websocket: WebSocket):
                 if not audio_bytes:
                     continue
                 samples = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-                if np.sqrt(np.mean(samples * samples)) >= 0.008:
+                audio_seconds += len(samples) / 16000.0
+                if np.sqrt(np.mean(samples * samples)) >= STREAMING_RMS_THRESHOLD:
                     pause_open = False
                 if len(samples) < 160:
                     continue
-                result = await asyncio.to_thread(
-                    run_streaming_generate,
-                    recognizer,
-                    samples,
-                    cache,
-                    False,
-                    chunk_size,
-                    hotword_str,
-                )
+                result = await asyncio.to_thread(run_streaming_generate, recognizer, samples, cache, False, chunk_size, hotword_str, cfg)
+                generate_calls += 1
                 if result and result[0].get("text"):
                     full_text += result[0]["text"]
                     partial = meaningful_stream_text(full_text)
+                    partial, _ = apply_correction_rules(partial, language)
                     if partial:
                         await websocket.send_json({"type": "partial", "text": partial})
 
@@ -583,6 +792,9 @@ async def ws_transcribe(websocket: WebSocket):
     except Exception as exc:
         try:
             await websocket.send_json({"type": "error", "detail": str(exc)})
+        except Exception:
+            pass
+        try:
             await websocket.close(code=1011)
         except Exception:
             pass

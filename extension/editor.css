@@ -398,6 +398,23 @@ button:disabled {
   border-left: 3px solid var(--green);
 }
 
+.quality-hint {
+  margin: 8px 0 0;
+  padding: 9px 12px;
+  color: #45645b;
+  font-size: 12px;
+  line-height: 1.55;
+  background: #f7fbf9;
+  border: 1px dashed #c9d8d3;
+  border-radius: 10px;
+}
+
+.quality-hint.warning {
+  color: #7a4b13;
+  background: #fff8eb;
+  border-color: #f0d2a0;
+}
+
 .tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

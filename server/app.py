@@ -293,10 +293,56 @@ def normalize_clinical_text(text: str) -> str:
     for source, target in replacements.items():
         text = text.replace(source, target)
     text = re.sub(r"(\d)(mg|g|μg|ug|mL|ml|IU)\b", r"\1 \2", text, flags=re.IGNORECASE)
+    text = normalize_blood_pressure_text(text)
     text = re.sub(r"[，,]{2,}", "，", text)
     text = re.sub(r"[。\.]{2,}", "。", text)
     text = re.sub(r" *\n *", "\n", text)
     return text.strip()
+
+
+def normalize_blood_pressure_text(text: str) -> str:
+    value = text or ""
+    phrase_rules = [
+        ("一百三十到一百四十，八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三十到一百四十/八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三十到一百四十八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三到一百四，八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三到一百四/八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三到一百四八十到九十毫米汞柱", "130-140/80-90mmHg"),
+        ("一百三十到一百四十，八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百三十到一百四十/八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百三十到一百四十八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百三到一百四，八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百三到一百四/八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百三到一百四八十到九十mmHg", "130-140/80-90mmHg"),
+        ("一百六一百毫米汞柱", "160/100mmHg"),
+        ("一百六一百mmHg", "160/100mmHg"),
+    ]
+    for source, target in phrase_rules:
+        value = value.replace(source, target)
+    value = value.replace("毫米汞柱", "mmHg").replace("毫米汞汞柱", "mmHg")
+    value = re.sub(r"(?i)\s*mm\s*hg\b", "mmHg", value)
+    value = re.sub(r"(?i)\s*mmhg\b", "mmHg", value)
+    value = re.sub(
+        r"(?<!\d)(\d{2,3})[到至~～－—-](\d{2,3})[、，,/\s]+(\d{2,3})[到至~～－—-](\d{2,3})\s*mmHg",
+        r"\1-\2/\3-\4mmHg",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(
+        r"(?<!\d)(\d{2,3})[到至~～－—-](\d{2,3})/(\d{2,3})[到至~～－—-](\d{2,3})\s*mmHg",
+        r"\1-\2/\3-\4mmHg",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(
+        r"(?<!\d)(\d{2,3})-(\d{2,3})/(\d{2,3})-(\d{2,3})\s*mmHg",
+        r"\1-\2/\3-\4mmHg",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(r"(?<!\d)(\d{2,3})/(\d{2,3})\s*mmHg", r"\1/\2mmHg", value, flags=re.IGNORECASE)
+    return value
 
 
 def normalize_english_text(text: str) -> str:

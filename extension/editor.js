@@ -152,6 +152,15 @@ const QC_RULES = [
     regex: /\b(?:qd|bid|tid|qid|q\d+h|qod|qw|qn|qhs|prn|st|once daily|twice daily|three times daily|every \d+ hours?)\b/gi,
   },
   {
+    id: "blood_pressure",
+    label: "血压数值/范围",
+    labelEn: "Blood pressure value/range",
+    detail: "请核对收缩压/舒张压、范围符号和单位 mmHg，语音识别容易把 130-140/80-90mmHg 一类数值听错。",
+    detailEn: "Verify systolic/diastolic values, range markers, and mmHg units.",
+    severity: "high",
+    regex: /\b\d{2,3}(?:\s*[-~～至到]\s*\d{2,3})?\s*\/\s*\d{2,3}(?:\s*[-~～至到]\s*\d{2,3})?\s*mmHg\b/gi,
+  },
+  {
     id: "prescription_action",
     label: "处方/医嘱动作",
     labelEn: "Prescription/order action",

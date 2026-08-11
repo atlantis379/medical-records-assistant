@@ -26,6 +26,7 @@ FEEDBACK_FILE = APP_DIR / "data" / "feedback.jsonl"
 HOTWORD_PACKS = [
     {"id": "general_medical", "filename": "general_medical.txt", "label": "通用医学词库", "label_en": "General medical", "built_in": True, "enabled": True},
     {"id": "respiratory_history", "filename": "respiratory_history.txt", "label": "呼吸道病史词库", "label_en": "Respiratory history", "built_in": True, "enabled": True},
+    {"id": "medical_history", "filename": "medical_history.txt", "label": "既往史词库", "label_en": "Past medical history", "built_in": True, "enabled": True},
     {"id": "infectious_disease", "filename": "infectious_disease.txt", "label": "感染科词库", "label_en": "Infectious disease", "built_in": True, "enabled": True},
     {"id": "antimicrobials", "filename": "antimicrobials.txt", "label": "抗菌药词库", "label_en": "Antimicrobials", "built_in": True, "enabled": True},
     {"id": "pathogens", "filename": "pathogens.txt", "label": "病原体词库", "label_en": "Pathogens", "built_in": True, "enabled": True},
@@ -137,7 +138,7 @@ def read_custom_hotwords() -> list[str]:
 
 def read_hotword_entries() -> list[dict]:
     entries: list[dict] = []
-    priority = {"user_custom": 0, "respiratory_history": 1, "antimicrobials": 2, "pathogens": 3, "infectious_disease": 4, "general_medical": 5}
+    priority = {"user_custom": 0, "respiratory_history": 1, "medical_history": 2, "antimicrobials": 3, "pathogens": 4, "infectious_disease": 5, "general_medical": 6}
     for pack in HOTWORD_PACKS:
         if not pack.get("enabled", True):
             continue
@@ -553,14 +554,38 @@ def apply_correction_rules(text: str, language: str = "zh-CN") -> tuple[str, lis
 def cleanup_clinical_asr_artifacts(text: str) -> str:
     value = text or ""
     punctuation_rules = [
+        ("主诉反复", "主诉：反复"),
+        ("主诉：反复咳嗽咳痰3年。加重", "主诉：反复咳嗽、咳痰3年，加重"),
+        ("气促1周现病史患者", "气促1周。\n现病史：患者"),
+        ("气促一周现病史患者", "气促1周。\n现病史：患者"),
+        ("现病史患者", "现病史：患者"),
+        ("样痰偶有", "样痰，偶有"),
+        ("咳嗽。咳白色", "咳嗽，咳白色"),
+        ("呼吸困难曾于", "呼吸困难，曾于"),
         ("慢性支气管炎一周前", "慢性支气管炎。一周前"),
+        ("慢性支气管炎1周前", "慢性支气管炎。1周前"),
         ("受凉后上述症状", "受凉后，上述症状"),
+        ("发作咳嗽频繁", "发作，咳嗽频繁"),
+        ("咳嗽频繁痰量", "咳嗽频繁，痰量"),
+        ("脓痰不易", "脓痰，不易"),
         ("不易咳出自觉", "不易咳出，自觉"),
+        ("气短活动后", "气短，活动后"),
         ("尤甚无胸痛", "尤甚，无胸痛"),
+        ("无胸痛咯血", "无胸痛、咯血"),
         ("咯血无恶心", "咯血，无恶心"),
+        ("无恶心呕吐", "无恶心、呕吐"),
         ("呕吐发病以来", "呕吐。发病以来"),
         ("欠佳二便", "欠佳，二便"),
         ("正常体重", "正常，体重"),
+        ("既往史高血压", "既往史：高血压"),
+        ("变化。既往史：", "变化。\n既往史："),
+        ("5年最高", "5年，最高"),
+        ("mmHg平日", "mmHg，平日"),
+        ("缓释片控制血压", "缓释片控制，血压"),
+        ("mmHg否认", "mmHg。否认"),
+        ("病史否认肝炎", "病史，否认肝炎"),
+        ("肝炎结核", "肝炎、结核"),
+        ("传染病史。吸烟史", "传染病史。\n吸烟史"),
     ]
     for source, target in punctuation_rules:
         value = value.replace(source, target)

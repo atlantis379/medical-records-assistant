@@ -398,6 +398,45 @@ button:disabled {
   border-left: 3px solid var(--green);
 }
 
+.recognition-trace {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.trace-card {
+  padding: 10px 12px;
+  color: #24443b;
+  background: #fbfffd;
+  border: 1px solid #dbe8e4;
+  border-radius: 12px;
+}
+
+.trace-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+  color: #45645b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trace-card p {
+  margin: 4px 0;
+  color: #2d4d44;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.trace-card code {
+  padding: 1px 6px;
+  color: #126a56;
+  background: #e7f3ef;
+  border-radius: 8px;
+}
+
 .quality-hint {
   margin: 8px 0 0;
   padding: 9px 12px;
@@ -759,6 +798,18 @@ footer {
 .diagnostics-box { border: 1px dashed #c9d8d3; border-radius: 12px; padding: 10px 12px; background: #f7fbf9; margin: 8px 0 14px; }
 .diagnostics-box summary { cursor: pointer; color: #45645b; font-weight: 650; }
 .diagnostics-box pre { white-space: pre-wrap; word-break: break-word; max-height: 180px; overflow: auto; margin: 10px 0 0; color: #42554f; font-size: 12px; }
+.self-check-modal .modal-content { max-width: 840px; }
+.self-check-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.self-check-item { border: 1px solid #dbe8e4; border-radius: 14px; padding: 12px 14px; background: #fbfffd; display: grid; gap: 6px; }
+.self-check-item.pass { border-color: #b8d8cd; background: #f7fbf9; }
+.self-check-item.warning { border-color: #efd597; background: #fffaf0; }
+.self-check-item.fail { border-color: #efb1a6; background: #fff8f6; }
+.self-check-item strong { color: #18362f; }
+.self-check-item span { color: #5c7069; font-size: 12px; line-height: 1.45; }
+.self-check-badge { width: fit-content; padding: 2px 8px; border-radius: 999px; color: #fff; background: #81908b; font-size: 12px; }
+.self-check-item.pass .self-check-badge { background: #126a56; }
+.self-check-item.warning .self-check-badge { background: #b47516; }
+.self-check-item.fail .self-check-badge { background: #a33a37; }
 
 
 .language-note { color: #5c7069; font-size: 12px; margin-top: 4px; }

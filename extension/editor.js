@@ -6,14 +6,14 @@ const els = {
   statusDot: $("#statusDot"), serviceStatus: $("#serviceStatus"), serviceDetail: $("#serviceDetail"),
   templateSelect: $("#templateSelect"), insertMode: $("#insertMode"), insertTemplateButton: $("#insertTemplateButton"),
   uiLanguageSelect: $("#uiLanguageSelect"), dictationLanguageSelect: $("#dictationLanguageSelect"), asrProfileSelect: $("#asrProfileSelect"),
-  copyButton: $("#copyButton"), preSubmitCheckButton: $("#preSubmitCheckButton"), snapshotButton: $("#snapshotButton"), exportButton: $("#exportButton"), feedbackButton: $("#feedbackButton"),
+  copyButton: $("#copyButton"), preSubmitCheckButton: $("#preSubmitCheckButton"), snapshotButton: $("#snapshotButton"), exportButton: $("#exportButton"), selfCheckButton: $("#selfCheckButton"), feedbackButton: $("#feedbackButton"),
   undoButton: $("#undoButton"), clearButton: $("#clearButton"), feedback: $("#feedback"), wordCount: $("#wordCount"),
   riskList: $("#riskList"), riskCount: $("#riskCount"), autosaveToggle: $("#autosaveToggle"),
   hotwordEditor: $("#hotwordEditor"), hotwordCount: $("#hotwordCount"), saveHotwordsButton: $("#saveHotwordsButton"),
   hotwordPackList: $("#hotwordPackList"), exportHotwordsButton: $("#exportHotwordsButton"), importHotwordsButton: $("#importHotwordsButton"), importHotwordsInput: $("#importHotwordsInput"),
   historyList: $("#historyList"), clearHistoryButton: $("#clearHistoryButton"), privacyText: $("#privacyText"),
   waveCanvas: $("#waveCanvas"), silenceIndicator: $("#silenceIndicator"),
-  partialDisplay: $("#partialDisplay"), qualityHint: $("#qualityHint")
+  partialDisplay: $("#partialDisplay"), recognitionTrace: $("#recognitionTrace"), qualityHint: $("#qualityHint")
 };
 
 let audioContext, mediaStream, sourceNode, processorNode, silentGain, timerHandle, autosaveTimer;
@@ -24,6 +24,7 @@ const SILENCE_THRESHOLD = 0.012;
 let patientSlots = [], activeSlotId = null;
 let ws = null, wsConnected = false, streamingMode = false, chunkBuffer = [];
 let streamReadyPromise = null, streamFinalPromise = null, stoppingRecording = false;
+let lastRecognitionDiagnostics = null, lastSelfCheckReport = null;
 const WS_URL = "ws://127.0.0.1:8765/ws/transcribe";
 
 
@@ -32,7 +33,7 @@ const I18N = {
     app_title: "病历助手", subtitle: "听写、核对、整理，再安全地复制到病历系统。",
     ui_language: "界面语言", dictation_language: "听写语言", asr_profile: "识别模式", section_label: "病历段落", insert_mode: "追加方式",
     insert_template: "插入结构模板", manage_templates: "管理模板", start_recording: "开始听写", stop_recording: "停止并识别",
-    copy_all: "复制全文", pre_submit_check: "提交前核对", save_version: "保存版本", export_txt: "导出 TXT", beta_feedback: "内测反馈", undo: "撤销", clear: "清空",
+    copy_all: "复制全文", pre_submit_check: "提交前核对", save_version: "保存版本", export_txt: "导出 TXT", self_check: "环境自检", beta_feedback: "内测反馈", undo: "撤销", clear: "清空",
     autosave: "在本机自动恢复草稿", draft_title: "病历草稿", review_tab: "核对", hotwords_tab: "热词", history_tab: "版本",
     review_caption: "只提示，不自动修改临床含义。", risk_empty: "识别后，剂量、频次、阴阳性和关键病原体会显示在这里。",
     voice_commands: "可口述命令", command_note: "停顿约0.7秒自动加逗号，约1.4秒自动加句号；也可口述“句号、逗号、换行”。",
@@ -42,14 +43,14 @@ const I18N = {
     template_name: "模板名称", template_prefix: "段落前缀", template_body: "模板内容", composite_template: "组合模板（插入时展开所有段落）",
     template_sections: "包含段落（逗号分隔）", save: "保存", cancel: "取消", feedback_title: "提交内测反馈", feedback_caption: "反馈默认只保存到本机服务，不会上传病历正文。请尽量不要填写患者姓名、身份证号、住院号等敏感信息。",
     feedback_category: "反馈类型", feedback_rating: "整体评分", feedback_message: "反馈内容", feedback_contact: "联系方式（选填）", diagnostics_summary: "将随反馈附带的诊断信息",
-    save_feedback: "保存反馈", copy_diagnostics: "复制诊断信息", pre_submit_title: "提交前核对清单", copy_after_check: "仍要复制全文", back_to_edit: "返回修改", placeholder_draft: "点击“开始听写”，或直接在这里输入和修改病历内容……",
+    save_feedback: "保存反馈", copy_diagnostics: "复制诊断信息", self_check_title: "环境自检", self_check_raw: "自检原始信息", rerun_self_check: "重新自检", pre_submit_title: "提交前核对清单", copy_after_check: "仍要复制全文", back_to_edit: "返回修改", placeholder_draft: "点击“开始听写”，或直接在这里输入和修改病历内容……",
     autosave_on: "自动恢复已开启：草稿保存在本浏览器本地，不参与同步；录音仍不保存。", autosave_off: "默认不保存草稿和录音。只有开启自动恢复后，草稿才写入浏览器本地存储。"
   },
   "en-US": {
     app_title: "病历助手", subtitle: "Dictate, review, organize, then safely copy into the EHR.",
     ui_language: "Interface", dictation_language: "Dictation", asr_profile: "Recognition mode", section_label: "Clinical section", insert_mode: "Insert mode",
     insert_template: "Insert template", manage_templates: "Templates", start_recording: "Start dictation", stop_recording: "Stop & transcribe",
-    copy_all: "Copy all", pre_submit_check: "Pre-submit check", save_version: "Save version", export_txt: "Export TXT", beta_feedback: "Beta feedback", undo: "Undo", clear: "Clear",
+    copy_all: "Copy all", pre_submit_check: "Pre-submit check", save_version: "Save version", export_txt: "Export TXT", self_check: "Self-check", beta_feedback: "Beta feedback", undo: "Undo", clear: "Clear",
     autosave: "Restore drafts on this computer", draft_title: "Clinical draft", review_tab: "Review", hotwords_tab: "Hotwords", history_tab: "Versions",
     review_caption: "Prompts only; clinical meaning is never changed automatically.", risk_empty: "After recognition, dosage, frequency, positive/negative wording, and pathogens will appear here.",
     voice_commands: "Voice commands", command_note: "Short pauses add commas; longer pauses add periods. You may also say “period, comma, new line”.",
@@ -59,7 +60,7 @@ const I18N = {
     template_name: "Template name", template_prefix: "Section prefix", template_body: "Template body", composite_template: "Composite template (expand all sections)",
     template_sections: "Included sections, separated by commas", save: "Save", cancel: "Cancel", feedback_title: "Submit beta feedback", feedback_caption: "Feedback is saved locally by default and does not upload clinical text. Avoid patient names, IDs, admission numbers, or other sensitive data.",
     feedback_category: "Category", feedback_rating: "Overall rating", feedback_message: "Feedback", feedback_contact: "Contact (optional)", diagnostics_summary: "Diagnostics included with feedback",
-    save_feedback: "Save feedback", copy_diagnostics: "Copy diagnostics", pre_submit_title: "Pre-submit checklist", copy_after_check: "Copy anyway", back_to_edit: "Back to edit", placeholder_draft: "Click “Start dictation”, or type and edit the clinical note here…",
+    save_feedback: "Save feedback", copy_diagnostics: "Copy diagnostics", self_check_title: "Environment self-check", self_check_raw: "Raw self-check data", rerun_self_check: "Run again", pre_submit_title: "Pre-submit checklist", copy_after_check: "Copy anyway", back_to_edit: "Back to edit", placeholder_draft: "Click “Start dictation”, or type and edit the clinical note here…",
     autosave_on: "Draft restore is on: drafts are stored locally in this browser; audio is still not saved.", autosave_off: "Drafts and audio are not saved by default. Drafts are written to local browser storage only when restore is enabled."
   }
 };
@@ -740,6 +741,112 @@ function encodeWav(samples, sampleRate = 16000) {
 }
 function updateTimer() { const total=Math.floor((Date.now()-startedAt)/1000); els.timer.textContent=`${String(Math.floor(total/60)).padStart(2,"0")}:${String(total%60).padStart(2,"0")}`; }
 
+function mergeRecordedChunks() {
+  const length = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const merged = new Float32Array(length);
+  let offset = 0;
+  for (const chunk of chunks) { merged.set(chunk, offset); offset += chunk.length; }
+  return merged;
+}
+
+function frameRms(samples, start, end) {
+  let sumSq = 0;
+  for (let i = start; i < end; i++) sumSq += samples[i] * samples[i];
+  return Math.sqrt(sumSq / Math.max(1, end - start));
+}
+
+function splitSpeechSegments(samples, sampleRate = 16000) {
+  const durationSeconds = samples.length / sampleRate;
+  if (durationSeconds < 8) return [{ start: 0, end: samples.length, startSeconds: 0, endSeconds: durationSeconds }];
+  const frameSize = Math.round(sampleRate * 0.1);
+  const frameCount = Math.ceil(samples.length / frameSize);
+  const threshold = Math.max(0.006, SILENCE_THRESHOLD * 0.65);
+  const minSpeechFrames = 4;
+  const minSilenceFrames = currentAsrProfile() === "accurate" ? 10 : 8;
+  const padFrames = 2;
+  const maxSegmentFrames = currentAsrProfile() === "fast" ? 120 : 180;
+  const segments = [];
+  let inSpeech = false, startFrame = 0, lastVoiceFrame = -1, silenceRun = 0;
+
+  const pushSegment = (endFrame) => {
+    const paddedStart = Math.max(0, (startFrame - padFrames) * frameSize);
+    const paddedEnd = Math.min(samples.length, (endFrame + padFrames) * frameSize);
+    const segmentDuration = (paddedEnd - paddedStart) / sampleRate;
+    if (segmentDuration >= 0.45) {
+      segments.push({
+        start: paddedStart,
+        end: paddedEnd,
+        startSeconds: Math.round((paddedStart / sampleRate) * 100) / 100,
+        endSeconds: Math.round((paddedEnd / sampleRate) * 100) / 100
+      });
+    }
+  };
+
+  for (let frame = 0; frame < frameCount; frame++) {
+    const start = frame * frameSize;
+    const end = Math.min(samples.length, start + frameSize);
+    const isVoice = frameRms(samples, start, end) >= threshold;
+    if (isVoice) {
+      if (!inSpeech) { inSpeech = true; startFrame = frame; }
+      lastVoiceFrame = frame; silenceRun = 0;
+    } else if (inSpeech) {
+      silenceRun++;
+      if (silenceRun >= minSilenceFrames && lastVoiceFrame - startFrame + 1 >= minSpeechFrames) {
+        pushSegment(lastVoiceFrame + 1);
+        inSpeech = false; silenceRun = 0; lastVoiceFrame = -1;
+      }
+    }
+    if (inSpeech && frame - startFrame + 1 >= maxSegmentFrames) {
+      pushSegment(frame + 1);
+      inSpeech = false; silenceRun = 0; lastVoiceFrame = -1;
+    }
+  }
+  if (inSpeech && lastVoiceFrame - startFrame + 1 >= minSpeechFrames) pushSegment(lastVoiceFrame + 1);
+  if (segments.length <= 1) return [{ start: 0, end: samples.length, startSeconds: 0, endSeconds: durationSeconds }];
+  for (let i = 0; i < segments.length; i++) {
+    const next = segments[i + 1];
+    segments[i].pauseAfterSeconds = next ? Math.max(0, Math.round((next.startSeconds - segments[i].endSeconds) * 100) / 100) : 0;
+  }
+  return segments.slice(0, 24);
+}
+
+function joinSegmentTexts(results) {
+  const isEnglish = currentDictationLanguage() === "en-US";
+  const values = results.map(item => (item?.text || "").trim()).filter(Boolean);
+  return isEnglish ? values.join(" ") : values.join("");
+}
+
+function aggregateSegmentResults(results, audioSeconds, startedMs) {
+  const elapsedSeconds = (Date.now() - startedMs) / 1000;
+  const corrections = [];
+  for (const result of results) {
+    for (const item of result.corrections || []) {
+      const existing = corrections.find(v => v.from === item.from && v.to === item.to);
+      if (existing) existing.count += item.count || 0;
+      else corrections.push({ ...item });
+    }
+  }
+  const correctionCount = corrections.reduce((sum, item) => sum + (item.count || 0), 0);
+  const warnings = [...new Set(results.flatMap(result => result.quality?.warnings || []))];
+  return {
+    text: joinSegmentTexts(results),
+    raw_text: results.map(item => item.raw_text || "").filter(Boolean).join(currentDictationLanguage() === "en-US" ? " " : ""),
+    elapsed_seconds: elapsedSeconds,
+    quality: { duration_seconds: Math.round(audioSeconds * 100) / 100, warnings },
+    metrics: {
+      elapsed_seconds: elapsedSeconds,
+      audio_seconds: Math.round(audioSeconds * 100) / 100,
+      realtime_factor: audioSeconds > 0 ? Math.round((elapsedSeconds / audioSeconds) * 1000) / 1000 : null,
+      profile: currentAsrProfile(),
+      segment_count: results.length,
+      hotword_count: Math.max(...results.map(item => item.metrics?.hotword_count || 0), 0),
+      correction_count: correctionCount
+    },
+    corrections,
+    segments: results
+  };
+}
+
 function drawWaveBar(rms) {
   const canvas = els.waveCanvas;
   const ctx = canvas.getContext("2d");
@@ -768,6 +875,89 @@ function renderRecognitionHints(result) {
   els.qualityHint.textContent = parts.join(" · ");
   els.qualityHint.hidden = parts.length === 0;
   els.qualityHint.classList.toggle("warning", Boolean(quality?.warnings?.length));
+}
+
+function summarizeCorrections(corrections = []) {
+  return corrections
+    .slice(0, 6)
+    .map(item => `${item.from}→${item.to}${item.count ? `×${item.count}` : ""}`)
+    .join("，");
+}
+
+function sanitizeRecognitionReport(report) {
+  const metrics = report?.metrics || {};
+  return {
+    updatedAt: new Date().toISOString(),
+    mode: report?.mode || (metrics.segment_count > 1 ? "segmented" : "single"),
+    language: currentDictationLanguage(),
+    profile: currentAsrProfile(),
+    segmentCount: metrics.segment_count || report?.segments?.length || 1,
+    elapsedSeconds: metrics.elapsed_seconds || report?.elapsed_seconds || null,
+    audioSeconds: metrics.audio_seconds || report?.quality?.duration_seconds || null,
+    realtimeFactor: metrics.realtime_factor ?? null,
+    hotwordCount: metrics.hotword_count ?? null,
+    correctionCount: metrics.correction_count || (report?.corrections || []).reduce((sum, item) => sum + (item.count || 0), 0),
+    qualityWarnings: report?.quality?.warnings || [],
+    hasRawPreview: Boolean(report?.raw_text || report?.segments?.some(item => item.raw_text)),
+  };
+}
+
+function resetRecognitionTrace() {
+  if (!els.recognitionTrace) return;
+  els.recognitionTrace.hidden = true;
+  els.recognitionTrace.replaceChildren();
+}
+
+function appendTraceLine(card, label, text) {
+  if (!text) return;
+  const line = document.createElement("p");
+  const strong = document.createElement("strong");
+  strong.textContent = label;
+  line.append(strong, document.createTextNode(text));
+  card.appendChild(line);
+}
+
+function renderRecognitionTrace(report) {
+  if (!els.recognitionTrace || !report) return;
+  lastRecognitionDiagnostics = sanitizeRecognitionReport(report);
+  const segments = report.segments?.length ? report.segments : [report];
+  els.recognitionTrace.replaceChildren();
+  const summary = document.createElement("div");
+  summary.className = "trace-card";
+  const summaryHeader = document.createElement("header");
+  const title = document.createElement("span");
+  const metrics = report.metrics || {};
+  title.textContent = metrics.segment_count > 1 ? `分段识别：${metrics.segment_count} 段` : "识别结果轨迹";
+  const badge = document.createElement("code");
+  badge.textContent = Number.isFinite(metrics.realtime_factor) ? `RTF ${metrics.realtime_factor}` : currentAsrProfile();
+  summaryHeader.append(title, badge);
+  summary.appendChild(summaryHeader);
+  if (report.raw_text && report.raw_text !== report.text) appendTraceLine(summary, "原始：", report.raw_text);
+  appendTraceLine(summary, "后处理：", report.text || "");
+  const correctionText = summarizeCorrections(report.corrections || []);
+  if (correctionText) appendTraceLine(summary, "医学纠错：", correctionText);
+  els.recognitionTrace.appendChild(summary);
+
+  if (segments.length > 1) {
+    for (const segment of segments.slice(0, 8)) {
+      const card = document.createElement("div");
+      card.className = "trace-card";
+      const header = document.createElement("header");
+      const left = document.createElement("span");
+      const index = segment.metrics?.segment_index || segment.segment_index || segments.indexOf(segment) + 1;
+      left.textContent = `第 ${index}/${segments.length} 段`;
+      const right = document.createElement("code");
+      right.textContent = segment.metrics?.realtime_factor ? `RTF ${segment.metrics.realtime_factor}` : `${segment.segment?.startSeconds ?? ""}-${segment.segment?.endSeconds ?? ""}s`;
+      header.append(left, right);
+      card.appendChild(header);
+      if (segment.raw_text && segment.raw_text !== segment.text) appendTraceLine(card, "原始：", segment.raw_text);
+      appendTraceLine(card, "后处理：", segment.text || "");
+      const itemCorrections = summarizeCorrections(segment.corrections || []);
+      if (itemCorrections) appendTraceLine(card, "纠错：", itemCorrections);
+      els.recognitionTrace.appendChild(card);
+    }
+  }
+  els.recognitionTrace.hidden = false;
 }
 
 function closeStreamingSocket() {
@@ -806,7 +996,7 @@ async function connectStreaming() {
       els.partialDisplay.textContent = msg.text || "";
       els.partialDisplay.hidden = !msg.text;
     } else if (msg.type === "final") {
-      finalReceived = true; resolveFinal({ text: msg.text || "", metrics: msg.metrics || null, corrections: msg.corrections || [] });
+      finalReceived = true; resolveFinal({ text: msg.text || "", raw_text: msg.raw_text || "", metrics: msg.metrics || null, corrections: msg.corrections || [] });
     } else if (msg.type === "error") {
       const error = new Error(msg.detail || "流式识别失败");
       rejectReady(error); rejectFinal(error);
@@ -856,6 +1046,7 @@ async function startRecording() {
     processorNode = audioContext.createScriptProcessor(4096, 1, 1);
     silentGain = audioContext.createGain(); silentGain.gain.value = 0;
     chunks = []; chunkBuffer = [];
+    resetRecognitionTrace();
     if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
     silenceFrames = 0; graceFrames = 0; voicedFrames = 0; pauseMarkLevel = 0;
     const frameSeconds = 4096 / audioContext.sampleRate;
@@ -962,7 +1153,10 @@ async function stopRecording() {
         els.partialDisplay.hidden = true;
         const finalText = typeof finalResult === "string" ? finalResult : (finalResult?.text || "");
         if (finalText) mergeText(finalText);
-        renderRecognitionHints(typeof finalResult === "string" ? null : finalResult);
+        if (typeof finalResult !== "string") {
+          renderRecognitionTrace({ ...finalResult, mode: "streaming" });
+          renderRecognitionHints(finalResult);
+        }
         const rtf = finalResult?.metrics?.realtime_factor;
         setFeedback(`流式识别完成${Number.isFinite(rtf) ? `，RTF ${rtf}` : ""}。请核对右侧提醒。`);
         els.recordButton.disabled = false;
@@ -978,25 +1172,60 @@ async function stopRecording() {
     closeStreamingSocket(); stoppingRecording = false; els.recordButton.disabled = false;
   }
 }
-async function batchTranscribe(sampleRate) {
-  els.recordButton.disabled = true;
-  els.partialDisplay.hidden = true;
-  if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
-  setFeedback("正在本地识别，请稍候……");
-  const length = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-  const merged = new Float32Array(length);
-  let offset = 0;
-  for (const chunk of chunks) { merged.set(chunk, offset); offset += chunk.length; }
+
+async function transcribeAudioBlob(blob, { segmentIndex = 1, segmentCount = 1 } = {}) {
   const form = new FormData();
-  form.append("file", encodeWav(resampleTo16k(merged, sampleRate)), "dictation.wav");
+  form.append("file", blob, segmentCount > 1 ? `dictation-segment-${segmentIndex}.wav` : "dictation.wav");
   form.append("department", currentDictationLanguage() === "zh-CN" ? "infectious_disease" : "general");
   form.append("language", currentDictationLanguage());
   form.append("profile", currentAsrProfile());
+  form.append("segment_index", String(segmentIndex));
+  form.append("segment_count", String(segmentCount));
+  const response = await fetch(`${API_BASE}/transcribe`, { method: "POST", body: form });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "识别失败");
+  return data;
+}
+
+async function batchTranscribe(sampleRate) {
+  els.recordButton.disabled = true;
+  els.partialDisplay.hidden = true;
+  resetRecognitionTrace();
+  if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
+  setFeedback("正在本地识别，请稍候……");
+  const startedMs = Date.now();
+  const merged = mergeRecordedChunks();
+  const resampled = resampleTo16k(merged, sampleRate);
+  const audioSeconds = resampled.length / 16000;
+  const segments = splitSpeechSegments(resampled, 16000);
   try {
-    const response = await fetch(`${API_BASE}/transcribe`, { method: "POST", body: form });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "识别失败");
+    if (segments.length > 1) {
+      const results = [];
+      setFeedback(`检测到 ${segments.length} 个语音段，正在分段识别……`);
+      for (let i = 0; i < segments.length; i++) {
+        const segment = segments[i];
+        const blob = encodeWav(resampled.slice(segment.start, segment.end), 16000);
+        setFeedback(`正在识别第 ${i + 1}/${segments.length} 段……`);
+        const data = await transcribeAudioBlob(blob, { segmentIndex: i + 1, segmentCount: segments.length });
+        data.segment = segment;
+        results.push(data);
+        renderRecognitionTrace(aggregateSegmentResults(results, audioSeconds, startedMs));
+      }
+      const aggregate = aggregateSegmentResults(results, audioSeconds, startedMs);
+      mergeText(aggregate.text);
+      renderRecognitionTrace({ ...aggregate, mode: "segmented" });
+      renderRecognitionHints(aggregate);
+      const suffix = [
+        Number.isFinite(aggregate.metrics.realtime_factor) ? `RTF ${aggregate.metrics.realtime_factor}` : "",
+        aggregate.metrics.correction_count ? `修正 ${aggregate.metrics.correction_count} 处` : ""
+      ].filter(Boolean).join("，");
+      setFeedback(`分段识别完成：${segments.length} 段${suffix ? `（${suffix}）` : ""}。请核对右侧提醒。`);
+      return;
+    }
+
+    const data = await transcribeAudioBlob(encodeWav(resampled, 16000));
     mergeText(data.text);
+    renderRecognitionTrace({ ...data, mode: "single" });
     renderRecognitionHints(data);
     const rtf = data.metrics?.realtime_factor;
     const correctionCount = data.metrics?.correction_count || 0;
@@ -1010,6 +1239,127 @@ async function batchTranscribe(sampleRate) {
 }
 
 
+async function collectBrowserDiagnostics() {
+  const diagnostics = {
+    secureContext: window.isSecureContext,
+    microphonePermission: "unknown",
+    audioInputCount: null,
+    mediaDevices: Boolean(navigator.mediaDevices?.getUserMedia),
+    extensionId: globalThis.chrome?.runtime?.id || null
+  };
+  try {
+    if (navigator.permissions?.query) {
+      const status = await navigator.permissions.query({ name: "microphone" });
+      diagnostics.microphonePermission = status.state;
+    }
+  } catch (error) {
+    diagnostics.microphonePermission = `unknown: ${error.message}`;
+  }
+  try {
+    if (navigator.mediaDevices?.enumerateDevices) {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      diagnostics.audioInputCount = devices.filter(device => device.kind === "audioinput").length;
+    }
+  } catch (error) {
+    diagnostics.audioInputCount = `unknown: ${error.message}`;
+  }
+  return diagnostics;
+}
+
+function browserChecksFromDiagnostics(browser) {
+  const checks = [];
+  checks.push({
+    id: "browser_microphone_api",
+    label: "浏览器麦克风接口",
+    status: browser.mediaDevices ? "pass" : "fail",
+    detail: browser.mediaDevices ? "浏览器支持 getUserMedia。" : "当前浏览器环境不支持麦克风录音。"
+  });
+  checks.push({
+    id: "browser_microphone_permission",
+    label: "麦克风权限",
+    status: browser.microphonePermission === "denied" ? "fail" : (browser.microphonePermission === "granted" ? "pass" : "warning"),
+    detail: `当前权限：${browser.microphonePermission}。若为 prompt，请首次录音时允许麦克风。`
+  });
+  checks.push({
+    id: "browser_audio_inputs",
+    label: "输入设备",
+    status: Number(browser.audioInputCount) > 0 ? "pass" : "warning",
+    detail: Number(browser.audioInputCount) > 0 ? `检测到 ${browser.audioInputCount} 个音频输入设备。` : "未能确认音频输入设备，请插入/启用麦克风后测试。"
+  });
+  return checks;
+}
+
+function statusLabel(status) {
+  return status === "pass" ? "通过" : status === "fail" ? "失败" : "提醒";
+}
+
+function renderSelfCheckReport(report) {
+  const modal = document.getElementById("selfCheckModal");
+  const summary = document.getElementById("selfCheckSummary");
+  const list = document.getElementById("selfCheckList");
+  const raw = document.getElementById("selfCheckRaw");
+  list.replaceChildren();
+  const serverChecks = report.server?.checks || [];
+  const browserChecks = browserChecksFromDiagnostics(report.browser || {});
+  const checks = [...serverChecks, ...browserChecks];
+  const hasFail = checks.some(item => item.status === "fail");
+  const hasWarning = checks.some(item => item.status === "warning");
+  summary.classList.toggle("has-high", hasFail);
+  summary.textContent = hasFail
+    ? "自检发现阻断项：请优先处理红色项目后再测试语音。"
+    : hasWarning
+      ? "自检可继续测试，但有黄色提醒项，建议记录测试表现。"
+      : "自检通过，可以开始本地语音测试。";
+  for (const check of checks) {
+    const item = document.createElement("div");
+    item.className = `self-check-item ${check.status || "warning"}`;
+    const badge = document.createElement("span");
+    badge.className = "self-check-badge";
+    badge.textContent = statusLabel(check.status);
+    const title = document.createElement("strong");
+    title.textContent = check.label || check.id;
+    const detail = document.createElement("span");
+    detail.textContent = check.detail || "";
+    item.append(badge, title, detail);
+    list.appendChild(item);
+  }
+  raw.textContent = JSON.stringify(report, null, 2);
+  modal.showModal();
+}
+
+async function runSelfCheck() {
+  const modal = document.getElementById("selfCheckModal");
+  const summary = document.getElementById("selfCheckSummary");
+  const list = document.getElementById("selfCheckList");
+  const raw = document.getElementById("selfCheckRaw");
+  summary.classList.remove("has-high");
+  summary.textContent = "正在检查本地服务、模型、麦克风和词库……";
+  list.replaceChildren();
+  raw.textContent = "准备中……";
+  modal.showModal();
+  const report = { generatedAt: new Date().toISOString(), server: null, browser: null };
+  try {
+    const response = await fetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
+    report.server = await response.json();
+    if (!response.ok) throw new Error(report.server?.detail || "自检接口返回异常");
+  } catch (error) {
+    report.server = {
+      overall: "fail",
+      checks: [{ id: "service", label: "本地服务", status: "fail", detail: `无法连接 127.0.0.1:8765：${error.message}` }],
+      warnings: ["请确认 start_server.bat 已启动，并且浏览器可以访问本地服务。"]
+    };
+  }
+  report.browser = await collectBrowserDiagnostics();
+  lastSelfCheckReport = report;
+  renderSelfCheckReport(report);
+}
+
+async function copySelfCheckDiagnostics() {
+  if (!lastSelfCheckReport) await runSelfCheck();
+  await navigator.clipboard.writeText(JSON.stringify(lastSelfCheckReport, null, 2));
+  setFeedback("环境自检信息已复制。");
+}
+
 async function collectFeedbackDiagnostics() {
   const diagnostics = {
     extensionVersion: globalThis.chrome?.runtime?.getManifest ? chrome.runtime.getManifest().version : "local-preview",
@@ -1022,7 +1372,11 @@ async function collectFeedbackDiagnostics() {
     draftLength: els.draft.value.length,
     patientCount: patientSlots.length,
     autosaveEnabled: els.autosaveToggle.checked,
-    asrProfile: currentAsrProfile()
+    asrProfile: currentAsrProfile(),
+    lastRecognition: lastRecognitionDiagnostics,
+    browser: null,
+    selfCheck: null,
+    performance: null
   };
   try {
     const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
@@ -1035,6 +1389,19 @@ async function collectFeedbackDiagnostics() {
     diagnostics.license = await response.json();
   } catch (error) {
     diagnostics.license = { error: error.message };
+  }
+  diagnostics.browser = await collectBrowserDiagnostics();
+  try {
+    const response = await fetch(`${API_BASE}/asr/performance`, { cache: "no-store" });
+    diagnostics.performance = await response.json();
+  } catch (error) {
+    diagnostics.performance = { error: error.message };
+  }
+  try {
+    const response = await fetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
+    diagnostics.selfCheck = await response.json();
+  } catch (error) {
+    diagnostics.selfCheck = { error: error.message };
   }
   return diagnostics;
 }
@@ -1097,7 +1464,7 @@ els.uiLanguageSelect.addEventListener("change", async () => { applyUILanguage(el
 els.dictationLanguageSelect.addEventListener("change", async () => { await storageSet({ [STORAGE.dictationLanguage]: els.dictationLanguageSelect.value }); updateLanguageSpecificUI(); });
 els.asrProfileSelect?.addEventListener("change", async () => { await storageSet({ [STORAGE.asrProfile]: currentAsrProfile() }); checkService(); setFeedback(`已切换识别模式：${els.asrProfileSelect.selectedOptions[0]?.textContent || currentAsrProfile()}`); });
 els.recordButton.addEventListener("click",()=>recording?stopRecording():startRecording()); els.draft.addEventListener("input",updateDraftMeta);
-els.insertTemplateButton.addEventListener("click",insertStructuredTemplate); els.saveHotwordsButton.addEventListener("click",saveHotwords); els.exportHotwordsButton.addEventListener("click", exportHotwordPacks); els.importHotwordsButton.addEventListener("click", () => els.importHotwordsInput.click()); els.importHotwordsInput.addEventListener("change", event => importHotwordFile(event.target.files?.[0])); els.snapshotButton.addEventListener("click",saveSnapshot); els.preSubmitCheckButton.addEventListener("click", () => renderPreSubmitChecklist(true)); els.exportButton.addEventListener("click",exportText); els.feedbackButton.addEventListener("click", openFeedbackModal);
+els.insertTemplateButton.addEventListener("click",insertStructuredTemplate); els.saveHotwordsButton.addEventListener("click",saveHotwords); els.exportHotwordsButton.addEventListener("click", exportHotwordPacks); els.importHotwordsButton.addEventListener("click", () => els.importHotwordsInput.click()); els.importHotwordsInput.addEventListener("change", event => importHotwordFile(event.target.files?.[0])); els.snapshotButton.addEventListener("click",saveSnapshot); els.preSubmitCheckButton.addEventListener("click", () => renderPreSubmitChecklist(true)); els.exportButton.addEventListener("click",exportText); els.selfCheckButton.addEventListener("click", runSelfCheck); els.feedbackButton.addEventListener("click", openFeedbackModal);
 document.getElementById("manageTemplatesButton").addEventListener("click", openTemplateManager);
 document.getElementById("closeTemplateModal").addEventListener("click", () => document.getElementById("templateModal").close());
 document.getElementById("closePreSubmitModal").addEventListener("click", () => document.getElementById("preSubmitModal").close());
@@ -1107,6 +1474,10 @@ document.getElementById("closeFeedbackModal").addEventListener("click", () => do
 document.getElementById("cancelFeedbackButton").addEventListener("click", () => document.getElementById("feedbackModal").close());
 document.getElementById("submitFeedbackButton").addEventListener("click", submitFeedback);
 document.getElementById("copyDiagnosticsButton").addEventListener("click", copyFeedbackDiagnostics);
+document.getElementById("closeSelfCheckModal").addEventListener("click", () => document.getElementById("selfCheckModal").close());
+document.getElementById("cancelSelfCheckButton").addEventListener("click", () => document.getElementById("selfCheckModal").close());
+document.getElementById("rerunSelfCheckButton").addEventListener("click", runSelfCheck);
+document.getElementById("copySelfCheckButton").addEventListener("click", copySelfCheckDiagnostics);
 document.getElementById("addTemplateButton").addEventListener("click", () => openTemplateForm());
 document.getElementById("saveTemplateBtn").addEventListener("click", saveTemplateForm);
 document.getElementById("cancelTemplateBtn").addEventListener("click", () => { document.getElementById("templateManagerView").hidden = false; document.getElementById("templateFormView").hidden = true; });

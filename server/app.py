@@ -1,8 +1,11 @@
 import asyncio
+import importlib.util
 import io
 import json
 import os
+import platform
 import re
+import sys
 import tempfile
 import time
 import uuid
@@ -40,6 +43,7 @@ ASR_PROFILES = {
     "accurate": {"id": "accurate", "label": "准确优先", "label_en": "Accuracy first", "batch_size_s": 90, "stream_chunk_size": [5, 12, 6], "encoder_chunk_look_back": 6, "decoder_chunk_look_back": 2, "hotword_limit": 420, "hotword_char_limit": 6800, "description": "更多上下文和热词，CPU 推理会更慢。"},
 }
 DEFAULT_ASR_PROFILE = os.getenv("ASR_PROFILE", "balanced")
+MODEL_PACKAGE_ROOT = APP_DIR.parent / "models" / "modelscope"
 
 app = FastAPI(title="病历助手本地服务", version="0.10.0")
 app.add_middleware(
@@ -189,6 +193,28 @@ def pack_payload(pack: dict) -> dict:
     }
 
 
+def build_asr_model(model_name: str):
+    """Build a FunASR AutoModel lazily.
+
+    Keep this small and environment-driven so offline beta packages can point
+    ModelScope to bundled local caches without changing application code.
+    """
+    from funasr import AutoModel
+
+    kwargs = {
+        "model": model_name,
+        "device": DEVICE,
+        "disable_update": True,
+    }
+    vad_model = os.getenv("ASR_VAD_MODEL", "").strip()
+    punc_model = os.getenv("ASR_PUNC_MODEL", "").strip()
+    if vad_model:
+        kwargs["vad_model"] = vad_model
+    if punc_model:
+        kwargs["punc_model"] = punc_model
+    return AutoModel(**kwargs)
+
+
 def get_model():
     global model
     if model is not None:
@@ -314,6 +340,139 @@ def analyze_wav_quality(audio: bytes) -> dict:
     return quality
 
 
+def directory_size_mb(path: Path) -> float | None:
+    try:
+        total = 0
+        for item in path.rglob("*"):
+            if item.is_file():
+                total += item.stat().st_size
+        return round(total / 1024 / 1024, 1)
+    except OSError:
+        return None
+
+
+def model_cache_roots() -> list[Path]:
+    roots: list[Path] = []
+    env_cache = os.getenv("MODELSCOPE_CACHE", "").strip()
+    if env_cache:
+        roots.append(Path(env_cache))
+    roots.extend([
+        MODEL_PACKAGE_ROOT,
+        MODEL_PACKAGE_ROOT / "hub",
+        Path.home() / ".cache" / "modelscope" / "hub",
+        Path.home() / ".cache" / "modelscope",
+    ])
+    unique: list[Path] = []
+    seen: set[str] = set()
+    for root in roots:
+        key = str(root)
+        if key not in seen:
+            unique.append(root)
+            seen.add(key)
+    return unique
+
+
+def model_cache_candidates(model_name: str) -> list[Path]:
+    if not model_name:
+        return []
+    owners: list[str] = []
+    leaf = model_name
+    if "/" in model_name:
+        owner, leaf = model_name.split("/", 1)
+        owners.append(owner)
+    owners.extend(["iic", "damo", "modelscope", "FunAudioLLM", "QwenAudio"])
+    candidates: list[Path] = []
+    for root in model_cache_roots():
+        for owner in owners:
+            candidates.append(root / "models" / owner / leaf)
+            candidates.append(root / "hub" / "models" / owner / leaf)
+        candidates.append(root / "models" / leaf)
+        candidates.append(root / leaf)
+    unique: list[Path] = []
+    seen: set[str] = set()
+    for path in candidates:
+        key = str(path)
+        if key not in seen:
+            unique.append(path)
+            seen.add(key)
+    return unique
+
+
+def model_package_status() -> list[dict]:
+    packages = [
+        {"id": "zh_default", "label": "中文默认识别模型", "env": "ASR_MODEL", "model": MODEL_NAME, "required": True, "default_included": True, "loaded": model is not None},
+        {"id": "zh_streaming", "label": "中文流式识别模型", "env": "ASR_STREAMING_MODEL", "model": STREAMING_MODEL_NAME, "required": True, "default_included": True, "loaded": streaming_model is not None, "error": streaming_model_error},
+        {"id": "en_optional", "label": "英文可选识别模型", "env": "ASR_MODEL_EN", "model": EN_MODEL_NAME, "required": False, "default_included": False, "loaded": english_model is not None},
+    ]
+    result: list[dict] = []
+    for package in packages:
+        candidates = model_cache_candidates(package.get("model", ""))
+        existing = [path for path in candidates if path.exists()]
+        result.append({
+            **package,
+            "configured": bool(package.get("model")),
+            "installed": bool(existing),
+            "path": str(existing[0]) if existing else None,
+            "size_mb": directory_size_mb(existing[0]) if existing else None,
+            "checked_paths": [str(path) for path in candidates[:8]],
+        })
+    return result
+
+
+def module_status(module_name: str) -> dict:
+    spec = importlib.util.find_spec(module_name)
+    return {
+        "name": module_name,
+        "ok": spec is not None,
+        "origin": getattr(spec, "origin", None) if spec else None,
+    }
+
+
+def build_self_check() -> dict:
+    dependencies = [module_status(name) for name in ["fastapi", "uvicorn", "numpy", "funasr", "modelscope", "torch"]]
+    models = model_package_status()
+    hotword_packs = [pack_payload(pack) for pack in HOTWORD_PACKS]
+    correction_count = len(read_correction_rules())
+    missing_required = [item["label"] for item in models if item["required"] and not item["loaded"] and not item["installed"]]
+    checks: list[dict] = [
+        {"id": "service", "label": "本地服务", "status": "pass", "detail": "127.0.0.1:8765 已响应。"},
+        {"id": "dependencies", "label": "Python 依赖", "status": "pass" if all(item["ok"] for item in dependencies[:4]) else "fail", "detail": f"{sum(1 for item in dependencies if item['ok'])}/{len(dependencies)} 个核心模块可导入。"},
+        {"id": "hotwords", "label": "医学词库", "status": "pass" if read_hotwords() else "warning", "detail": f"共 {len(read_hotwords())} 个热词，当前模式启用 {len(active_hotwords(resolve_asr_profile()))} 个。"},
+        {"id": "corrections", "label": "医学后处理", "status": "pass" if correction_count else "warning", "detail": f"已加载 {correction_count} 条保守纠错规则。"},
+        {"id": "models", "label": "模型包", "status": "warning" if missing_required else "pass", "detail": "缺少：" + "、".join(missing_required) if missing_required else "中文默认、中文流式模型已在常见缓存目录发现或已加载。"},
+        {"id": "streaming", "label": "流式识别", "status": "warning" if streaming_model_error else "pass", "detail": streaming_model_error or "未发现流式模型错误。"},
+    ]
+    if DEVICE == "cpu":
+        checks.append({"id": "performance", "label": "性能模式", "status": "warning", "detail": "当前为 CPU 推理，建议优先使用“快速/均衡”模式测试。"})
+    with asr_stats_lock:
+        performance = dict(asr_stats)
+    warnings = []
+    if missing_required:
+        warnings.append("未在常见缓存目录发现部分必需模型；如果首次识别会自动下载，请确认网络或使用离线包。")
+    if streaming_model_error:
+        warnings.append(f"流式模型最近加载失败：{streaming_model_error}")
+    if not all(item["ok"] for item in dependencies[:4]):
+        warnings.append("核心 Python 依赖不完整，请重新运行 install.bat。")
+    overall = "fail" if any(item["status"] == "fail" for item in checks) else ("warning" if warnings or any(item["status"] == "warning" for item in checks) else "pass")
+    return {
+        "overall": overall,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "app": {"name": "病历助手", "version": app.version, "build": "diagnostics-segmented-asr-20260811"},
+        "runtime": {"python": sys.version.split()[0], "platform": platform.platform(), "device": DEVICE, "app_dir": str(APP_DIR), "modelscope_cache": os.getenv("MODELSCOPE_CACHE")},
+        "checks": checks,
+        "dependencies": dependencies,
+        "models": models,
+        "hotword_packs": hotword_packs,
+        "hotword_total": len(read_hotwords()),
+        "active_hotwords": len(active_hotwords(resolve_asr_profile())),
+        "correction_rules": correction_count,
+        "asr_profiles": list(ASR_PROFILES.values()),
+        "performance": performance,
+        "warnings": warnings,
+        "privacy": "自检不读取、不上传病历正文和录音文件。",
+    }
+
+
 def read_correction_rules() -> list[dict]:
     rules: list[dict] = []
     if not CORRECTION_RULE_DIR.exists():
@@ -418,6 +577,16 @@ def asr_performance():
     snapshot["average_realtime_factor"] = round(total_infer / total_audio, 3) if total_audio > 0 else None
     snapshot["profile"] = resolve_asr_profile()
     return snapshot
+
+
+@app.get("/models/status")
+def models_status():
+    return {"packages": model_package_status(), "cache_roots": [str(path) for path in model_cache_roots()]}
+
+
+@app.get("/diagnostics/self-check")
+def diagnostics_self_check():
+    return build_self_check()
 
 
 @app.get("/correction-rules")
@@ -576,6 +745,8 @@ async def transcribe(
     department: str = Form(default="infectious_disease"),
     language: str = Form(default="zh-CN"),
     profile: str = Form(default="balanced"),
+    segment_index: int = Form(default=1),
+    segment_count: int = Form(default=1),
 ):
     if file.content_type not in {"audio/wav", "audio/x-wav", "audio/wave"}:
         raise HTTPException(status_code=400, detail="仅支持 WAV 音频")
@@ -602,8 +773,9 @@ async def transcribe(
             if hotwords:
                 kwargs["hotword"] = hotwords
         result = await asyncio.to_thread(run_batch_generate, recognizer, kwargs)
-        text = result[0].get("text", "") if result else ""
-        text = normalize_text_for_language(text, resolved_language)
+        raw_text = result[0].get("text", "") if result else ""
+        normalized_text = normalize_text_for_language(raw_text, resolved_language)
+        text = normalized_text
         text, corrections = apply_correction_rules(text, resolved_language)
         text = ensure_terminal_punctuation(text) if resolved_language == "zh-CN" else text
         if not text:
@@ -611,9 +783,30 @@ async def transcribe(
         elapsed = time.perf_counter() - started
         audio_seconds = float(quality.get("duration_seconds") or 0.0)
         realtime_factor = round(elapsed / audio_seconds, 3) if audio_seconds > 0 else None
-        metrics = {"elapsed_seconds": elapsed, "audio_seconds": audio_seconds, "realtime_factor": realtime_factor, "profile": cfg["id"], "hotword_count": hotword_count, "correction_count": sum(item["count"] for item in corrections)}
+        metrics = {
+            "elapsed_seconds": elapsed,
+            "audio_seconds": audio_seconds,
+            "realtime_factor": realtime_factor,
+            "profile": cfg["id"],
+            "hotword_count": hotword_count,
+            "correction_count": sum(item["count"] for item in corrections),
+            "segment_index": max(1, int(segment_index or 1)),
+            "segment_count": max(1, int(segment_count or 1)),
+        }
         record_asr_metric("batch", audio_seconds, elapsed, metrics)
-        return {"text": text, "elapsed_seconds": elapsed, "model": EN_MODEL_NAME if resolved_language == "en-US" else MODEL_NAME, "device": DEVICE, "language": resolved_language, "profile": cfg, "quality": quality, "metrics": metrics, "corrections": corrections}
+        return {
+            "text": text,
+            "raw_text": raw_text,
+            "normalized_text": normalized_text,
+            "elapsed_seconds": elapsed,
+            "model": EN_MODEL_NAME if resolved_language == "en-US" else MODEL_NAME,
+            "device": DEVICE,
+            "language": resolved_language,
+            "profile": cfg,
+            "quality": quality,
+            "metrics": metrics,
+            "corrections": corrections,
+        }
     except HTTPException:
         raise
     except Exception as exc:
@@ -757,12 +950,13 @@ async def ws_transcribe(websocket: WebSocket):
                     generate_calls += 1
                     if result and result[0].get("text"):
                         full_text += result[0]["text"]
-                    final_text, corrections = apply_correction_rules(meaningful_stream_text(full_text), language)
+                    raw_text = meaningful_stream_text(full_text)
+                    final_text, corrections = apply_correction_rules(raw_text, language)
                     final_text = ensure_terminal_punctuation(final_text)
                     elapsed = time.perf_counter() - stream_started
                     metrics = {"elapsed_seconds": elapsed, "audio_seconds": round(audio_seconds, 3), "realtime_factor": round(elapsed / audio_seconds, 3) if audio_seconds > 0 else None, "profile": cfg["id"], "hotword_count": len(hotword_str.split()) if hotword_str else 0, "generate_calls": generate_calls, "correction_count": sum(item["count"] for item in corrections)}
                     record_asr_metric("streaming", audio_seconds, elapsed, metrics)
-                    await websocket.send_json({"type": "final", "text": final_text, "metrics": metrics, "corrections": corrections})
+                    await websocket.send_json({"type": "final", "text": final_text, "raw_text": raw_text, "metrics": metrics, "corrections": corrections})
                     break
                 continue
 

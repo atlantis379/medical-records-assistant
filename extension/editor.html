@@ -60,6 +60,7 @@
       <button id="preSubmitCheckButton" type="button" data-i18n="pre_submit_check">提交前核对</button>
       <button id="snapshotButton" type="button" data-i18n="save_version">保存版本</button>
       <button id="exportButton" type="button" data-i18n="export_txt">导出 TXT</button>
+      <button id="selfCheckButton" type="button" data-i18n="self_check">环境自检</button>
       <button id="feedbackButton" type="button" data-i18n="beta_feedback">内测反馈</button>
       <button id="undoButton" type="button" data-i18n="undo">撤销</button>
       <button id="clearButton" class="danger-ghost" type="button" data-i18n="clear">清空</button>
@@ -83,6 +84,7 @@
         </div>
         <textarea id="draft" spellcheck="false" placeholder="点击“开始听写”，或直接在这里输入和修改病历内容……"></textarea>
         <div id="partialDisplay" class="partial-result" hidden></div>
+        <div id="recognitionTrace" class="recognition-trace" hidden></div>
         <p id="feedback" class="feedback" aria-live="polite"></p>
         <p id="qualityHint" class="quality-hint" hidden></p>
       </article>
@@ -209,6 +211,28 @@
             <button id="submitFeedbackButton" class="primary" type="button" data-i18n="save_feedback">保存反馈</button>
             <button id="copyDiagnosticsButton" type="button" data-i18n="copy_diagnostics">复制诊断信息</button>
             <button id="cancelFeedbackButton" type="button" data-i18n="cancel">取消</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="selfCheckModal" class="modal self-check-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 data-i18n="self_check_title">环境自检</h3>
+          <button id="closeSelfCheckModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div class="modal-body">
+          <p id="selfCheckSummary" class="qc-summary">正在检查本地服务、模型、麦克风和词库……</p>
+          <div id="selfCheckList" class="self-check-list"></div>
+          <details class="diagnostics-box" open>
+            <summary data-i18n="self_check_raw">自检原始信息</summary>
+            <pre id="selfCheckRaw">准备中……</pre>
+          </details>
+          <div class="template-form-actions">
+            <button id="rerunSelfCheckButton" class="primary" type="button" data-i18n="rerun_self_check">重新自检</button>
+            <button id="copySelfCheckButton" type="button" data-i18n="copy_diagnostics">复制诊断信息</button>
+            <button id="cancelSelfCheckButton" type="button" data-i18n="cancel">取消</button>
           </div>
         </div>
       </div>

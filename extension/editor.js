@@ -89,6 +89,9 @@ function currentAsrProfile() {
   const value = els.asrProfileSelect?.value || "balanced";
   return ["fast", "balanced", "accurate"].includes(value) ? value : "balanced";
 }
+function shouldRefineStreamingWithBatch() {
+  return currentDictationLanguage() === "zh-CN" && currentAsrProfile() !== "fast";
+}
 function updateLanguageSpecificUI() {
   dictationLanguage = currentDictationLanguage();
   const isEnglish = dictationLanguage === "en-US";
@@ -927,7 +930,11 @@ function renderRecognitionTrace(report) {
   const summaryHeader = document.createElement("header");
   const title = document.createElement("span");
   const metrics = report.metrics || {};
-  title.textContent = metrics.segment_count > 1 ? `分段识别：${metrics.segment_count} 段` : "识别结果轨迹";
+  title.textContent = report.mode === "streaming-preview"
+    ? "流式预览（等待二次精修）"
+    : report.mode === "streaming-fallback"
+      ? "流式结果（精修失败后保留）"
+      : metrics.segment_count > 1 ? `分段识别：${metrics.segment_count} 段` : "识别结果轨迹";
   const badge = document.createElement("code");
   badge.textContent = Number.isFinite(metrics.realtime_factor) ? `RTF ${metrics.realtime_factor}` : currentAsrProfile();
   summaryHeader.append(title, badge);
@@ -1152,11 +1159,16 @@ async function stopRecording() {
         ]);
         els.partialDisplay.hidden = true;
         const finalText = typeof finalResult === "string" ? finalResult : (finalResult?.text || "");
-        if (finalText) mergeText(finalText);
         if (typeof finalResult !== "string") {
-          renderRecognitionTrace({ ...finalResult, mode: "streaming" });
+          renderRecognitionTrace({ ...finalResult, mode: shouldRefineStreamingWithBatch() ? "streaming-preview" : "streaming" });
           renderRecognitionHints(finalResult);
         }
+        if (shouldRefineStreamingWithBatch()) {
+          setFeedback("流式预览已完成，正在用完整录音二次精修……");
+          await batchTranscribe(sampleRate, { streamPreview: typeof finalResult === "string" ? { text: finalResult } : finalResult });
+          return;
+        }
+        if (finalText) mergeText(finalText);
         const rtf = finalResult?.metrics?.realtime_factor;
         setFeedback(`流式识别完成${Number.isFinite(rtf) ? `，RTF ${rtf}` : ""}。请核对右侧提醒。`);
         els.recordButton.disabled = false;
@@ -1187,12 +1199,13 @@ async function transcribeAudioBlob(blob, { segmentIndex = 1, segmentCount = 1 } 
   return data;
 }
 
-async function batchTranscribe(sampleRate) {
+async function batchTranscribe(sampleRate, options = {}) {
+  const streamPreview = options.streamPreview || null;
   els.recordButton.disabled = true;
   els.partialDisplay.hidden = true;
-  resetRecognitionTrace();
+  if (!streamPreview) resetRecognitionTrace();
   if (els.qualityHint) { els.qualityHint.hidden = true; els.qualityHint.textContent = ""; els.qualityHint.classList.remove("warning"); }
-  setFeedback("正在本地识别，请稍候……");
+  setFeedback(streamPreview ? "正在用完整录音进行二次精修，请稍候……" : "正在本地识别，请稍候……");
   const startedMs = Date.now();
   const merged = mergeRecordedChunks();
   const resampled = resampleTo16k(merged, sampleRate);
@@ -1234,7 +1247,16 @@ async function batchTranscribe(sampleRate) {
       correctionCount ? `修正 ${correctionCount} 处` : ""
     ].filter(Boolean).join("，");
     setFeedback(`识别完成，用时 ${data.elapsed_seconds.toFixed(1)} 秒${suffix ? `（${suffix}）` : ""}。请核对右侧提醒。`);
-  } catch (error) { setFeedback(`识别失败：${error.message}`, true); }
+  } catch (error) {
+    if (streamPreview?.text) {
+      mergeText(streamPreview.text);
+      renderRecognitionTrace({ ...streamPreview, mode: "streaming-fallback" });
+      renderRecognitionHints(streamPreview);
+      setFeedback(`二次精修失败，已保留流式预览结果：${error.message}`, true);
+    } else {
+      setFeedback(`识别失败：${error.message}`, true);
+    }
+  }
   finally { els.recordButton.disabled = false; checkService(); }
 }
 

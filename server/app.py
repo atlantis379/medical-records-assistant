@@ -25,6 +25,7 @@ USER_HOTWORD_FILE = HOTWORD_PACK_DIR / "user_custom.txt"
 FEEDBACK_FILE = APP_DIR / "data" / "feedback.jsonl"
 HOTWORD_PACKS = [
     {"id": "general_medical", "filename": "general_medical.txt", "label": "通用医学词库", "label_en": "General medical", "built_in": True, "enabled": True},
+    {"id": "respiratory_history", "filename": "respiratory_history.txt", "label": "呼吸道病史词库", "label_en": "Respiratory history", "built_in": True, "enabled": True},
     {"id": "infectious_disease", "filename": "infectious_disease.txt", "label": "感染科词库", "label_en": "Infectious disease", "built_in": True, "enabled": True},
     {"id": "antimicrobials", "filename": "antimicrobials.txt", "label": "抗菌药词库", "label_en": "Antimicrobials", "built_in": True, "enabled": True},
     {"id": "pathogens", "filename": "pathogens.txt", "label": "病原体词库", "label_en": "Pathogens", "built_in": True, "enabled": True},
@@ -38,9 +39,9 @@ MAX_HOTWORDS = 1000
 CORRECTION_RULE_DIR = APP_DIR / "data" / "correction_rules"
 STREAMING_RMS_THRESHOLD = float(os.getenv("ASR_STREAMING_RMS_THRESHOLD", "0.008"))
 ASR_PROFILES = {
-    "fast": {"id": "fast", "label": "快速", "label_en": "Fast", "batch_size_s": 45, "stream_chunk_size": [0, 8, 4], "encoder_chunk_look_back": 3, "decoder_chunk_look_back": 1, "hotword_limit": 160, "hotword_char_limit": 2600, "description": "低延迟优先，减少上下文和热词数量。"},
-    "balanced": {"id": "balanced", "label": "均衡", "label_en": "Balanced", "batch_size_s": 60, "stream_chunk_size": [5, 10, 5], "encoder_chunk_look_back": 4, "decoder_chunk_look_back": 1, "hotword_limit": 260, "hotword_char_limit": 4200, "description": "兼顾识别速度、准确度和 CPU 占用。"},
-    "accurate": {"id": "accurate", "label": "准确优先", "label_en": "Accuracy first", "batch_size_s": 90, "stream_chunk_size": [5, 12, 6], "encoder_chunk_look_back": 6, "decoder_chunk_look_back": 2, "hotword_limit": 420, "hotword_char_limit": 6800, "description": "更多上下文和热词，CPU 推理会更慢。"},
+    "fast": {"id": "fast", "label": "快速", "label_en": "Fast", "batch_size_s": 45, "stream_chunk_size": [0, 8, 4], "encoder_chunk_look_back": 3, "decoder_chunk_look_back": 1, "hotword_limit": 190, "hotword_char_limit": 3200, "description": "低延迟优先，减少上下文和热词数量。"},
+    "balanced": {"id": "balanced", "label": "均衡", "label_en": "Balanced", "batch_size_s": 60, "stream_chunk_size": [5, 10, 5], "encoder_chunk_look_back": 4, "decoder_chunk_look_back": 1, "hotword_limit": 320, "hotword_char_limit": 5600, "description": "兼顾识别速度、准确度和 CPU 占用。"},
+    "accurate": {"id": "accurate", "label": "准确优先", "label_en": "Accuracy first", "batch_size_s": 90, "stream_chunk_size": [5, 12, 6], "encoder_chunk_look_back": 6, "decoder_chunk_look_back": 2, "hotword_limit": 480, "hotword_char_limit": 8200, "description": "更多上下文和热词，CPU 推理会更慢。"},
 }
 DEFAULT_ASR_PROFILE = os.getenv("ASR_PROFILE", "balanced")
 MODEL_PACKAGE_ROOT = APP_DIR.parent / "models" / "modelscope"
@@ -136,7 +137,7 @@ def read_custom_hotwords() -> list[str]:
 
 def read_hotword_entries() -> list[dict]:
     entries: list[dict] = []
-    priority = {"user_custom": 0, "antimicrobials": 1, "pathogens": 2, "infectious_disease": 3, "general_medical": 4}
+    priority = {"user_custom": 0, "respiratory_history": 1, "antimicrobials": 2, "pathogens": 3, "infectious_disease": 4, "general_medical": 5}
     for pack in HOTWORD_PACKS:
         if not pack.get("enabled", True):
             continue
@@ -544,7 +545,28 @@ def apply_correction_rules(text: str, language: str = "zh-CN") -> tuple[str, lis
                 value = value.replace(source, target)
         if count:
             applied.append({"from": source, "to": target, "count": count, "category": rule.get("category", "general")})
+    if language == "zh-CN":
+        value = cleanup_clinical_asr_artifacts(value)
     return value, applied
+
+
+def cleanup_clinical_asr_artifacts(text: str) -> str:
+    value = text or ""
+    punctuation_rules = [
+        ("慢性支气管炎一周前", "慢性支气管炎。一周前"),
+        ("受凉后上述症状", "受凉后，上述症状"),
+        ("不易咳出自觉", "不易咳出，自觉"),
+        ("尤甚无胸痛", "尤甚，无胸痛"),
+        ("咯血无恶心", "咯血，无恶心"),
+        ("呕吐发病以来", "呕吐。发病以来"),
+        ("欠佳二便", "欠佳，二便"),
+        ("正常体重", "正常，体重"),
+    ]
+    for source, target in punctuation_rules:
+        value = value.replace(source, target)
+    # Remove an isolated Latin tail commonly emitted by ASR, e.g. "。i。".
+    value = re.sub(r"([。！？；：，、,.!?;:])\s*[A-Za-z]\s*[。！？；：，、,.!?;:]*$", r"\1", value)
+    return value.strip()
 
 
 def record_asr_metric(kind: str, audio_seconds: float, elapsed_seconds: float, detail: dict) -> None:

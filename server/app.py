@@ -27,6 +27,7 @@ HOTWORD_PACKS = [
     {"id": "general_medical", "filename": "general_medical.txt", "label": "通用医学词库", "label_en": "General medical", "built_in": True, "enabled": True},
     {"id": "respiratory_history", "filename": "respiratory_history.txt", "label": "呼吸道病史词库", "label_en": "Respiratory history", "built_in": True, "enabled": True},
     {"id": "medical_history", "filename": "medical_history.txt", "label": "既往史词库", "label_en": "Past medical history", "built_in": True, "enabled": True},
+    {"id": "clinical_metrics", "filename": "clinical_metrics.txt", "label": "临床指标词库", "label_en": "Clinical metrics", "built_in": True, "enabled": True},
     {"id": "infectious_disease", "filename": "infectious_disease.txt", "label": "感染科词库", "label_en": "Infectious disease", "built_in": True, "enabled": True},
     {"id": "antimicrobials", "filename": "antimicrobials.txt", "label": "抗菌药词库", "label_en": "Antimicrobials", "built_in": True, "enabled": True},
     {"id": "pathogens", "filename": "pathogens.txt", "label": "病原体词库", "label_en": "Pathogens", "built_in": True, "enabled": True},
@@ -138,7 +139,7 @@ def read_custom_hotwords() -> list[str]:
 
 def read_hotword_entries() -> list[dict]:
     entries: list[dict] = []
-    priority = {"user_custom": 0, "respiratory_history": 1, "medical_history": 2, "antimicrobials": 3, "pathogens": 4, "infectious_disease": 5, "general_medical": 6}
+    priority = {"user_custom": 0, "respiratory_history": 1, "medical_history": 2, "clinical_metrics": 3, "antimicrobials": 4, "pathogens": 5, "infectious_disease": 6, "general_medical": 7}
     for pack in HOTWORD_PACKS:
         if not pack.get("enabled", True):
             continue
@@ -276,6 +277,127 @@ def resolve_language(value: str | None) -> str:
     return "zh-CN"
 
 
+CN_DIGIT_MAP = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+CN_NUMBER_PATTERN = r"[零〇一二两三四五六七八九十百点半]+"
+NUMBER_TOKEN_PATTERN = rf"[<>≤≥]?\d+(?:\.\d+)?(?:[到至~～－—-]\d+(?:\.\d+)?)?|{CN_NUMBER_PATTERN}"
+CLINICAL_METRIC_NAMES = [
+    "超敏C反应蛋白", "C反应蛋白", "CRP", "降钙素原", "PCT",
+    "白细胞计数", "白细胞", "中性粒细胞比例", "中性粒细胞", "淋巴细胞比例", "淋巴细胞",
+    "血红蛋白", "血小板", "血糖", "空腹血糖", "随机血糖", "乳酸",
+    "肌酐", "尿素氮", "尿酸", "白蛋白", "总胆红素", "直接胆红素", "间接胆红素",
+    "丙氨酸氨基转移酶", "天门冬氨酸氨基转移酶", "ALT", "AST",
+    "D-二聚体", "D二聚体", "凝血酶原时间", "活化部分凝血活酶时间", "国际标准化比值", "INR",
+]
+CLINICAL_METRIC_PATTERN = "|".join(re.escape(name) for name in sorted(CLINICAL_METRIC_NAMES, key=len, reverse=True))
+CLINICAL_UNIT_PATTERN = r"×10\^9/L|10\^9/L|mmol/L|μmol/L|umol/L|mg/L|ng/mL|g/L|U/L|IU/L|%|秒|s"
+
+
+def parse_chinese_integer(value: str) -> int | None:
+    if not value:
+        return None
+    if value.isdigit():
+        return int(value)
+    if len(value) > 1 and all(char in CN_DIGIT_MAP for char in value):
+        return int("".join(str(CN_DIGIT_MAP[char]) for char in value))
+    if "百" in value:
+        left, right = value.split("百", 1)
+        hundreds = 1 if left == "" else CN_DIGIT_MAP.get(left)
+        if hundreds is None:
+            return None
+        if not right:
+            return hundreds * 100
+        # Spoken shorthand such as "一百三" usually means 130 in vital signs/BP context.
+        if "十" not in right and len(right) == 1 and right in CN_DIGIT_MAP:
+            return hundreds * 100 + CN_DIGIT_MAP[right] * 10
+        rest = parse_chinese_integer(right)
+        return None if rest is None else hundreds * 100 + rest
+    if "十" in value:
+        left, right = value.split("十", 1)
+        tens = 1 if left == "" else CN_DIGIT_MAP.get(left)
+        ones = 0 if right == "" else CN_DIGIT_MAP.get(right)
+        if tens is None or ones is None:
+            return None
+        return tens * 10 + ones
+    if len(value) == 1:
+        return CN_DIGIT_MAP.get(value)
+    return None
+
+
+def spoken_number_to_digits(value: str) -> str:
+    raw = (value or "").strip().replace("．", ".")
+    if not raw:
+        return raw
+    if re.search(r"\d", raw):
+        return re.sub(r"(?<=\d)[到至~～－—](?=\d)", "-", raw)
+    if raw.endswith("半"):
+        base = parse_chinese_integer(raw[:-1])
+        if base is not None:
+            return f"{base}.5"
+    if "点" in raw:
+        left, right = raw.split("点", 1)
+        integer = parse_chinese_integer(left) if left else 0
+        if integer is None:
+            return raw
+        decimals = "".join(str(CN_DIGIT_MAP[char]) for char in right if char in CN_DIGIT_MAP)
+        return f"{integer}.{decimals}" if decimals else str(integer)
+    integer = parse_chinese_integer(raw)
+    return str(integer) if integer is not None else raw
+
+
+def normalize_unit_label(unit: str | None) -> str:
+    if not unit:
+        return ""
+    value = unit.replace("／", "/")
+    lowered = value.lower()
+    if lowered == "umol/l":
+        return "μmol/L"
+    if lowered == "ng/ml":
+        return "ng/mL"
+    if lowered in {"u/l", "iu/l", "mmol/l", "mg/l", "g/l"}:
+        return {"u/l": "U/L", "iu/l": "IU/L", "mmol/l": "mmol/L", "mg/l": "mg/L", "g/l": "g/L"}[lowered]
+    if lowered == "10^9/l":
+        return "×10^9/L"
+    return value
+
+
+def format_number_with_unit(number: str, unit: str | None = "") -> str:
+    normalized_unit = normalize_unit_label(unit)
+    if not normalized_unit:
+        return number
+    if normalized_unit in {"%", "℃", "秒", "s"} or normalized_unit.startswith("×10^"):
+        return f"{number}{normalized_unit}"
+    return f"{number} {normalized_unit}"
+
+
+def canonical_metric_name(name: str) -> str:
+    lowered = name.lower()
+    aliases = {
+        "crp": "CRP",
+        "pct": "PCT",
+        "alt": "ALT",
+        "ast": "AST",
+        "inr": "INR",
+        "d二聚体": "D-二聚体",
+    }
+    return aliases.get(lowered, name)
+
+
+def metric_value_prefix(prefix: str | None) -> str:
+    value = prefix or ""
+    aliases = {
+        "大于": ">",
+        "高于": ">",
+        "超过": ">",
+        "小于": "<",
+        "低于": "<",
+        "不超过": "≤",
+        "不高于": "≤",
+        "不低于": "≥",
+        "约": "约",
+    }
+    return aliases.get(value, "")
+
+
 def normalize_clinical_text(text: str) -> str:
     text = re.sub(r"\s+", "", text).strip()
     spoken_commands = [
@@ -292,12 +414,19 @@ def normalize_clinical_text(text: str) -> str:
     }
     for source, target in replacements.items():
         text = text.replace(source, target)
-    text = re.sub(r"(\d)(mg|g|μg|ug|mL|ml|IU)\b", r"\1 \2", text, flags=re.IGNORECASE)
-    text = normalize_blood_pressure_text(text)
+    text = normalize_clinical_metric_text(text)
+    text = re.sub(r"(\d)(mg|g|μg|ug|mL|ml|IU|U|mmol/L|μmol/L|umol/L|mg/L|ng/mL|g/L|U/L|IU/L)\b", r"\1 \2", text, flags=re.IGNORECASE)
     text = re.sub(r"[，,]{2,}", "，", text)
     text = re.sub(r"[。\.]{2,}", "。", text)
     text = re.sub(r" *\n *", "\n", text)
     return text.strip()
+
+
+def normalize_clinical_metric_text(text: str) -> str:
+    value = normalize_blood_pressure_text(text)
+    value = normalize_vital_sign_text(value)
+    value = normalize_lab_unit_text(value)
+    return normalize_lab_metric_text(value)
 
 
 def normalize_blood_pressure_text(text: str) -> str:
@@ -342,6 +471,116 @@ def normalize_blood_pressure_text(text: str) -> str:
         flags=re.IGNORECASE,
     )
     value = re.sub(r"(?<!\d)(\d{2,3})/(\d{2,3})\s*mmHg", r"\1/\2mmHg", value, flags=re.IGNORECASE)
+    return value
+
+
+def normalize_vital_sign_text(text: str) -> str:
+    value = text or ""
+    value = re.sub(r"(?i)\bspo\s*2\b", "SpO2", value)
+    value = re.sub(r"(?i)\bspo2\b", "SpO2", value)
+    value = re.sub(r"次\s*(?:每分钟|每分|/分钟|／分钟)", "次/分", value)
+
+    def replace_temperature(match: re.Match) -> str:
+        name = match.group(1)
+        number = spoken_number_to_digits(match.group(2))
+        tail = match.group(3) or ""
+        if tail and "." not in number:
+            tail_number = spoken_number_to_digits(tail)
+            if re.fullmatch(r"\d", tail_number):
+                number = f"{number}.{tail_number}"
+        return f"{name}{number}℃"
+
+    value = re.sub(
+        rf"(体温|T)({NUMBER_TOKEN_PATTERN})(?:摄氏度|℃|度)([零〇一二两三四五六七八九\d])?",
+        replace_temperature,
+        value,
+        flags=re.IGNORECASE,
+    )
+
+    def replace_rate(match: re.Match) -> str:
+        return f"{match.group(1)}{spoken_number_to_digits(match.group(2))}次/分"
+
+    rate_names = r"心率|脉搏|呼吸频率|呼吸"
+    value = re.sub(rf"({rate_names})({NUMBER_TOKEN_PATTERN})(?:次)?/分", replace_rate, value)
+    value = re.sub(rf"({rate_names})({NUMBER_TOKEN_PATTERN})次(?!/分)", replace_rate, value)
+
+    oxygen_names = r"血氧饱和度|指脉氧|SpO2"
+
+    def replace_spoken_percent(match: re.Match) -> str:
+        return f"{match.group(1)}{spoken_number_to_digits(match.group(2))}%"
+
+    def replace_numeric_oxygen(match: re.Match) -> str:
+        name, number = match.group(1), match.group(2)
+        try:
+            numeric = float(number)
+        except ValueError:
+            return match.group(0)
+        if 50 <= numeric <= 100:
+            return f"{name}{number}%"
+        return match.group(0)
+
+    value = re.sub(rf"({oxygen_names})(?:为|是|达|约)?(?:百分之|%)({CN_NUMBER_PATTERN})", replace_spoken_percent, value, flags=re.IGNORECASE)
+    value = re.sub(rf"({oxygen_names})(?:为|是|达|约)?(\d{{2,3}}(?:\.\d+)?)(?:百分比|%)", r"\1\2%", value, flags=re.IGNORECASE)
+    value = re.sub(rf"({oxygen_names})(?:为|是|达|约)?(\d{{2,3}})(?![\d%])", replace_numeric_oxygen, value, flags=re.IGNORECASE)
+    return value
+
+
+def normalize_lab_unit_text(text: str) -> str:
+    value = text or ""
+    value = value.replace("百分比", "%")
+    unit_rules = [
+        (r"(?:乘以)?(?:十的九次方|10的9次方)(?:每升|/升|／升)?", "×10^9/L"),
+        (r"(?i)(?:x|×)\s*10\s*(?:\^|的)?\s*9\s*/?\s*(?:l|L|升)", "×10^9/L"),
+        (r"(?i)\s*(?:mmol|毫摩尔)\s*(?:每升|/升|／升|/L|／L)", "mmol/L"),
+        (r"(?i)\s*(?:μmol|umol|微摩尔)\s*(?:每升|/升|／升|/L|／L)", "μmol/L"),
+        (r"(?i)\s*(?:ng|纳克)\s*(?:每\s*(?:毫升|ml|mL)|[/／]\s*(?:毫升|ml|mL))", "ng/mL"),
+        (r"(?i)\s*(?:mg|毫克)\s*(?:每升|/升|／升|/L|／L)", "mg/L"),
+        (r"(?i)\s*(?:g|克)\s*(?:每升|/升|／升|/L|／L)", "g/L"),
+        (r"(?i)\s*(?:IU|国际单位)\s*(?:每升|/升|／升|/L|／L)", "IU/L"),
+        (r"(?i)\s*(?:U|单位)\s*(?:每升|/升|／升|/L|／L)", "U/L"),
+    ]
+    for pattern, replacement in unit_rules:
+        value = re.sub(pattern, replacement, value)
+    value = value.replace("μmol/L", "μmol/L").replace("umol/L", "μmol/L")
+    value = re.sub(r"(?i)ng/ml", "ng/mL", value)
+    value = re.sub(r"(?i)mmol/l", "mmol/L", value)
+    value = re.sub(r"(?i)mg/l", "mg/L", value)
+    value = re.sub(r"(?i)g/l", "g/L", value)
+    value = re.sub(r"(?i)\bu/l\b", "U/L", value)
+    value = re.sub(r"(?i)\biu/l\b", "IU/L", value)
+    return value
+
+
+def normalize_lab_metric_text(text: str) -> str:
+    value = text or ""
+    connector_pattern = r"为|是|约|达|升高至|降低至|大于|高于|超过|小于|低于|不超过|不高于|不低于|[:：]"
+
+    def replace_metric_percent(match: re.Match) -> str:
+        name = canonical_metric_name(match.group(1))
+        number = metric_value_prefix(match.group(2)) + spoken_number_to_digits(match.group(3))
+        return f"{name} {number}%"
+
+    def replace_metric(match: re.Match) -> str:
+        name = canonical_metric_name(match.group(1))
+        number = metric_value_prefix(match.group(2)) + spoken_number_to_digits(match.group(3))
+        unit = normalize_unit_label(match.group(4) or "")
+        return f"{name} {format_number_with_unit(number, unit)}"
+
+    value = re.sub(
+        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?(?:百分之|%)({NUMBER_TOKEN_PATTERN})",
+        replace_metric_percent,
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(
+        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?({NUMBER_TOKEN_PATTERN})\s*({CLINICAL_UNIT_PATTERN})?",
+        replace_metric,
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(r"\bCRP\s*([<>≤≥]?\d+(?:\.\d+)?)", r"CRP \1", value, flags=re.IGNORECASE)
+    value = re.sub(r"\bPCT\s*([<>≤≥]?\d+(?:\.\d+)?)", r"PCT \1", value, flags=re.IGNORECASE)
+    value = re.sub(r"\bINR\s*([<>≤≥]?\d+(?:\.\d+)?)", r"INR \1", value, flags=re.IGNORECASE)
     return value
 
 

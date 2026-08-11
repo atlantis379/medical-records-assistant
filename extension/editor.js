@@ -117,7 +117,8 @@ const riskRules = [
   { label: "否定与结论", detail: "请核对阴阳性结论与否定表述", severity: "high", regex: /(?:[一-鿿]{1,6}(?:阴性|阳性)|未见[一-鿿]{1,8}|否认[一-鿿]{1,10}(?:病史|史)|(?:有|无)[一-鿿]{2,8}(?:史|症状|表现|接触)|考虑[一-鿿]{2,10}|排除[一-鿿]{2,10})/g },
   { label: "药物剂量", detail: "请核对数值、单位和小数点", severity: "high", regex: /\d+(?:\.\d+)?\s*(?:mg|g|μg|ug|ml|mL|IU|万U)\b/gi },
   { label: "给药频次", detail: "请核对给药间隔与频次", severity: "medium", regex: /\b(?:qd|bid|tid|qid|q\d+h|qod|qw|qn|prn|st)\b/gi },
-  { label: "体温或百分比", detail: "请核对体温、血氧等数值", severity: "high", regex: /\d+(?:\.\d+)?\s*(?:℃|%)/g },
+  { label: "生命体征/百分比", detail: "请核对体温、心率、呼吸、血氧和百分比数值", severity: "high", regex: /\d+(?:\.\d+)?\s*(?:℃|%|次\/分|mmHg)/gi },
+  { label: "检验指标数值", detail: "请核对检验指标、单位和小数点", severity: "high", regex: /(?:白细胞计数|白细胞|中性粒细胞比例|中性粒细胞|淋巴细胞比例|淋巴细胞|血红蛋白|血小板|CRP|C反应蛋白|PCT|降钙素原|血糖|乳酸|肌酐|尿素氮|尿酸|白蛋白|总胆红素|ALT|AST|D-二聚体|INR)\s*[：:]?\s*约?[<>≤≥]?\d+(?:\.\d+)?(?:\s*[-~～至到]\s*\d+(?:\.\d+)?)?\s*(?:×10\^9\/L|10\^9\/L|mmol\/L|μmol\/L|umol\/L|mg\/L|ng\/mL|g\/L|U\/L|IU\/L|%|秒|s)?/gi },
   { label: "方向与部位", detail: "请核对左、右及双侧", severity: "medium", regex: /(左侧|右侧|双侧|左肺|右肺|左上|左下|右上|右下)/g },
   { label: "重点病原体", detail: "请核对病原体名称及培养来源", severity: "medium", regex: /(肺炎克雷伯菌|鲍曼不动杆菌|铜绿假单胞菌|金黄色葡萄球菌|曲霉菌|隐球菌|结核分枝杆菌|耶氏肺孢子菌)/g }
 ];
@@ -159,6 +160,24 @@ const QC_RULES = [
     detailEn: "Verify systolic/diastolic values, range markers, and mmHg units.",
     severity: "high",
     regex: /\b\d{2,3}(?:\s*[-~～至到]\s*\d{2,3})?\s*\/\s*\d{2,3}(?:\s*[-~～至到]\s*\d{2,3})?\s*mmHg\b/gi,
+  },
+  {
+    id: "vital_signs",
+    label: "生命体征数值/单位",
+    labelEn: "Vital sign value/unit",
+    detail: "请核对体温、心率、脉搏、呼吸频率、血氧饱和度等数值和单位。",
+    detailEn: "Verify temperature, heart rate, pulse, respiratory rate, SpO2 and their units.",
+    severity: "high",
+    regex: /(?:(?:体温|T)\s*\d+(?:\.\d+)?\s*℃|(?:心率|脉搏|呼吸频率|呼吸)\s*\d{1,3}\s*次\/分|(?:血氧饱和度|指脉氧|SpO2)\s*\d+(?:\.\d+)?\s*%)/gi,
+  },
+  {
+    id: "lab_metrics",
+    label: "检验指标数值/单位",
+    labelEn: "Lab value/unit",
+    detail: "请核对检验指标名称、数值、小数点、范围符号和单位，例如 CRP、PCT、白细胞、血糖、肌酐、D-二聚体等。",
+    detailEn: "Verify lab item, value, decimal point, range marker, and unit, such as CRP, PCT, WBC, glucose, creatinine, and D-dimer.",
+    severity: "high",
+    regex: /(?:白细胞计数|白细胞|中性粒细胞比例|中性粒细胞|淋巴细胞比例|淋巴细胞|血红蛋白|血小板|CRP|C反应蛋白|超敏C反应蛋白|PCT|降钙素原|血糖|空腹血糖|随机血糖|乳酸|肌酐|尿素氮|尿酸|白蛋白|总胆红素|直接胆红素|间接胆红素|ALT|AST|丙氨酸氨基转移酶|天门冬氨酸氨基转移酶|D-二聚体|凝血酶原时间|活化部分凝血活酶时间|国际标准化比值|INR)\s*[：:]?\s*约?[<>≤≥]?\d+(?:\.\d+)?(?:\s*[-~～至到]\s*\d+(?:\.\d+)?)?\s*(?:×10\^9\/L|10\^9\/L|mmol\/L|μmol\/L|umol\/L|mg\/L|ng\/mL|g\/L|U\/L|IU\/L|%|秒|s)?/gi,
   },
   {
     id: "prescription_action",

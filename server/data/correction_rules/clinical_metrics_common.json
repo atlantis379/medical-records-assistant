@@ -1,0 +1,32 @@
+{
+  "version": "2026-08-12",
+  "description": "常见生命体征、检验指标和单位的保守纠错规则。仅做术语、大小写和单位格式规范化，不判断正常/异常。",
+  "rules": [
+    { "from": "血氧包和度", "to": "血氧饱和度", "category": "vital_sign" },
+    { "from": "指脉养", "to": "指脉氧", "category": "vital_sign" },
+    { "from": "spo二", "to": "SpO2", "category": "vital_sign" },
+    { "from": "spo2", "to": "SpO2", "category": "vital_sign" },
+    { "from": "SPO2", "to": "SpO2", "category": "vital_sign" },
+    { "from": "次每分", "to": "次/分", "category": "vital_sign_unit" },
+    { "from": "次每分钟", "to": "次/分", "category": "vital_sign_unit" },
+    { "from": "毫摩尔每升", "to": "mmol/L", "category": "lab_unit" },
+    { "from": "微摩尔每升", "to": "μmol/L", "category": "lab_unit" },
+    { "from": "毫克每升", "to": "mg/L", "category": "lab_unit" },
+    { "from": "纳克每毫升", "to": "ng/mL", "category": "lab_unit" },
+    { "from": "克每升", "to": "g/L", "category": "lab_unit" },
+    { "from": "单位每升", "to": "U/L", "category": "lab_unit" },
+    { "from": "国际单位每升", "to": "IU/L", "category": "lab_unit" },
+    { "from": "乘以十的九次方每升", "to": "×10^9/L", "category": "lab_unit" },
+    { "from": "十的九次方每升", "to": "×10^9/L", "category": "lab_unit" },
+    { "from": "d二聚体", "to": "D-二聚体", "category": "coagulation" },
+    { "from": "D二聚体", "to": "D-二聚体", "category": "coagulation" },
+    { "from": "D2聚体", "to": "D-二聚体", "category": "coagulation" },
+    { "from": "肌干", "to": "肌酐", "category": "renal_function" },
+    { "from": "尿素蛋", "to": "尿素氮", "category": "renal_function" },
+    { "from": "谷丙转氨酶", "to": "丙氨酸氨基转移酶", "category": "liver_function" },
+    { "from": "谷草转氨酶", "to": "天门冬氨酸氨基转移酶", "category": "liver_function" },
+    { "from": "alt", "to": "ALT", "category": "liver_function" },
+    { "from": "ast", "to": "AST", "category": "liver_function" },
+    { "from": "inr", "to": "INR", "category": "coagulation" }
+  ]
+}

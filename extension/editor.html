@@ -6,90 +6,163 @@
   <title data-i18n="app_title">病历助手</title>
   <link rel="stylesheet" href="editor.css">
 </head>
-<body>
+<body class="auth-locked">
+  <div id="authOverlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-card">
+      <h2 id="authTitle">病历助手 · 登录</h2>
+      <p id="authNote" class="auth-note"></p>
+      <form id="authLoginForm" autocomplete="on" hidden>
+        <label>用户名<input id="authUsername" type="text" autocomplete="username" maxlength="40"></label>
+        <label>密码<input id="authPassword" type="password" autocomplete="current-password" maxlength="200"></label>
+        <button class="primary" type="submit">登录</button>
+        <p class="panel-caption">多位医生共用这台电脑：用完请点“退出登录”，暂时离开可点“锁定”。忘记密码请联系管理员。</p>
+      </form>
+      <form id="authSetupForm" autocomplete="off" hidden>
+        <p class="panel-caption">这是第一次使用。请设置管理员账号，之后由管理员为每位医生创建账号。账号只保存在这台电脑上。</p>
+        <label>管理员用户名<input id="setupUsername" type="text" autocomplete="username" maxlength="40"></label>
+        <label>姓名（选填）<input id="setupName" type="text" maxlength="40"></label>
+        <label>密码（至少 8 位）<input id="setupPassword" type="password" autocomplete="new-password" maxlength="200"></label>
+        <label>再输入一次密码<input id="setupPassword2" type="password" autocomplete="new-password" maxlength="200"></label>
+        <button class="primary" type="submit">创建并登录</button>
+      </form>
+      <div id="authOffline" hidden>
+        <p><strong>本地服务还没有启动。</strong></p>
+        <p class="panel-caption">请双击桌面“病历助手”图标，等屏幕右下角的图标变绿后，这个页面会自动继续。</p>
+      </div>
+      <p id="authError" class="auth-error" role="alert"></p>
+    </div>
+  </div>
   <main class="app-shell">
     <header class="topbar">
-      <div>
-        <p class="eyebrow">LOCAL CLINICAL DICTATION · V0.10</p>
-        <h1 data-i18n="app_title">病历助手</h1>
-        <p class="subtitle" data-i18n="subtitle">听写、核对、整理，再安全地复制到病历系统。</p>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1 data-i18n="app_title">病历助手</h1>
+          <p class="subtitle" data-i18n="subtitle">听写、核对，再复制到病历系统。</p>
+        </div>
       </div>
-      <div class="status-card">
-        <span id="statusDot" class="status-dot"></span>
-        <div><strong id="serviceStatus">正在检查本地服务</strong><small id="serviceDetail">127.0.0.1:8765</small></div>
-      </div>
-    </header>
 
-    <section class="toolbar panel">
-      <label><span data-i18n="ui_language">界面语言</span>
-        <select id="uiLanguageSelect">
-          <option value="zh-CN">中文</option>
-          <option value="en-US">English</option>
-        </select>
-      </label>
-      <label><span data-i18n="dictation_language">听写语言</span>
-        <select id="dictationLanguageSelect">
-          <option value="zh-CN">中文普通话</option>
-          <option value="en-US">English</option>
-        </select>
-      </label>
-      <label><span data-i18n="asr_profile">识别模式</span>
-        <select id="asrProfileSelect">
-          <option value="fast">快速</option>
-          <option value="balanced" selected>均衡</option>
-          <option value="accurate">准确优先</option>
-        </select>
-      </label>
-      <label><span data-i18n="section_label">病历段落</span>
-        <select id="templateSelect">
-          <option value="">自由听写</option><option value="主诉：">主诉</option><option value="现病史：">现病史</option>
-          <option value="流行病学史：">流行病学史</option><option value="既往史：">既往史</option>
-          <option value="辅助检查：">辅助检查</option><option value="诊疗经过：">诊疗经过</option>
-        </select>
-      </label>
-      <label><span data-i18n="insert_mode">追加方式</span>
-        <select id="insertMode"><option value="append">追加到末尾</option><option value="cursor">插入光标处</option><option value="replace">替换全文</option></select>
-      </label>
-      <button id="insertTemplateButton" type="button" data-i18n="insert_template">插入结构模板</button>
-      <button id="manageTemplatesButton" type="button" data-i18n="manage_templates">管理模板</button>
-      <button id="recordButton" class="record-button" type="button"><span class="mic">●</span><span id="recordLabel">开始听写</span></button>
-    </section>
-
-    <nav class="quick-actions panel" aria-label="草稿工具">
-      <button id="copyButton" class="primary" type="button" data-i18n="copy_all">复制全文</button>
-      <button id="preSubmitCheckButton" type="button" data-i18n="pre_submit_check">提交前核对</button>
-      <button id="snapshotButton" type="button" data-i18n="save_version">保存版本</button>
-      <button id="exportButton" type="button" data-i18n="export_txt">导出 TXT</button>
-      <button id="selfCheckButton" type="button" data-i18n="self_check">环境自检</button>
-      <button id="feedbackButton" type="button" data-i18n="beta_feedback">内测反馈</button>
-      <button id="undoButton" type="button" data-i18n="undo">撤销</button>
-      <button id="clearButton" class="danger-ghost" type="button" data-i18n="clear">清空</button>
-      <label class="autosave-control"><input id="autosaveToggle" type="checkbox"> <span data-i18n="autosave">在本机自动恢复草稿</span></label>
-    </nav>
-
-    <section class="workspace">
-      <nav id="patientBar" class="patient-bar panel" aria-label="患者列表">
+      <nav id="patientBar" class="patient-bar" aria-label="患者列表">
         <div id="patientTabs" class="patient-tabs"></div>
         <button id="addPatientButton" class="add-patient" type="button" title="新增患者">+</button>
         <input id="newPatientInput" class="new-patient-input" type="text" maxlength="12" placeholder="床号/姓名" hidden>
       </nav>
-      <article class="editor-panel panel">
-        <div class="section-heading">
-          <div><h2 data-i18n="draft_title">病历草稿</h2><p id="wordCount">0 字</p></div>
+
+      <div class="topbar-end">
+        <details class="menu status-menu">
+          <summary class="status-summary"><span id="statusDot" class="status-dot"></span><strong id="serviceStatus">正在检查本地服务</strong></summary>
+          <div class="menu-pop">
+            <small id="serviceDetail">127.0.0.1:8765</small>
+            <button id="stopServiceButton" class="stop-service" type="button" data-i18n="stop_service" hidden>停止服务</button>
+          </div>
+        </details>
+        <div id="userBar" class="user-bar" hidden>
+          <details class="menu user-menu">
+            <summary><strong id="userName"></strong></summary>
+            <div class="menu-pop menu-list">
+              <button id="changePasswordButton" type="button">修改密码</button>
+              <button id="accountsButton" type="button" hidden>账号管理</button>
+            </div>
+          </details>
+          <button id="lockButton" class="ghost" type="button" title="暂时离开：保留草稿，需要重新登录">锁定</button>
+          <button id="logoutButton" class="ghost" type="button" title="用完了：清除保存的草稿">退出登录</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <article class="editor-panel">
+        <div class="command-strip">
+          <button id="recordButton" class="record-button" type="button"><span class="mic" aria-hidden="true"></span><span id="recordLabel">开始听写</span></button>
           <div class="recording-indicators">
             <canvas id="waveCanvas" width="180" height="36" aria-hidden="true"></canvas>
             <span id="silenceIndicator" class="silence-indicator" hidden>静音检测中</span>
             <span id="recordTimer" class="timer">00:00</span>
           </div>
+          <h2 class="visually-hidden" data-i18n="draft_title">病历草稿</h2>
+          <p id="wordCount" class="word-count">0 字</p>
+          <div class="strip-end">
+            <details class="menu settings-menu">
+              <summary>听写设置</summary>
+              <div class="menu-pop settings-pop">
+                <!-- only Chinese is offered for now; the English texts stay in editor.js for later -->
+                <label id="uiLanguageLabel" hidden><span data-i18n="ui_language">界面语言</span>
+                  <select id="uiLanguageSelect">
+                    <option value="zh-CN">中文</option>
+                    <option value="en-US">English</option>
+                  </select>
+                </label>
+                <label id="dictationLanguageLabel" hidden><span data-i18n="dictation_language">听写语言</span>
+                  <select id="dictationLanguageSelect">
+                    <option value="zh-CN">中文普通话</option>
+                    <option value="en-US">English</option>
+                  </select>
+                </label>
+                <label><span data-i18n="asr_profile">识别模式</span>
+                  <select id="asrProfileSelect">
+                    <option value="fast">快速</option>
+                    <option value="balanced" selected>均衡</option>
+                    <option value="accurate">准确优先</option>
+                  </select>
+                </label>
+                <label><span data-i18n="section_label">病历段落</span>
+                  <select id="templateSelect">
+                    <option value="">自由听写</option><option value="主诉：">主诉</option><option value="现病史：">现病史</option>
+                    <option value="流行病学史：">流行病学史</option><option value="既往史：">既往史</option>
+                    <option value="辅助检查：">辅助检查</option><option value="诊疗经过：">诊疗经过</option>
+                  </select>
+                </label>
+                <label><span data-i18n="insert_mode">追加方式</span>
+                  <select id="insertMode"><option value="append">追加到末尾</option><option value="cursor">插入光标处</option><option value="replace">替换全文</option></select>
+                </label>
+                <div class="pop-actions">
+                  <button id="insertTemplateButton" type="button" data-i18n="insert_template">插入结构模板</button>
+                  <button id="manageTemplatesButton" type="button" data-i18n="manage_templates">管理模板</button>
+                </div>
+              </div>
+            </details>
+            <details class="menu more-menu">
+              <summary>更多</summary>
+              <div class="menu-pop menu-list">
+                <button id="openReportButton" type="button">导入外院报告…</button>
+                <button id="exportButton" type="button" data-i18n="export_txt">导出 TXT</button>
+                <button id="selfCheckButton" type="button" data-i18n="self_check">环境自检</button>
+                <button id="feedbackButton" type="button" data-i18n="beta_feedback">内测反馈</button>
+                <label class="autosave-control"><input id="autosaveToggle" type="checkbox"> <span id="autosaveLabelText">自动保存草稿（加密保存在本机，限时删除）</span></label>
+              </div>
+            </details>
+          </div>
         </div>
-        <textarea id="draft" spellcheck="false" placeholder="点击“开始听写”，或直接在这里输入和修改病历内容……"></textarea>
+
+        <div class="document">
+          <div id="fieldBar" class="field-bar">
+            <label class="checkbox-label field-toggle"><input id="fieldRoutingToggle" type="checkbox" checked> <span data-i18n="field_routing">按字段归位</span></label>
+            <div id="fieldChips" class="field-chips" role="group" aria-label="病历字段"></div>
+            <span id="fieldCurrent" class="field-current" aria-live="polite"></span>
+          </div>
+          <div class="paper">
+            <textarea id="draft" spellcheck="false" placeholder="点击“开始听写”，或直接在这里输入和修改病历内容……"></textarea>
+          </div>
+        </div>
+
         <div id="partialDisplay" class="partial-result" hidden></div>
         <div id="recognitionTrace" class="recognition-trace" hidden></div>
-        <p id="feedback" class="feedback" aria-live="polite"></p>
         <p id="qualityHint" class="quality-hint" hidden></p>
+
+        <div class="document-foot">
+          <p id="feedback" class="feedback" aria-live="polite"></p>
+          <div class="foot-actions">
+            <button id="addHotwordButton" type="button" disabled title="先在草稿里选中一个词">加入热词</button>
+            <button id="undoButton" type="button" data-i18n="undo">撤销</button>
+            <button id="clearButton" class="danger-ghost" type="button" data-i18n="clear">清空</button>
+            <button id="snapshotButton" type="button" data-i18n="save_version">保存版本</button>
+            <button id="preSubmitCheckButton" type="button" data-i18n="pre_submit_check">提交前核对</button>
+            <button id="copyButton" class="primary" type="button" data-i18n="copy_all">复制全文</button>
+          </div>
+        </div>
       </article>
 
-      <aside class="side-panel panel">
+      <aside class="side-panel">
         <div class="tabs" role="tablist">
           <button class="tab active" data-tab="review" type="button"><span data-i18n="review_tab">核对</span> <span id="riskCount">0</span></button>
           <button class="tab" data-tab="hotwords" type="button" data-i18n="hotwords_tab">热词</button>
@@ -98,17 +171,32 @@
 
         <section id="reviewPanel" class="tab-panel active">
           <p class="panel-caption" data-i18n="review_caption">只提示，不自动修改临床含义。</p>
+          <div id="phoneticBox" class="phonetic-box" hidden>
+            <strong>可能听错的词</strong>
+            <p class="panel-caption">发音相近但写法不同。请核对后再改，系统不会自动替换这些词。</p>
+            <div id="phoneticList" class="phonetic-list"></div>
+          </div>
           <div id="riskList" class="risk-list"><div class="empty-state" data-i18n="risk_empty">识别后，剂量、频次、阴阳性和关键病原体会显示在这里。</div></div>
           <div class="command-note"><strong data-i18n="voice_commands">可口述命令</strong><span data-i18n="command_note">停顿约0.7秒自动加逗号，约1.4秒自动加句号；也可口述“句号、逗号、换行”。</span></div>
         </section>
 
         <section id="hotwordsPanel" class="tab-panel">
+          <div id="specialtyBox" class="specialty-box">
+            <strong data-i18n="specialty_title">我的专业</strong>
+            <p class="panel-caption" data-i18n="specialty_caption">选择您所在的专业，启用对应的专业词库。设置只保存在本机。</p>
+            <div id="specialtyList" class="specialty-list"></div>
+            <label class="checkbox-label"><input id="includeDraftToggle" type="checkbox"> <span data-i18n="include_draft">试用尚未经医生审核的专业词库</span></label>
+            <p id="specialtyHint" class="panel-caption"></p>
+          </div>
           <p class="panel-caption" data-i18n="hotwords_caption">内置词库会自动启用；下方编辑的是用户自定义热词。</p>
           <div id="hotwordPackList" class="hotword-pack-list"><div class="empty-state">正在读取词库……</div></div>
           <div class="side-actions hotword-pack-actions">
             <button id="exportHotwordsButton" type="button" data-i18n="export_hotwords">导出词库</button>
             <button id="importHotwordsButton" type="button" data-i18n="import_hotwords">导入词库</button>
             <input id="importHotwordsInput" type="file" accept=".txt,.json" hidden>
+          </div>
+          <div class="side-actions hotword-pack-actions">
+            <button id="openMinerButton" type="button">从本院病历提取热词…</button>
           </div>
           <textarea id="hotwordEditor" class="compact-editor" placeholder="肺炎克雷伯菌&#10;哌拉西林他唑巴坦"></textarea>
           <div class="side-actions"><span id="hotwordCount">0 个</span><button id="saveHotwordsButton" class="primary" type="button" data-i18n="save_hotwords">保存自定义热词</button></div>
@@ -237,7 +325,186 @@
         </div>
       </div>
     </dialog>
+
+    <dialog id="passwordModal" class="modal">
+      <div class="modal-content">
+        <header class="modal-header"><h3>修改密码</h3><button id="closePasswordModal" class="modal-close" type="button">&times;</button></header>
+        <form id="passwordForm" class="modal-body" autocomplete="off">
+          <label>原密码<input id="oldPassword" type="password" autocomplete="current-password" maxlength="200"></label>
+          <label>新密码（至少 8 位）<input id="newPassword" type="password" autocomplete="new-password" maxlength="200"></label>
+          <label>再输入一次新密码<input id="newPassword2" type="password" autocomplete="new-password" maxlength="200"></label>
+          <p id="passwordError" class="auth-error" role="alert"></p>
+          <button class="primary" type="submit">修改密码</button>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="accountsModal" class="modal accounts-modal">
+      <div class="modal-content">
+        <header class="modal-header"><h3>账号管理</h3><button id="closeAccountsModal" class="modal-close" type="button">&times;</button></header>
+        <div class="modal-body">
+          <p class="panel-caption">账号和密码只保存在这台电脑上。重置密码或删除账号，会同时删除该医生保存的草稿。</p>
+          <p id="accountsError" class="auth-error" role="alert"></p>
+          <div class="miner-table-wrap">
+            <table class="miner-table">
+              <thead><tr><th>用户名</th><th>姓名</th><th>角色</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody id="accountRows"></tbody>
+            </table>
+          </div>
+          <h4>添加账号</h4>
+          <form id="addUserForm" class="add-user-form" autocomplete="off">
+            <label>用户名<input id="newUserName" type="text" maxlength="40"></label>
+            <label>姓名（选填）<input id="newUserDisplay" type="text" maxlength="40"></label>
+            <label>初始密码（至少 8 位）<input id="newUserPassword" type="password" autocomplete="new-password" maxlength="200"></label>
+            <label>角色<select id="newUserRole"><option value="doctor">医生</option><option value="admin">管理员</option></select></label>
+            <button class="primary" type="submit">添加</button>
+          </form>
+          <details>
+            <summary>最近的登录记录（只记录谁、何时、成功与否，不含密码和内容）</summary>
+            <ul id="auditList" class="audit-list"></ul>
+          </details>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="reportModal" class="modal report-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3>导入外院报告</h3>
+          <button id="closeReportModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div class="modal-body report-body">
+          <p class="panel-caption">图片只在这台电脑上处理：只发送给本机服务，只放在内存里，关闭窗口即清除，不会联网。识别结果只是草稿，请对照原图核对后再写入。</p>
+          <section class="report-pick">
+            <div class="side-actions">
+              <button id="reportPickFolder" type="button">选择文件夹…</button>
+              <button id="reportPickFiles" type="button">选择图片…</button>
+            </div>
+            <input id="reportFolderInput" type="file" webkitdirectory multiple hidden>
+            <input id="reportFilesInput" type="file" accept=".jpg,.jpeg,.png,.bmp,.webp" multiple hidden>
+            <progress id="reportProgress" max="100" value="0" hidden></progress>
+            <p id="reportPickInfo" class="miner-info"></p>
+            <div id="reportThumbs" class="report-thumbs"></div>
+          </section>
+          <section id="reportReview" class="report-review" hidden>
+            <div class="report-left">
+              <div class="report-tools">
+                <button id="reportRotateLeft" type="button" title="向左转 90°">向左转</button>
+                <button id="reportRotateRight" type="button" title="向右转 90°">向右转</button>
+                <button id="reportFit" type="button">放大</button>
+              </div>
+              <div id="reportViewer" class="report-viewer"><img id="reportImage" alt="外院报告原图"></div>
+            </div>
+            <div class="report-right">
+              <p id="reportStatus" class="miner-info"></p>
+              <div id="reportOptions" class="report-options" hidden>
+                <label class="checkbox-label"><input id="reportOnlyAbnormal" type="checkbox"> <span>只写异常项（有箭头，或需要核对的）</span></label>
+                <span id="reportCount" class="report-count"></span>
+              </div>
+              <textarea id="reportText" class="report-text" spellcheck="false" aria-label="识别出的文字，可以直接修改"></textarea>
+              <div class="side-actions">
+                <button id="reportAgain" type="button">按当前方向重新识别</button>
+                <button id="reportWrite" class="primary" type="button">写入草稿“辅助检查”</button>
+              </div>
+              <p id="reportWriteInfo" class="miner-info"></p>
+              <div id="reportSuggestBox" class="phonetic-box" hidden>
+                <strong>可能认错的字</strong>
+                <p class="panel-caption">字形相近、容易认错。请对照原图再改，系统不会自动替换。</p>
+                <div id="reportSuggestList" class="phonetic-list"></div>
+              </div>
+              <div class="report-checks"><strong>请对照原图核对这些数值</strong><p id="reportChecks"></p></div>
+              <div id="reportTableBox" class="report-table-box" hidden>
+                <strong>识别出的化验表格（灰色的行不会写入）</strong>
+                <div class="report-table-wrap">
+                  <table class="miner-table report-table">
+                    <thead><tr><th>项目</th><th>结果</th><th>单位</th><th>参考区间</th><th>提示</th></tr></thead>
+                    <tbody id="reportTableRows"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="minerModal" class="modal miner-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3>从本院病历提取热词</h3>
+          <button id="closeMinerModal" class="modal-close" type="button">&times;</button>
+        </header>
+        <div class="modal-body miner-body">
+          <p class="panel-caption">病例只在这台电脑上处理：只发送给本机服务，只放在内存里，关闭本窗口即清除，不会联网；生成的词库里只有词，没有病例内容。</p>
+
+          <section class="miner-step">
+            <h4>① 选择病例</h4>
+            <div class="side-actions">
+              <button id="minerPickFolder" type="button">选择文件夹…</button>
+              <button id="minerPickFiles" type="button">选择文件…</button>
+            </div>
+            <input id="minerFolderInput" type="file" webkitdirectory multiple hidden>
+            <input id="minerFilesInput" type="file" accept=".txt,.docx" multiple hidden>
+            <progress id="minerProgress" max="100" value="0" hidden></progress>
+            <p id="minerPickInfo" class="miner-info"></p>
+          </section>
+
+          <section id="minerStepScan" class="miner-step" hidden>
+            <h4>② 分析</h4>
+            <label>每个词至少要出现在多少份不同的病例里
+              <input id="minerMinCases" type="number" min="3" max="1000" value="5">
+            </label>
+            <p class="panel-caption">门槛越高越安全，也越容易漏掉少见的词。不能低于 3；具体数值请与医院信息科或伦理确认。</p>
+            <details>
+              <summary>高级选项</summary>
+              <label>一个文件里放了多份病例时，每份病例开头的文字（如“姓名”）
+                <input id="minerCaseStart" type="text" maxlength="30" placeholder="留空表示一个文件是一份病例">
+              </label>
+            </details>
+            <button id="minerScanButton" class="primary" type="button">开始分析</button>
+            <p id="minerScanInfo" class="miner-info"></p>
+          </section>
+
+          <section id="minerStepSelect" class="miner-step" hidden>
+            <h4>③ 勾选要采用的词</h4>
+            <p class="panel-caption">优先选识别经常出错的词（药名、检查名、缩写、本地说法）；“患者”“病史”这类日常用语识别本来就对，不必选。</p>
+            <div class="miner-toolbar">
+              <input id="minerQuery" type="text" placeholder="搜索">
+              <label class="checkbox-label"><input id="minerHideCommon" type="checkbox"> <span>隐藏日常用语</span></label>
+              <button id="minerSelectShown" type="button">选中当前显示的</button>
+              <button id="minerClearSelection" type="button">清除选择</button>
+            </div>
+            <p id="minerSelectionInfo" class="miner-info"></p>
+            <div class="miner-table-wrap">
+              <table class="miner-table">
+                <thead><tr><th>采用</th><th>词</th><th>病例数</th><th>主要出现在</th><th>类型</th><th>日常词频</th></tr></thead>
+                <tbody id="minerRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="minerStepBuild" class="miner-step" hidden>
+            <h4>④ 生成词库</h4>
+            <label>专业<select id="minerSpecialty"></select></label>
+            <label>词库名称<input id="minerLabel" type="text" maxlength="40" value="本院词库"></label>
+            <label>审核医生（选填）<input id="minerReviewer" type="text" maxlength="20" placeholder="填写后词库默认启用；留空为草稿"></label>
+            <p class="panel-caption">生成后的词库留在本机的词库文件夹里，可在“热词”页查看。带到其他电脑前，请先通读一遍词表。</p>
+            <button id="minerBuildButton" class="primary" type="button">生成词库</button>
+            <p id="minerBuildInfo" class="miner-info"></p>
+          </section>
+        </div>
+      </div>
+    </dialog>
   </main>
+  <script src="config.js"></script>
+  <script src="ui.js"></script>
+  <script src="fields.js"></script>
+  <script src="auth_logic.js"></script>
+  <script src="auth.js"></script>
   <script src="editor.js"></script>
+  <script src="miner_logic.js"></script>
+  <script src="miner.js"></script>
+  <script src="report_logic.js"></script>
+  <script src="report.js"></script>
 </body>
 </html>

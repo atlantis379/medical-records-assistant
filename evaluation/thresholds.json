@@ -1,0 +1,15 @@
+{
+  "status": "proposed - pending approval by the project owner and physicians",
+  "note": "PASS needs the point estimate to meet the threshold AND enough samples. FAIL is declared when a rate's 95% Wilson upper bound is below the threshold (or a limit is exceeded). Anything else is INCONCLUSIVE. Synthetic or transcript-only data can never PASS.",
+  "min_items": 30,
+  "min_samples": 30,
+  "metrics": {
+    "cer_content": { "max": 0.05, "label": "内容字错率（数字/单位不计格式差异）" },
+    "quantity_exact": { "min": 0.99, "label": "数量+单位完全正确（含空格样式）" },
+    "negation_recall": { "min": 0.99, "label": "否定与阴阳性表述正确" },
+    "negation_flips": { "max": 0, "label": "否定被说反的次数" },
+    "field_command": { "min": 0.98, "label": "字段口令识别" },
+    "must_not_hits": { "max": 0, "label": "出现禁止词（如相似药名）" },
+    "rtf": { "max": 1.0, "label": "实时率（推理耗时/音频时长）" }
+  }
+}

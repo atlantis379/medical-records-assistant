@@ -15,11 +15,16 @@ if errorlevel 1 (
   exit /b 1
 )
 
-for /f %%P in ('powershell -NoProfile -Command "$c=Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue; if($c){$c.OwningProcess ^| Select-Object -Unique}"') do taskkill /PID %%P /F >nul 2>nul
-set ASR_MODEL=paraformer-zh
-set ASR_STREAMING_MODEL=paraformer-zh-streaming
-set ASR_PRELOAD_STREAMING=1
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\service_ctl.ps1" -Action stop
+if errorlevel 2 (
+  echo Port 8765 is used by another program. It was not stopped; close it and run this file again.
+  pause
+  exit /b 1
+)
+set "ASR_MODEL=%USERPROFILE%\.cache\modelscope\hub\models\iic\speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+set "ASR_STREAMING_MODEL=%USERPROFILE%\.cache\modelscope\hub\models\iic\speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online"
+set ASR_PRELOAD_STREAMING=0
 set ASR_DEVICE=cuda
-echo Starting GPU ASR service v0.4 at http://127.0.0.1:8765
+echo Starting GPU ASR service at http://127.0.0.1:8765
 ".venv\Scripts\python.exe" -m uvicorn server.app:app --host 127.0.0.1 --port 8765
 pause

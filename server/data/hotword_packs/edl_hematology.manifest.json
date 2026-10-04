@@ -1,0 +1,29 @@
+{
+  "id": "edl_hematology",
+  "specialty": "hematology",
+  "label": "血液科基本药物词库",
+  "label_en": "Hematology essential medicines",
+  "filename": "edl_hematology.txt",
+  "language": "zh-CN",
+  "version": "2026-draft",
+  "status": "draft",
+  "compiled_on": "2026-10-04",
+  "compile_method": "scripts/build_edl_data.py 从目录 PDF 提取药品名称及其类别，scripts/build_edl_packs.py 按类别到科室的对应生成；对应关系由项目整理，未经医生审核。",
+  "sources": [
+    {
+      "tier": "A",
+      "name": "国家基本药物目录（2026年版）",
+      "url": null,
+      "used_for": "药品名称及其所属类别（官方公开文件）",
+      "page_read": true
+    }
+  ],
+  "reviewers": [],
+  "reviewed_on": null,
+  "review_notes": "",
+  "known_gaps": [
+    "目录只含基本药物，不含本科室常用的其他药品。",
+    "按类别归入科室是项目的整理，一种药可能被多个科室使用，须医生确认是否保留。",
+    "目录不含疾病名称；疾病、症状词需要另外的来源。"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "orthopedics",
+  "specialty": "orthopedics",
+  "label": "骨科词库",
+  "label_en": "Orthopedics",
+  "filename": "orthopedics.txt",
+  "language": "zh-CN",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "compiled_on": "2026-10-01",
+  "compile_method": "由 Claude 依据下列来源所涉的标准术语整理，并结合通用医学知识补充；词条未逐条对照来源核验，必须经专业医生逐条审核。",
+  "sources": [
+    {
+      "tier": "B",
+      "name": "好医术：实用骨科基础——胸腰椎骨折的分型与评分",
+      "url": "https://www.haoyishu.org/web/article/5295",
+      "used_for": "脊柱骨折分型（AO、Denis、TLICS、载荷分享评分）、脊柱解剖结构、ASIA 分级",
+      "page_read": true
+    },
+    {
+      "tier": "B",
+      "name": "骨科病例书写规范（知乎专栏）",
+      "url": "https://zhuanlan.zhihu.com/p/13109132779",
+      "used_for": "骨科体格检查记录要点（压痛、骨擦感、肌张力等）（仅依据搜索结果摘要，页面未读取；非权威来源，仅作线索）",
+      "page_read": false
+    },
+    {
+      "tier": "B",
+      "name": "T/BIA 9—2022 骨科疾病诊疗数据集——髋部骨折（团体标准）",
+      "url": "https://qxb-img-osscache.qixin.com/standards/d1bbf44552c2e234ccde7c2f97dd343e.pdf",
+      "used_for": "髋部骨折分型（Garden、Pauwels）（仅依据搜索结果摘要，页面未读取）",
+      "page_read": false
+    },
+    {
+      "tier": "B",
+      "name": "全国科学技术名词审定委员会 · 术语在线",
+      "url": "http://www.termonline.cn",
+      "used_for": "骨科学名词的规范写法，待医生审核时对照使用（尚未逐条核对）",
+      "page_read": false
+    }
+  ],
+  "reviewers": [],
+  "reviewed_on": null,
+  "review_notes": "",
+  "known_gaps": [
+    "未覆盖：手外科、小儿骨科、运动医学、骨肿瘤的细分术语。",
+    "关节活动度、肌力等检查的口述习惯（如“屈曲90度”）尚未收录，待医生提供样本。",
+    "药物仅含通用名，未审核是否覆盖本科室常用药。",
+    "含英文或符号的词（如 Lachman试验、4字试验）对热词是否有效尚未评测。"
+  ]
+}

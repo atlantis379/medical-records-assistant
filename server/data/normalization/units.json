@@ -1,0 +1,377 @@
+{
+  "version": "2026-10-01",
+  "status": "draft",
+  "note": "口述写法 -> 符号 -> 书写样式。样式 attach = 紧贴数字，space = 数字与单位之间空一格（见 docs/CLINICAL_NUMBER_UNIT_RULES.md 4.2）。草稿，待医生审核。新增单位只需在此追加，不必改代码。",
+  "units": [
+    {
+      "symbol": "mmHg",
+      "style": "attach",
+      "spoken": [
+        "毫米汞柱",
+        "毫米汞",
+        "mmHg"
+      ]
+    },
+    {
+      "symbol": "℃",
+      "style": "attach",
+      "spoken": [
+        "摄氏度",
+        "℃"
+      ]
+    },
+    {
+      "symbol": "次/分",
+      "style": "attach",
+      "spoken": [
+        "次每分钟",
+        "次每分",
+        "次/分钟",
+        "次／分钟",
+        "次/分",
+        "次／分"
+      ]
+    },
+    {
+      "symbol": "×10^9/L",
+      "style": "attach",
+      "spoken": [
+        "乘以十的九次方每升",
+        "乘十的九次方每升",
+        "十的九次方每升",
+        "×10^9/L",
+        "x10^9/L",
+        "10^9/L"
+      ]
+    },
+    {
+      "symbol": "×10^12/L",
+      "style": "attach",
+      "spoken": [
+        "乘以十的十二次方每升",
+        "乘十的十二次方每升",
+        "十的十二次方每升",
+        "×10^12/L",
+        "x10^12/L",
+        "10^12/L"
+      ]
+    },
+    {
+      "symbol": "kg",
+      "style": "space",
+      "spoken": [
+        "千克",
+        "公斤",
+        "kg"
+      ]
+    },
+    {
+      "symbol": "g",
+      "style": "space",
+      "spoken": [
+        "克",
+        "g"
+      ],
+      "not_followed_by": "雷|拉|林"
+    },
+    {
+      "symbol": "mg",
+      "style": "space",
+      "spoken": [
+        "毫克",
+        "mg"
+      ]
+    },
+    {
+      "symbol": "μg",
+      "style": "space",
+      "spoken": [
+        "微克",
+        "μg",
+        "ug",
+        "mcg"
+      ]
+    },
+    {
+      "symbol": "ng",
+      "style": "space",
+      "spoken": [
+        "纳克",
+        "ng"
+      ]
+    },
+    {
+      "symbol": "L",
+      "style": "space",
+      "spoken": [
+        "升",
+        "L"
+      ],
+      "not_followed_by": "高|级|压"
+    },
+    {
+      "symbol": "mL",
+      "style": "space",
+      "spoken": [
+        "毫升",
+        "mL",
+        "ml"
+      ]
+    },
+    {
+      "symbol": "dL",
+      "style": "space",
+      "spoken": [
+        "分升",
+        "dL"
+      ]
+    },
+    {
+      "symbol": "cm",
+      "style": "space",
+      "spoken": [
+        "厘米",
+        "cm"
+      ]
+    },
+    {
+      "symbol": "mm",
+      "style": "space",
+      "spoken": [
+        "毫米",
+        "mm"
+      ],
+      "not_followed_by": "汞"
+    },
+    {
+      "symbol": "mmol/L",
+      "style": "space",
+      "spoken": [
+        "毫摩尔每升",
+        "毫摩尔/升",
+        "mmol/L",
+        "mmol/l"
+      ]
+    },
+    {
+      "symbol": "μmol/L",
+      "style": "space",
+      "spoken": [
+        "微摩尔每升",
+        "微摩尔/升",
+        "μmol/L",
+        "umol/L",
+        "umol/l"
+      ]
+    },
+    {
+      "symbol": "g/L",
+      "style": "space",
+      "spoken": [
+        "克每升",
+        "克/升",
+        "g/L",
+        "g/l"
+      ]
+    },
+    {
+      "symbol": "mg/L",
+      "style": "space",
+      "spoken": [
+        "毫克每升",
+        "毫克/升",
+        "mg/L",
+        "mg/l"
+      ]
+    },
+    {
+      "symbol": "mg/dL",
+      "style": "space",
+      "spoken": [
+        "毫克每分升",
+        "mg/dL",
+        "mg/dl"
+      ]
+    },
+    {
+      "symbol": "ng/mL",
+      "style": "space",
+      "spoken": [
+        "纳克每毫升",
+        "纳克/毫升",
+        "ng/mL",
+        "ng/ml"
+      ]
+    },
+    {
+      "symbol": "pg/mL",
+      "style": "space",
+      "spoken": [
+        "皮克每毫升",
+        "pg/mL",
+        "pg/ml"
+      ]
+    },
+    {
+      "symbol": "μg/L",
+      "style": "space",
+      "spoken": [
+        "微克每升",
+        "μg/L",
+        "ug/L"
+      ]
+    },
+    {
+      "symbol": "U/L",
+      "style": "space",
+      "spoken": [
+        "单位每升",
+        "U/L",
+        "u/l"
+      ]
+    },
+    {
+      "symbol": "IU/L",
+      "style": "space",
+      "spoken": [
+        "国际单位每升",
+        "IU/L",
+        "iu/l"
+      ]
+    },
+    {
+      "symbol": "IU",
+      "style": "space",
+      "spoken": [
+        "国际单位",
+        "IU"
+      ]
+    },
+    {
+      "symbol": "U",
+      "style": "space",
+      "spoken": [
+        "单位"
+      ],
+      "not_followed_by": "每"
+    },
+    {
+      "symbol": "mL/kg",
+      "style": "space",
+      "spoken": [
+        "毫升每公斤",
+        "毫升每千克",
+        "mL/kg",
+        "ml/kg"
+      ]
+    },
+    {
+      "symbol": "mg/kg",
+      "style": "space",
+      "spoken": [
+        "毫克每公斤",
+        "毫克每千克",
+        "mg/kg"
+      ]
+    },
+    {
+      "symbol": "μg/kg/min",
+      "style": "space",
+      "spoken": [
+        "微克每公斤每分钟",
+        "微克每千克每分钟",
+        "μg/kg/min",
+        "ug/kg/min"
+      ]
+    },
+    {
+      "symbol": "L/min",
+      "style": "space",
+      "spoken": [
+        "升每分钟",
+        "升每分",
+        "升/分钟",
+        "L/min",
+        "l/min"
+      ]
+    },
+    {
+      "symbol": "mL/h",
+      "style": "space",
+      "spoken": [
+        "毫升每小时",
+        "毫升/小时",
+        "mL/h",
+        "ml/h"
+      ]
+    },
+    {
+      "symbol": "mg/h",
+      "style": "space",
+      "spoken": [
+        "毫克每小时",
+        "毫克/小时",
+        "mg/h"
+      ]
+    },
+    {
+      "symbol": "cmH2O",
+      "style": "space",
+      "spoken": [
+        "厘米水柱",
+        "cmH2O",
+        "cmh2o"
+      ]
+    },
+    {
+      "symbol": "kPa",
+      "style": "space",
+      "spoken": [
+        "千帕",
+        "kPa",
+        "kpa"
+      ]
+    }
+  ],
+  "frequencies": {
+    "per_day_words": [
+      "每日",
+      "每天",
+      "一日",
+      "一天",
+      "每24小时",
+      "每二十四小时"
+    ],
+    "per_day_abbr": {
+      "1": "qd",
+      "2": "bid",
+      "3": "tid",
+      "4": "qid"
+    },
+    "every_hours_abbr": "q{n}h",
+    "note": "每日三次 -> tid；每八小时一次 -> q8h。缩写前与数字或单位之间空一格。"
+  },
+  "rate_prefixes": [
+    {
+      "prefix": "每分钟",
+      "unit_spoken": "升",
+      "symbol": "L/min"
+    },
+    {
+      "prefix": "每分钟",
+      "unit_spoken": "毫升",
+      "symbol": "mL/min"
+    },
+    {
+      "prefix": "每小时",
+      "unit_spoken": "毫升",
+      "symbol": "mL/h"
+    },
+    {
+      "prefix": "每小时",
+      "unit_spoken": "毫克",
+      "symbol": "mg/h"
+    }
+  ],
+  "rate_prefixes_note": "每分钟三升 -> 3 L/min：前缀 + 数字 + 单位的口述速率写法。"
+}

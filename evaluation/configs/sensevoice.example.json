@@ -1,0 +1,7 @@
+{
+  "note": "SenseVoice-Small has no hotword support. It runs only if iic/SenseVoiceSmall is already in the local ModelScope cache; nothing is downloaded automatically. Use with: --configs evaluation/configs/sensevoice.example.json",
+  "configs": [
+    { "name": "paraformer_specialty", "backend": "paraformer", "hotwords": "specialty", "specialties": "sample", "include_draft": true, "postprocess": true },
+    { "name": "sensevoice", "backend": "sensevoice", "hotwords": "off", "specialties": "sample", "postprocess": true }
+  ]
+}

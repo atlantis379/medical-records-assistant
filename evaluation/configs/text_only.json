@@ -1,0 +1,7 @@
+{
+  "note": "For manifests that carry raw recognizer text (hypothesis) instead of audio. Shows what the text pipeline does with it.",
+  "configs": [
+    { "name": "raw_text", "backend": "transcripts", "hotwords": "off", "postprocess": false },
+    { "name": "with_postprocessing", "backend": "transcripts", "hotwords": "off", "specialties": "sample", "postprocess": true }
+  ]
+}

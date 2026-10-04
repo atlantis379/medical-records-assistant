@@ -1,0 +1,6 @@
+{
+  "ids": [
+    "effpekjjdemcgmbhlbfigchhhhmppbal"
+  ],
+  "note": "Browser extensions allowed to change data and use dictation (server/security.py). An empty list allows every extension. After publishing to a store, add the store's ID here. Environment variable BINGLI_ALLOWED_EXTENSIONS overrides this file ('*' allows all)."
+}

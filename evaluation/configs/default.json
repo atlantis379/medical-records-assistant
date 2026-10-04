@@ -1,0 +1,9 @@
+{
+  "note": "Each config answers one question. Compare paraformer_no_hotwords with paraformer_common to see what shared hotwords add, paraformer_common with paraformer_specialty for the specialty packs, and paraformer_specialty with paraformer_specialty_raw_text for what post-processing (numbers, units, corrections) fixes.",
+  "configs": [
+    { "name": "paraformer_no_hotwords", "backend": "paraformer", "hotwords": "off", "specialties": "sample", "postprocess": true },
+    { "name": "paraformer_common", "backend": "paraformer", "hotwords": "common", "postprocess": true },
+    { "name": "paraformer_specialty", "backend": "paraformer", "hotwords": "specialty", "specialties": "sample", "include_draft": true, "postprocess": true },
+    { "name": "paraformer_specialty_raw_text", "backend": "paraformer", "hotwords": "specialty", "specialties": "sample", "include_draft": true, "postprocess": false }
+  ]
+}

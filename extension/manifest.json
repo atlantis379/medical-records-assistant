@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_appName__",
   "version": "0.10.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAufSecRZAxuHJac28KeBHjMZbBgeg9ziXbtdEuUgb6a1NEeImj10Azo2W2QcjJBPiiP4BYpXgzxy3gSwcKsH34zeBIBeQ7/KUVJB70aZdVBARkukP9JNlKEIyINKDLxDa++5TNMrZTG+BE1Tn3sMrg0g3irndoUlTQLhcTda6JHNL0FmZJpa+tNGoW7xFPxr1O6+keR0jkqXqyk0ExCSPeB79HOmoJOtd7/1nsNzxqsgnqksTdrn0+XLSn4Cf7VhkHiHWVqnwthogfyciEHlHGSPPGjavockiPQaNQVAuO1/ZDe0ZE7DkSP67qiZC5yBtPkVfX5+mgFx0pRZh5W5eJwIDAQAB",
   "description": "__MSG_appDescription__",
   "action": {
     "default_title": "__MSG_actionTitle__"

@@ -18,21 +18,57 @@ import numpy as np
 from fastapi import Body, FastAPI, File, Form, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
+from . import accounts, auth_api, miner_api, report_api, security, service_control, webapp
+from .clinical import phonetics
+from .clinical.numbers import parse_cn_number
+from .clinical.quantities import normalize_quantities
+
 APP_DIR = Path(__file__).resolve().parent
 HOTWORD_FILE = APP_DIR / "data" / "infectious_disease_hotwords.txt"
 HOTWORD_PACK_DIR = APP_DIR / "data" / "hotword_packs"
 USER_HOTWORD_FILE = HOTWORD_PACK_DIR / "user_custom.txt"
 FEEDBACK_FILE = APP_DIR / "data" / "feedback.jsonl"
-HOTWORD_PACKS = [
-    {"id": "general_medical", "filename": "general_medical.txt", "label": "通用医学词库", "label_en": "General medical", "built_in": True, "enabled": True},
-    {"id": "respiratory_history", "filename": "respiratory_history.txt", "label": "呼吸道病史词库", "label_en": "Respiratory history", "built_in": True, "enabled": True},
-    {"id": "medical_history", "filename": "medical_history.txt", "label": "既往史词库", "label_en": "Past medical history", "built_in": True, "enabled": True},
-    {"id": "clinical_metrics", "filename": "clinical_metrics.txt", "label": "临床指标词库", "label_en": "Clinical metrics", "built_in": True, "enabled": True},
-    {"id": "infectious_disease", "filename": "infectious_disease.txt", "label": "感染科词库", "label_en": "Infectious disease", "built_in": True, "enabled": True},
-    {"id": "antimicrobials", "filename": "antimicrobials.txt", "label": "抗菌药词库", "label_en": "Antimicrobials", "built_in": True, "enabled": True},
-    {"id": "pathogens", "filename": "pathogens.txt", "label": "病原体词库", "label_en": "Pathogens", "built_in": True, "enabled": True},
-    {"id": "user_custom", "filename": "user_custom.txt", "label": "用户自定义热词", "label_en": "User custom", "built_in": False, "enabled": True},
+ALL_SPECIALTIES = "*"
+# Specialties a doctor can pick on this machine. Pack applicability is declared
+# per pack below (built-in packs) or in a *.manifest.json (specialty packs).
+SPECIALTIES = [
+    {"id": "infectious_disease", "label": "感染科", "label_en": "Infectious disease"},
+    {"id": "respiratory_critical_care", "label": "呼吸与危重症科", "label_en": "Respiratory & critical care"},
+    {"id": "orthopedics", "label": "骨科", "label_en": "Orthopedics"},
+    # Departments below have only the essential-medicines draft pack so far (scripts/build_edl_packs.py)
+    {"id": "cardiology", "label": "心血管内科", "label_en": "Cardiology"},
+    {"id": "neurology", "label": "神经内科", "label_en": "Neurology"},
+    {"id": "psychiatry", "label": "精神科", "label_en": "Psychiatry"},
+    {"id": "gastroenterology", "label": "消化内科", "label_en": "Gastroenterology"},
+    {"id": "endocrinology", "label": "内分泌科", "label_en": "Endocrinology"},
+    {"id": "nephrology_urology", "label": "肾内科与泌尿外科", "label_en": "Nephrology & urology"},
+    {"id": "hematology", "label": "血液科", "label_en": "Hematology"},
+    {"id": "oncology", "label": "肿瘤科", "label_en": "Oncology"},
+    {"id": "rheumatology_immunology", "label": "风湿免疫科", "label_en": "Rheumatology & immunology"},
+    {"id": "anesthesiology", "label": "麻醉科", "label_en": "Anesthesiology"},
+    {"id": "dermatology", "label": "皮肤科", "label_en": "Dermatology"},
+    {"id": "ophthalmology", "label": "眼科", "label_en": "Ophthalmology"},
+    {"id": "ent", "label": "耳鼻喉科", "label_en": "ENT"},
+    {"id": "obstetrics_gynecology", "label": "妇产科", "label_en": "Obstetrics & gynecology"},
+    {"id": "pediatrics", "label": "儿科", "label_en": "Pediatrics"},
+    {"id": "tcm", "label": "中医科", "label_en": "Traditional Chinese medicine"},
 ]
+SPECIALTY_IDS = [item["id"] for item in SPECIALTIES]
+# Built-in packs shipped before specialty support. `priority`: lower wins when the
+# hotword budget is tight. `specialties`: who gets the pack ("*" = everyone).
+HOTWORD_PACKS = [
+    {"id": "user_custom", "filename": "user_custom.txt", "label": "用户自定义热词", "label_en": "User custom", "built_in": False, "enabled": True, "status": "released", "priority": 0, "specialties": [ALL_SPECIALTIES]},
+    {"id": "respiratory_history", "filename": "respiratory_history.txt", "label": "呼吸道病史词库", "label_en": "Respiratory history", "built_in": True, "enabled": True, "status": "released", "priority": 1, "specialties": ["infectious_disease", "respiratory_critical_care"]},
+    {"id": "medical_history", "filename": "medical_history.txt", "label": "既往史词库", "label_en": "Past medical history", "built_in": True, "enabled": True, "status": "released", "priority": 2, "specialties": [ALL_SPECIALTIES]},
+    {"id": "clinical_metrics", "filename": "clinical_metrics.txt", "label": "临床指标词库", "label_en": "Clinical metrics", "built_in": True, "enabled": True, "status": "released", "priority": 3, "specialties": [ALL_SPECIALTIES]},
+    {"id": "antimicrobials", "filename": "antimicrobials.txt", "label": "抗菌药词库", "label_en": "Antimicrobials", "built_in": True, "enabled": True, "status": "released", "priority": 4, "specialties": ["infectious_disease", "respiratory_critical_care", "orthopedics"]},
+    {"id": "pathogens", "filename": "pathogens.txt", "label": "病原体词库", "label_en": "Pathogens", "built_in": True, "enabled": True, "status": "released", "priority": 5, "specialties": ["infectious_disease", "respiratory_critical_care"]},
+    {"id": "infectious_disease", "filename": "infectious_disease.txt", "label": "感染科词库", "label_en": "Infectious disease", "built_in": True, "enabled": True, "status": "released", "priority": 6, "specialties": ["infectious_disease"]},
+    {"id": "general_medical", "filename": "general_medical.txt", "label": "通用医学词库", "label_en": "General medical", "built_in": True, "enabled": True, "status": "released", "priority": 7, "specialties": [ALL_SPECIALTIES]},
+]
+SPECIALTY_PACK_PRIORITY = 1
+DEFAULT_SPECIALTIES = [item.strip() for item in os.getenv("APP_SPECIALTIES", "infectious_disease").split(",") if item.strip() in SPECIALTY_IDS]
+ALLOW_DRAFT_PACKS = os.getenv("ASR_ALLOW_DRAFT_PACKS", "0") == "1"
 MODEL_NAME = os.getenv("ASR_MODEL", "paraformer-zh")
 STREAMING_MODEL_NAME = os.getenv("ASR_STREAMING_MODEL", "paraformer-zh-streaming")
 EN_MODEL_NAME = os.getenv("ASR_MODEL_EN", "paraformer-en")
@@ -58,6 +94,10 @@ MODEL_CACHE_ALIASES = {
         "paraformer-zh-streaming",
         "speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online",
     ],
+    "paraformer-en": [
+        "paraformer-en",
+        "speech_paraformer-large-vad-punc_asr_nat-en-16k-common-vocab10020",
+    ],
     "fsmn-vad": [
         "fsmn-vad",
         "speech_fsmn_vad_zh-cn-16k-common-pytorch",
@@ -68,7 +108,19 @@ MODEL_CACHE_ALIASES = {
     ],
 }
 
-app = FastAPI(title="病历助手本地服务", version="0.10.0")
+APP_VERSION = "0.10.0"  # keep equal to extension/manifest.json (enforced by tests/test_release_consistency.py)
+APP_BUILD = "asr-quality-performance-20260811"
+
+app = FastAPI(title="病历助手本地服务", version=APP_VERSION)
+service_control.configure(APP_VERSION, APP_BUILD)
+app.include_router(service_control.router)
+app.include_router(auth_api.router)
+app.include_router(webapp.router)
+miner_api.configure(lambda: HOTWORD_PACK_DIR, lambda: SPECIALTY_IDS, lambda: known_hotword_words())
+app.include_router(miner_api.router)
+report_api.configure(lambda: imaging_and_known_terms())
+app.include_router(report_api.router)
+app.add_middleware(auth_api.AuthGuard)       # innermost: runs after the origin check and the CORS handling
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[],
@@ -77,6 +129,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "OPTIONS"],
     allow_headers=["*"],
 )
+app.add_middleware(security.OriginGuard)   # added last = runs first: refuses foreign pages before any endpoint
 
 model = None
 english_model = None
@@ -85,6 +138,7 @@ english_model_lock = Lock()
 streaming_model = None
 streaming_model_lock = Lock()
 streaming_model_error = None
+batch_model_error = None
 funasr_runtime_lock = Lock()
 asr_stats_lock = Lock()
 asr_stats = {
@@ -131,28 +185,126 @@ def read_pack_words(pack: dict) -> list[str]:
     return read_words_from_file(pack_path(pack))
 
 
+def custom_hotword_file() -> Path | None:
+    """The logged-in doctor's own word list, or None when there is no login (tests, evaluation)."""
+    session = auth_api.logged_in_session()
+    return accounts.get_store().user_dir(session.user_id) / "hotwords.txt" if session else None
+
+
 def read_custom_hotwords() -> list[str]:
+    own = custom_hotword_file()
+    if own is not None:
+        return read_words_from_file(own)
     if USER_HOTWORD_FILE.exists():
         return read_words_from_file(USER_HOTWORD_FILE)
     return read_words_from_file(HOTWORD_FILE)
 
 
-def read_hotword_entries() -> list[dict]:
+def load_specialty_packs() -> list[dict]:
+    """Specialty packs are described by `<id>.manifest.json` next to their word list.
+
+    Anything not explicitly `reviewed` by a named reviewer is treated as a draft,
+    and drafts stay inactive unless the doctor opts in (docs/DATA_SOURCE_POLICY.md).
+    """
+    packs: list[dict] = []
+    for path in sorted(HOTWORD_PACK_DIR.glob("*.manifest.json")):
+        try:
+            manifest = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(manifest, dict):
+            continue
+        pack_id = str(manifest.get("id", "")).strip()
+        filename = str(manifest.get("filename", "")).strip()
+        specialty = str(manifest.get("specialty", "")).strip()
+        if not (pack_id and filename and specialty) or Path(filename).name != filename:
+            continue
+        reviewers = [str(item) for item in manifest.get("reviewers", []) if str(item).strip()] if isinstance(manifest.get("reviewers"), list) else []
+        reviewed = manifest.get("status") == "reviewed" and bool(reviewers)
+        packs.append({
+            "id": pack_id,
+            "filename": filename,
+            "label": str(manifest.get("label", pack_id)),
+            "label_en": str(manifest.get("label_en", manifest.get("label", pack_id))),
+            "built_in": True,
+            "enabled": bool(manifest.get("enabled", True)),
+            "status": "reviewed" if reviewed else "draft",
+            "priority": SPECIALTY_PACK_PRIORITY,
+            "specialties": [specialty],
+            "version": str(manifest.get("version", "")),
+            "reviewers": reviewers,
+        })
+    return packs
+
+
+def all_packs() -> list[dict]:
+    packs = list(HOTWORD_PACKS)
+    known = {pack["id"] for pack in packs}
+    for pack in load_specialty_packs():
+        if pack["id"] not in known:
+            packs.append(pack)
+            known.add(pack["id"])
+    return packs
+
+
+def known_hotword_words() -> set[str]:
+    """Every word already in some pack (lower case): the hotword extraction does not offer these again."""
+    words: set[str] = set()
+    for pack in all_packs():
+        words.update(word.lower() for word in (read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack)))
+    return words
+
+
+def normalize_specialties(value) -> list[str]:
+    """None -> the configured default; anything else is filtered to known specialties.
+
+    An explicit empty selection stays empty (only shared packs apply).
+    """
+    if value is None:
+        return list(DEFAULT_SPECIALTIES)
+    items = value.split(",") if isinstance(value, str) else list(value)
+    result: list[str] = []
+    for item in items:
+        key = str(item).strip()
+        if key in SPECIALTY_IDS and key not in result:
+            result.append(key)
+    return result
+
+
+def resolve_specialties(specialties=None, department: str | None = None) -> list[str]:
+    if specialties is not None:
+        return normalize_specialties(specialties)
+    if department is not None:  # legacy single-department callers
+        return normalize_specialties([department])
+    return normalize_specialties(None)
+
+
+def pack_is_active(pack: dict, specialties: list[str], include_draft: bool | None = None) -> bool:
+    if not pack.get("enabled", True):
+        return False
+    allow_draft = ALLOW_DRAFT_PACKS if include_draft is None else include_draft
+    if pack.get("status", "released") == "draft" and not allow_draft:
+        return False
+    targets = pack.get("specialties") or []
+    return ALL_SPECIALTIES in targets or any(item in targets for item in specialties)
+
+
+def read_hotword_entries(specialties=None, include_draft: bool | None = None, department: str | None = None) -> list[dict]:
+    selected = resolve_specialties(specialties, department)
     entries: list[dict] = []
-    priority = {"user_custom": 0, "respiratory_history": 1, "medical_history": 2, "clinical_metrics": 3, "antimicrobials": 4, "pathogens": 5, "infectious_disease": 6, "general_medical": 7}
-    for pack in HOTWORD_PACKS:
-        if not pack.get("enabled", True):
+    for pack in all_packs():
+        if not pack_is_active(pack, selected, include_draft):
             continue
         words = read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack)
         for order, word in enumerate(words):
-            entries.append({"word": word, "pack_id": pack["id"], "priority": priority.get(pack["id"], 9), "order": order})
+            entries.append({"word": word, "pack_id": pack["id"], "priority": pack.get("priority", 9), "order": order})
     return entries
 
 
-def read_hotwords() -> list[str]:
+def read_hotwords(specialties=None, include_draft: bool | None = None, department: str | None = None) -> list[str]:
     combined: list[str] = []
     seen: set[str] = set()
-    for entry in read_hotword_entries():
+    for entry in read_hotword_entries(specialties, include_draft, department):
         key = entry["word"].casefold()
         if key not in seen:
             combined.append(entry["word"])
@@ -165,16 +317,14 @@ def resolve_asr_profile(value: str | None = None) -> dict:
     return ASR_PROFILES.get(key, ASR_PROFILES["balanced"])
 
 
-def active_hotwords(profile: dict | None = None, department: str = "infectious_disease") -> list[str]:
-    if department != "infectious_disease":
-        return []
+def active_hotwords(profile: dict | None = None, department: str | None = None, specialties=None, include_draft: bool | None = None) -> list[str]:
     cfg = profile or resolve_asr_profile()
     limit = int(cfg.get("hotword_limit", 260))
     char_limit = int(cfg.get("hotword_char_limit", 4200))
     selected: list[str] = []
     seen: set[str] = set()
     total_chars = 0
-    entries = sorted(read_hotword_entries(), key=lambda item: (item["priority"], -len(item["word"]), item["order"]))
+    entries = sorted(read_hotword_entries(specialties, include_draft, department), key=lambda item: (item["priority"], -len(item["word"]), item["order"]))
     for entry in entries:
         word = entry["word"].strip()
         key = word.casefold()
@@ -189,31 +339,62 @@ def active_hotwords(profile: dict | None = None, department: str = "infectious_d
     return selected
 
 
-def load_hotwords(profile: dict | None = None, department: str = "infectious_disease") -> str:
-    return " ".join(active_hotwords(profile, department))
+def load_hotwords(profile: dict | None = None, department: str | None = None, specialties=None, include_draft: bool | None = None) -> str:
+    return " ".join(active_hotwords(profile, department, specialties, include_draft))
 
 
 def write_hotwords(words: list[str]) -> list[str]:
     cleaned = clean_hotword_values(words)
-    HOTWORD_PACK_DIR.mkdir(parents=True, exist_ok=True)
     content = "# 用户自定义热词。每行一个词。\n" + "\n".join(cleaned) + "\n"
+    own = custom_hotword_file()
+    if own is not None:                      # each doctor has their own list
+        own.parent.mkdir(parents=True, exist_ok=True)
+        own.write_text(content, encoding="utf-8")
+        return cleaned
+    HOTWORD_PACK_DIR.mkdir(parents=True, exist_ok=True)
     USER_HOTWORD_FILE.write_text(content, encoding="utf-8")
     HOTWORD_FILE.parent.mkdir(parents=True, exist_ok=True)
     HOTWORD_FILE.write_text(content, encoding="utf-8")
     return cleaned
 
 
-def pack_payload(pack: dict) -> dict:
+def pack_payload(pack: dict, specialties=None, include_draft: bool | None = None) -> dict:
     words = read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack)
+    selected = resolve_specialties(specialties)
     return {
         "id": pack["id"],
         "label": pack["label"],
         "label_en": pack["label_en"],
         "built_in": pack["built_in"],
         "enabled": pack.get("enabled", True),
+        "status": pack.get("status", "released"),
+        "specialties": list(pack.get("specialties", [ALL_SPECIALTIES])),
+        "version": pack.get("version", ""),
+        "reviewers": list(pack.get("reviewers", [])),
+        "active": pack_is_active(pack, selected, include_draft),
         "count": len(words),
         "filename": pack["filename"],
     }
+
+
+class ModelUnavailable(RuntimeError):
+    """A recognition model is not on this computer and may not be downloaded (offline mode)."""
+
+
+def offline_mode() -> bool:
+    """The launcher and the start scripts set MODELSCOPE_OFFLINE=1: models come from the package, never the internet."""
+    return os.getenv("MODELSCOPE_OFFLINE", "").strip() == "1"
+
+
+def model_available(model_name: str) -> bool:
+    return any(path.is_dir() and any(path.iterdir()) for path in model_cache_candidates(model_name))
+
+
+def ensure_model_available(model_name: str, label: str) -> None:
+    """Without this, a model missing from an offline package is quietly downloaded (about 900 MB for the English
+    one) into the package folder, or hangs where there is no internet, while the doctor waits."""
+    if offline_mode() and not model_available(model_name):
+        raise ModelUnavailable(f"{label}没有随这个安装包提供，离线版不会联网下载，所以暂时不能使用。")
 
 
 def build_asr_model(model_name: str):
@@ -224,6 +405,7 @@ def build_asr_model(model_name: str):
     """
     from funasr import AutoModel
 
+    ensure_model_available(model_name, "识别模型")
     kwargs = {
         "model": model_name,
         "device": DEVICE,
@@ -261,6 +443,7 @@ def get_english_model():
             return english_model
         if not EN_MODEL_NAME:
             raise RuntimeError("英文识别模型未配置，请设置 ASR_MODEL_EN")
+        ensure_model_available(EN_MODEL_NAME, "英文识别模型")
         try:
             english_model = build_asr_model(EN_MODEL_NAME)
         except ImportError as exc:
@@ -278,7 +461,7 @@ def resolve_language(value: str | None) -> str:
 
 
 CN_DIGIT_MAP = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
-CN_NUMBER_PATTERN = r"[零〇一二两三四五六七八九十百点半]+"
+CN_NUMBER_PATTERN = r"[零〇一二两三四五六七八九十百千万点半]+"
 NUMBER_TOKEN_PATTERN = rf"[<>≤≥]?\d+(?:\.\d+)?(?:[到至~～－—-]\d+(?:\.\d+)?)?|{CN_NUMBER_PATTERN}"
 CLINICAL_METRIC_NAMES = [
     "超敏C反应蛋白", "C反应蛋白", "CRP", "降钙素原", "PCT",
@@ -329,6 +512,9 @@ def spoken_number_to_digits(value: str) -> str:
         return raw
     if re.search(r"\d", raw):
         return re.sub(r"(?<=\d)[到至~～－—](?=\d)", "-", raw)
+    parsed = parse_cn_number(raw)
+    if parsed is not None:
+        return parsed
     if raw.endswith("半"):
         base = parse_chinese_integer(raw[:-1])
         if base is not None:
@@ -398,8 +584,18 @@ def metric_value_prefix(prefix: str | None) -> str:
     return aliases.get(value, "")
 
 
-def normalize_clinical_text(text: str) -> str:
-    text = re.sub(r"\s+", "", text).strip()
+_CJK = "　-〿一-鿿＀-￯"
+
+
+def collapse_dictation_whitespace(text: str) -> str:
+    """Drop spaces next to Chinese text but keep the ones between Latin/number tokens (PaO2 60 mmHg)."""
+    value = re.sub(rf"(?<=[{_CJK}])\s+|\s+(?=[{_CJK}])", "", (text or "").strip())
+    return re.sub(r"\s{2,}", " ", value)
+
+
+def normalize_clinical_text_with_notes(text: str) -> tuple[str, list[dict]]:
+    """Normalize dictated text; also return notices for numbers that could not be read safely."""
+    text = collapse_dictation_whitespace(text)
     spoken_commands = [
         ("另起一段", "\n\n"), ("换一行", "\n"), ("换行", "\n"),
         ("句号", "。"), ("逗号", "，"), ("分号", "；"), ("冒号", "："),
@@ -407,10 +603,10 @@ def normalize_clinical_text(text: str) -> str:
     ]
     for source, target in spoken_commands:
         text = text.replace(source, target)
+    # numbers followed by a known unit / after a known measure name (server/clinical/quantities.py)
+    text, notes = normalize_quantities(text)
     replacements = {
-        "摄氏度": "℃", "毫克": " mg", "微克": " μg", "毫升": " mL",
-        "国际单位": " IU", "百分之": "%", "每八小时一次": "q8h",
-        "每日一次": "qd", "每日两次": "bid", "每日三次": "tid", "每日四次": "qid",
+        "摄氏度": "℃", "毫克": " mg", "微克": " μg", "毫升": " mL", "国际单位": " IU",
     }
     for source, target in replacements.items():
         text = text.replace(source, target)
@@ -419,7 +615,11 @@ def normalize_clinical_text(text: str) -> str:
     text = re.sub(r"[，,]{2,}", "，", text)
     text = re.sub(r"[。\.]{2,}", "。", text)
     text = re.sub(r" *\n *", "\n", text)
-    return text.strip()
+    return text.strip(), notes
+
+
+def normalize_clinical_text(text: str) -> str:
+    return normalize_clinical_text_with_notes(text)[0]
 
 
 def normalize_clinical_metric_text(text: str) -> str:
@@ -504,7 +704,7 @@ def normalize_vital_sign_text(text: str) -> str:
     value = re.sub(rf"({rate_names})({NUMBER_TOKEN_PATTERN})(?:次)?/分", replace_rate, value)
     value = re.sub(rf"({rate_names})({NUMBER_TOKEN_PATTERN})次(?!/分)", replace_rate, value)
 
-    oxygen_names = r"血氧饱和度|指脉氧|SpO2"
+    oxygen_names = r"血氧饱和度|指脉氧|SpO2|血氧"
 
     def replace_spoken_percent(match: re.Match) -> str:
         return f"{match.group(1)}{spoken_number_to_digits(match.group(2))}%"
@@ -529,7 +729,7 @@ def normalize_lab_unit_text(text: str) -> str:
     value = text or ""
     value = value.replace("百分比", "%")
     unit_rules = [
-        (r"(?:乘以)?(?:十的九次方|10的9次方)(?:每升|/升|／升)?", "×10^9/L"),
+        (r"(?:乘以|乘)?(?:十的九次方|10的9次方)(?:每升|/升|／升)?", "×10^9/L"),
         (r"(?i)(?:x|×)\s*10\s*(?:\^|的)?\s*9\s*/?\s*(?:l|L|升)", "×10^9/L"),
         (r"(?i)\s*(?:mmol|毫摩尔)\s*(?:每升|/升|／升|/L|／L)", "mmol/L"),
         (r"(?i)\s*(?:μmol|umol|微摩尔)\s*(?:每升|/升|／升|/L|／L)", "μmol/L"),
@@ -567,13 +767,13 @@ def normalize_lab_metric_text(text: str) -> str:
         return f"{name} {format_number_with_unit(number, unit)}"
 
     value = re.sub(
-        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?(?:百分之|%)({NUMBER_TOKEN_PATTERN})",
+        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?\s*(?:百分之|%)({NUMBER_TOKEN_PATTERN})",
         replace_metric_percent,
         value,
         flags=re.IGNORECASE,
     )
     value = re.sub(
-        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?({NUMBER_TOKEN_PATTERN})\s*({CLINICAL_UNIT_PATTERN})?",
+        rf"({CLINICAL_METRIC_PATTERN})(?:({connector_pattern}))?\s*({NUMBER_TOKEN_PATTERN})\s*({CLINICAL_UNIT_PATTERN})?",
         replace_metric,
         value,
         flags=re.IGNORECASE,
@@ -601,9 +801,13 @@ def normalize_english_text(text: str) -> str:
 
 
 def normalize_text_for_language(text: str, language: str) -> str:
+    return normalize_text_with_notes_for_language(text, language)[0]
+
+
+def normalize_text_with_notes_for_language(text: str, language: str) -> tuple[str, list[dict]]:
     if language == "en-US":
-        return normalize_english_text(text)
-    return normalize_clinical_text(text)
+        return normalize_english_text(text), []
+    return normalize_clinical_text_with_notes(text)
 
 
 def analyze_wav_quality(audio: bytes) -> dict:
@@ -697,6 +901,8 @@ def model_cache_candidates(model_name: str) -> list[Path]:
             for owner in owners:
                 candidates.append(root / "models" / owner / leaf)
                 candidates.append(root / "hub" / "models" / owner / leaf)
+                candidates.append(root / "models" / f"{owner}--{leaf}")          # layout newer ModelScope versions write
+                candidates.append(root / "hub" / "models" / f"{owner}--{leaf}")
             candidates.append(root / "models" / leaf)
             candidates.append(root / leaf)
     unique: list[Path] = []
@@ -742,7 +948,7 @@ def module_status(module_name: str) -> dict:
 def build_self_check() -> dict:
     dependencies = [module_status(name) for name in ["fastapi", "uvicorn", "numpy", "funasr", "modelscope", "torch"]]
     models = model_package_status()
-    hotword_packs = [pack_payload(pack) for pack in HOTWORD_PACKS]
+    hotword_packs = [pack_payload(pack) for pack in all_packs()]
     correction_count = len(read_correction_rules())
     missing_required = [item["label"] for item in models if item["required"] and not item["loaded"] and not item["installed"]]
     checks: list[dict] = [
@@ -768,7 +974,7 @@ def build_self_check() -> dict:
     return {
         "overall": overall,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "app": {"name": "病历助手", "version": app.version, "build": "diagnostics-segmented-asr-20260811"},
+        "app": {"name": "病历助手", "version": app.version, "build": APP_BUILD},
         "runtime": {"python": sys.version.split()[0], "platform": platform.platform(), "device": DEVICE, "app_dir": str(APP_DIR), "modelscope_cache": os.getenv("MODELSCOPE_CACHE")},
         "checks": checks,
         "dependencies": dependencies,
@@ -796,22 +1002,35 @@ def read_correction_rules() -> list[dict]:
         items = payload.get("rules", payload if isinstance(payload, list) else [])
         if not isinstance(items, list):
             continue
+        # A file (top-level) or a single rule may restrict itself to some specialties;
+        # without a tag the rule applies to everyone.
+        file_scope = payload.get("specialties") if isinstance(payload, dict) else None
         for item in items:
             if not isinstance(item, dict):
                 continue
             source = str(item.get("from", "")).strip()
             target = str(item.get("to", "")).strip()
             if source and target and source != target:
-                rules.append({"from": source, "to": target, "category": item.get("category", "general"), "source": path.name})
+                scope = item.get("specialties", file_scope)
+                scope = [str(entry) for entry in scope] if isinstance(scope, list) and scope else [ALL_SPECIALTIES]
+                rules.append({"from": source, "to": target, "category": item.get("category", "general"), "source": path.name, "specialties": scope})
     return rules
 
 
-def apply_correction_rules(text: str, language: str = "zh-CN") -> tuple[str, list[dict]]:
+def rule_applies(rule: dict, specialties: list[str]) -> bool:
+    scope = rule.get("specialties") or [ALL_SPECIALTIES]
+    return ALL_SPECIALTIES in scope or any(item in scope for item in specialties)
+
+
+def apply_correction_rules(text: str, language: str = "zh-CN", specialties=None) -> tuple[str, list[dict]]:
     value = text or ""
     applied: list[dict] = []
     if not value:
         return value, applied
+    selected = resolve_specialties(specialties)
     for rule in read_correction_rules():
+        if not rule_applies(rule, selected):
+            continue
         source = rule["from"]
         target = rule["to"]
         if re.fullmatch(r"[A-Za-z0-9+./-]+", source):
@@ -901,11 +1120,14 @@ def health():
         "streaming_model_loaded": streaming_model is not None,
         "streaming_supported": True,
         "streaming_model_error": streaming_model_error,
-        "build": "asr-quality-performance-20260811",
+        "batch_model_error": batch_model_error,
+        "build": APP_BUILD,
         "languages": {"ui": ["zh-CN", "en-US"], "dictation": ["zh-CN", "en-US"]},
         "english_model": EN_MODEL_NAME,
         "english_model_loaded": english_model is not None,
-        "hotword_pack_count": len(HOTWORD_PACKS),
+        "english_dictation_available": (not offline_mode()) or model_available(EN_MODEL_NAME),
+        "hotword_pack_count": len(all_packs()),
+        "default_specialties": list(DEFAULT_SPECIALTIES),
         "asr_profile": resolve_asr_profile(),
         "correction_rule_count": len(read_correction_rules()),
     }
@@ -959,7 +1181,7 @@ def correction_rules():
 def license_status():
     """Return the local feature tier.
 
-    v0.6 ships as a free local-first MVP. This endpoint gives the extension,
+    The app ships as a free local-first build. This endpoint gives the extension,
     installer, and future Pro/Hospital licensing flow a stable integration point
     without changing dictation behavior.
     """
@@ -985,7 +1207,9 @@ def license_status():
 
 @app.get("/hotwords")
 def get_hotwords():
-    words = read_hotwords()
+    # Only the editable user list. Returning the merged built-in + user words made
+    # "save" copy every built-in word into user_custom, where it outranks the packs.
+    words = read_custom_hotwords()
     return {"words": words, "count": len(words)}
 
 
@@ -996,15 +1220,42 @@ def update_hotwords(words: list[str] = Body(..., embed=True)):
 
 
 @app.get("/hotword-packs")
-def get_hotword_packs():
-    packs = [pack_payload(pack) for pack in HOTWORD_PACKS]
-    return {"packs": packs, "total_count": len(read_hotwords()), "sources": "server/data/hotword_packs/SOURCES.md"}
+def get_hotword_packs(specialties: str | None = None, include_draft: bool | None = None):
+    selected = resolve_specialties(specialties)
+    packs = [pack_payload(pack, selected, include_draft) for pack in all_packs()]
+    return {
+        "packs": packs,
+        "total_count": len(read_hotwords(selected, include_draft)),
+        "specialties": selected,
+        "sources": "server/data/hotword_packs/SOURCES.md",
+    }
+
+
+@app.get("/specialties")
+def get_specialties(include_draft: bool | None = None):
+    """What a doctor can choose from, with the review status of each specialty's packs."""
+    packs = all_packs()
+    items = []
+    for specialty in SPECIALTIES:
+        own = [pack for pack in packs if specialty["id"] in pack.get("specialties", [])]
+        items.append({
+            **specialty,
+            "pack_count": len(own),
+            "reviewed_pack_count": sum(1 for pack in own if pack.get("status", "released") != "draft"),
+            "draft_pack_count": sum(1 for pack in own if pack.get("status") == "draft"),
+            "packs": [{"id": pack["id"], "label": pack["label"], "status": pack.get("status", "released")} for pack in own],
+        })
+    return {
+        "specialties": items,
+        "default": list(DEFAULT_SPECIALTIES),
+        "include_draft_default": ALLOW_DRAFT_PACKS if include_draft is None else include_draft,
+    }
 
 
 @app.get("/hotword-packs/export")
 def export_hotword_packs():
     packs = []
-    for pack in HOTWORD_PACKS:
+    for pack in all_packs():
         words = read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack)
         packs.append({**pack_payload(pack), "words": words})
     return {
@@ -1065,6 +1316,7 @@ def submit_feedback(payload: dict = Body(...)):
         "contact": contact,
         "diagnostics": diagnostics,
         "app_version": app.version,
+        "user": (auth_api.logged_in_session().username if auth_api.logged_in_session() else ""),
         "license_tier": os.getenv("APP_LICENSE_TIER", "free"),
     }
     FEEDBACK_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -1098,7 +1350,9 @@ def run_batch_generate(recognizer, kwargs):
 @app.post("/transcribe")
 async def transcribe(
     file: UploadFile = File(...),
-    department: str = Form(default="infectious_disease"),
+    department: str | None = Form(default=None),
+    specialties: str | None = Form(default=None),
+    include_draft: bool | None = Form(default=None),
     language: str = Form(default="zh-CN"),
     profile: str = Form(default="balanced"),
     segment_index: int = Form(default=1),
@@ -1123,17 +1377,16 @@ async def transcribe(
         recognizer = await asyncio.to_thread(get_english_model if resolved_language == "en-US" else get_model)
         kwargs = {"input": temp_path, "batch_size_s": cfg["batch_size_s"]}
         hotword_count = 0
-        if resolved_language == "zh-CN" and department == "infectious_disease":
-            hotwords = load_hotwords(cfg, department)
+        selected_specialties = resolve_specialties(specialties, department)
+        if resolved_language == "zh-CN":
+            hotwords = load_hotwords(cfg, specialties=selected_specialties, include_draft=include_draft)
             hotword_count = len(hotwords.split()) if hotwords else 0
             if hotwords:
                 kwargs["hotword"] = hotwords
         result = await asyncio.to_thread(run_batch_generate, recognizer, kwargs)
         raw_text = result[0].get("text", "") if result else ""
-        normalized_text = normalize_text_for_language(raw_text, resolved_language)
-        text = normalized_text
-        text, corrections = apply_correction_rules(text, resolved_language)
-        text = ensure_terminal_punctuation(text) if resolved_language == "zh-CN" else text
+        text, normalized_text, corrections, number_notices = postprocess_transcript(raw_text, resolved_language, selected_specialties, phonetic=True)
+        suggestions = phonetic_suggestions(text) if resolved_language == "zh-CN" else []
         if not text:
             raise HTTPException(status_code=422, detail="未识别到有效内容")
         elapsed = time.perf_counter() - started
@@ -1162,14 +1415,101 @@ async def transcribe(
             "quality": quality,
             "metrics": metrics,
             "corrections": corrections,
+            "number_notices": number_notices,
+            "phonetic_suggestions": suggestions,
         }
     except HTTPException:
         raise
+    except ModelUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"语音识别失败：{exc}") from exc
     finally:
         if temp_path:
             Path(temp_path).unlink(missing_ok=True)
+
+
+ESSENTIAL_DRUGS_FILE = APP_DIR / "data" / "reference" / "essential_drugs_2026.json"
+_phonetic_cache: dict = {"key": None, "index": None}
+
+
+def essential_drug_names() -> list[str]:
+    """Every drug name of the national essential medicines catalogue, as clinicians say it (no bracketed dosage forms)."""
+    try:
+        data = json.loads(ESSENTIAL_DRUGS_FILE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    names = []
+    for drug in data.get("drugs", []):
+        name = re.sub(r"[（(].*$", "", str(drug.get("name", ""))).strip()
+        if len(name) >= 2 and name not in names:
+            names.append(name)
+    return names
+
+
+def phonetic_index() -> "phonetics.Index":
+    """Known terms for the sound-alike check: the catalogue, every released pack and the doctor's own hotwords.
+    Draft packs are left out: unreviewed words must not rewrite a clinician's text."""
+    packs = [pack for pack in all_packs() if pack.get("status", "released") != "draft" and pack.get("enabled", True)]
+    stamps = []
+    for pack in packs:
+        try:
+            stamps.append((pack["id"], pack_path(pack).stat().st_mtime_ns))
+        except OSError:
+            continue
+    try:
+        catalogue_stamp = ESSENTIAL_DRUGS_FILE.stat().st_mtime_ns
+    except OSError:
+        catalogue_stamp = 0
+    own = tuple(read_custom_hotwords())
+    key = (catalogue_stamp, tuple(sorted(stamps)), own)
+    if _phonetic_cache["key"] != key:
+        words = set(essential_drug_names()) | set(own)
+        for pack in packs:
+            words.update(read_custom_hotwords() if pack["id"] == "user_custom" else read_pack_words(pack))
+        _phonetic_cache.update(key=key, index=phonetics.Index.build(words))
+    return _phonetic_cache["index"]
+
+
+IMAGING_TERMS_FILE = APP_DIR / "data" / "reference" / "imaging_terms.txt"
+
+
+def imaging_and_known_terms() -> set[str]:
+    """Words the look-alike check for recognised reports compares with: imaging and anatomy terms, drug names, released packs."""
+    words = set(read_words_from_file(IMAGING_TERMS_FILE))
+    if phonetics.available():
+        words |= phonetic_index().words
+    else:
+        words |= set(essential_drug_names())
+    return words
+
+
+def phonetic_suggestions(text: str) -> list[dict]:
+    """Sound-alike findings that are only suggested (the text is not changed)."""
+    if not phonetics.available():
+        return []
+    return phonetics.scan(text, phonetic_index())[1]
+
+
+def postprocess_transcript(raw_text: str, language: str, specialties=None, phonetic: bool = False) -> tuple[str, str, list[dict], list[dict]]:
+    """Everything that happens to recognizer output before the clinician sees it.
+
+    Shared by /transcribe and by evaluation/ so measured results match production.
+    Returns (final_text, normalized_text, corrections, number_notices).
+    """
+    normalized_text, number_notices = normalize_text_with_notes_for_language(raw_text, language)
+    text, corrections = apply_correction_rules(normalized_text, language, specialties)
+    if phonetic and language == "zh-CN" and phonetics.available():
+        replacements, _ = phonetics.scan(text, phonetic_index())
+        if replacements:
+            text = phonetics.apply(text, replacements)
+            counts: dict = {}
+            for item in replacements:
+                counts[(item["from"], item["to"])] = counts.get((item["from"], item["to"]), 0) + 1
+            corrections = corrections + [{"from": a, "to": b, "count": n, "category": "phonetic"} for (a, b), n in counts.items()]
+    if language == "zh-CN":
+        text = ensure_terminal_punctuation(text)
+    return text, normalized_text, corrections, number_notices
 
 
 def ensure_terminal_punctuation(text: str) -> str:
@@ -1209,6 +1549,7 @@ def get_streaming_model():
         if streaming_model is not None:
             return streaming_model
         try:
+            ensure_model_available(STREAMING_MODEL_NAME, "流式识别模型")
             with funasr_runtime_lock:
                 from funasr import AutoModel
                 streaming_model = AutoModel(
@@ -1231,10 +1572,30 @@ async def preload_streaming_model():
         streaming_model_error = str(exc)
 
 
-@app.on_event("startup")
-async def start_streaming_preload():
+async def preload_models():
+    """Load the recognition models in the background right after start-up, one after the other.
+
+    The streaming model comes first (live text starts when recording starts); the batch model is the one that
+    refines the text when recording stops, and loading it on the first request used to stall that first
+    dictation for 40+ seconds. ASR_PRELOAD_BATCH=1 (set by the launcher) loads it too.
+    """
+    global streaming_model_error, batch_model_error
     if os.getenv("ASR_PRELOAD_STREAMING", "1") == "1":
-        asyncio.create_task(preload_streaming_model())
+        try:
+            await asyncio.to_thread(get_streaming_model)
+        except Exception as exc:
+            streaming_model_error = str(exc)
+    if os.getenv("ASR_PRELOAD_BATCH", "0") == "1":
+        try:
+            await asyncio.to_thread(get_model)
+        except Exception as exc:
+            batch_model_error = str(exc)
+
+
+@app.on_event("startup")
+async def start_model_preload():
+    if os.getenv("ASR_PRELOAD_STREAMING", "1") == "1" or os.getenv("ASR_PRELOAD_BATCH", "0") == "1":
+        asyncio.create_task(preload_models())
 
 
 def run_streaming_generate(recognizer, samples, cache, is_final, chunk_size, hotword_str, profile: dict):
@@ -1252,10 +1613,23 @@ def run_streaming_generate(recognizer, samples, cache, is_final, chunk_size, hot
 
 @app.websocket("/ws/transcribe")
 async def ws_transcribe(websocket: WebSocket):
-    await websocket.accept()
+    service_control.stream_opened()      # lets the stop button warn when a dictation is running
+    try:
+        await _ws_transcribe_session(websocket)
+    finally:
+        service_control.stream_closed()
+
+
+async def _ws_transcribe_session(websocket: WebSocket):
+    offered = websocket.scope.get("subprotocols") or []
+    await websocket.accept(subprotocol=auth_api.SUBPROTOCOL if auth_api.SUBPROTOCOL in offered else None)
     try:
         config = await websocket.receive_json()
-        department = config.get("department", "infectious_disease")
+        department = config.get("department")
+        raw_specialties = config.get("specialties")
+        include_draft = config.get("include_draft")
+        include_draft = include_draft if isinstance(include_draft, bool) else None
+        selected_specialties = resolve_specialties(raw_specialties, department)
         language = resolve_language(config.get("language", "zh-CN"))
         if language != "zh-CN":
             await websocket.send_json({"type": "error", "detail": "English streaming is not enabled yet; use batch dictation."})
@@ -1268,7 +1642,7 @@ async def ws_transcribe(websocket: WebSocket):
         await websocket.send_json({"type": "ready", "profile": cfg})
 
         cache = {}
-        hotword_str = load_hotwords(cfg, department) if department == "infectious_disease" else ""
+        hotword_str = load_hotwords(cfg, specialties=selected_specialties, include_draft=include_draft)
         full_text = ""
         pause_open = False
         stream_started = time.perf_counter()
@@ -1298,7 +1672,7 @@ async def ws_transcribe(websocket: WebSocket):
                     if punctuated != full_text:
                         full_text = punctuated
                         partial = meaningful_stream_text(full_text)
-                        partial, _ = apply_correction_rules(partial, language)
+                        partial, _ = apply_correction_rules(partial, language, selected_specialties)
                         await websocket.send_json({"type": "partial", "text": partial, "pause_punctuation": True})
                     continue
                 if cmd.get("type") == "end":
@@ -1307,12 +1681,13 @@ async def ws_transcribe(websocket: WebSocket):
                     if result and result[0].get("text"):
                         full_text += result[0]["text"]
                     raw_text = meaningful_stream_text(full_text)
-                    final_text, corrections = apply_correction_rules(raw_text, language)
+                    number_notices = normalize_clinical_text_with_notes(full_text)[1]
+                    final_text, corrections = apply_correction_rules(raw_text, language, selected_specialties)
                     final_text = ensure_terminal_punctuation(final_text)
                     elapsed = time.perf_counter() - stream_started
                     metrics = {"elapsed_seconds": elapsed, "audio_seconds": round(audio_seconds, 3), "realtime_factor": round(elapsed / audio_seconds, 3) if audio_seconds > 0 else None, "profile": cfg["id"], "hotword_count": len(hotword_str.split()) if hotword_str else 0, "generate_calls": generate_calls, "correction_count": sum(item["count"] for item in corrections)}
                     record_asr_metric("streaming", audio_seconds, elapsed, metrics)
-                    await websocket.send_json({"type": "final", "text": final_text, "raw_text": raw_text, "metrics": metrics, "corrections": corrections})
+                    await websocket.send_json({"type": "final", "text": final_text, "raw_text": raw_text, "metrics": metrics, "corrections": corrections, "number_notices": number_notices})
                     break
                 continue
 
@@ -1331,7 +1706,7 @@ async def ws_transcribe(websocket: WebSocket):
                 if result and result[0].get("text"):
                     full_text += result[0]["text"]
                     partial = meaningful_stream_text(full_text)
-                    partial, _ = apply_correction_rules(partial, language)
+                    partial, _ = apply_correction_rules(partial, language, selected_specialties)
                     if partial:
                         await websocket.send_json({"type": "partial", "text": partial})
 

@@ -1,0 +1,50 @@
+{
+  "id": "respiratory_critical_care",
+  "specialty": "respiratory_critical_care",
+  "label": "呼吸与危重症科词库",
+  "label_en": "Respiratory & critical care",
+  "filename": "respiratory_critical_care.txt",
+  "language": "zh-CN",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "compiled_on": "2026-10-01",
+  "compile_method": "由 Claude 依据下列来源所涉的标准术语整理，并结合通用医学知识补充；词条未逐条对照来源核验，必须经专业医生逐条审核。",
+  "sources": [
+    {
+      "tier": "B",
+      "name": "MSD 诊疗手册（专业版）：机械通气概述",
+      "url": "https://www.msdmanuals.cn/professional/critical-care-medicine/respiratory-failure-and-mechanical-ventilation/overview-of-mechanical-ventilation",
+      "used_for": "通气模式、呼吸机参数与设置、机械通气并发症术语",
+      "page_read": true
+    },
+    {
+      "tier": "B",
+      "name": "中国急诊成人镇痛、镇静与谵妄管理专家共识",
+      "url": "http://www.cem.org.cn/rhtml/20231205/index.htm",
+      "used_for": "镇痛镇静与谵妄管理相关药物和量表名称（仅依据搜索结果摘要，页面未能读取）",
+      "page_read": false
+    },
+    {
+      "tier": "B",
+      "name": "成人呼吸危重症患者镇痛镇静管理及相关问题专家共识",
+      "url": "https://www.kanhuxi.com/documents/%E5%AD%A6%E6%9C%AF/7720/",
+      "used_for": "呼吸危重症镇痛镇静用药范围（仅依据搜索结果摘要，页面未读取）",
+      "page_read": false
+    },
+    {
+      "tier": "B",
+      "name": "中华医学会重症医学分会《中国成人ICU镇痛和镇静治疗指南》（2018）",
+      "url": null,
+      "used_for": "镇静镇痛药物范围（仅依据搜索结果中的转述，未读取原文）",
+      "page_read": false
+    }
+  ],
+  "reviewers": [],
+  "reviewed_on": null,
+  "review_notes": "",
+  "known_gaps": [
+    "未覆盖：睡眠呼吸、肺移植、呼吸康复、肺癌专科术语。",
+    "药物仅含通用名，未审核是否覆盖本科室常用药。",
+    "发音相近、临床后果严重的词需医生确认是否保留（如不同血管活性药、不同肌松药）。"
+  ]
+}

@@ -1,5 +1,5 @@
-const API_BASE = "http://127.0.0.1:8765";
-const STORAGE = { autosave: "autosave_enabled", draft: "local_draft", history: "draft_history", patients: "patient_slots", uiLanguage: "ui_language", dictationLanguage: "dictation_language", asrProfile: "asr_profile" };
+const API_BASE = SERVICE_BASE;      // config.js
+const STORAGE = { autosave: "autosave_enabled", draft: "local_draft", history: "draft_history", patients: "patient_slots", uiLanguage: "ui_language", dictationLanguage: "dictation_language", asrProfile: "asr_profile", specialties: "specialties", includeDraftPacks: "include_draft_packs", fieldRouting: "field_routing" };
 const $ = selector => document.querySelector(selector);
 const els = {
   draft: $("#draft"), recordButton: $("#recordButton"), recordLabel: $("#recordLabel"), timer: $("#recordTimer"),
@@ -25,7 +25,7 @@ let patientSlots = [], activeSlotId = null;
 let ws = null, wsConnected = false, streamingMode = false, chunkBuffer = [];
 let streamReadyPromise = null, streamFinalPromise = null, stoppingRecording = false;
 let lastRecognitionDiagnostics = null, lastSelfCheckReport = null;
-const WS_URL = "ws://127.0.0.1:8765/ws/transcribe";
+const WS_URL = SERVICE_WS;
 
 
 const I18N = {
@@ -39,12 +39,14 @@ const I18N = {
     voice_commands: "可口述命令", command_note: "停顿约0.7秒自动加逗号，约1.4秒自动加句号；也可口述“句号、逗号、换行”。",
     hotwords_caption: "内置词库会自动启用；下方编辑的是用户自定义热词。", save_hotwords: "保存自定义热词", export_hotwords: "导出词库", import_hotwords: "导入词库", history_caption: "手动保存的版本仅保存在本浏览器中，最多 20 个。",
     history_empty: "尚未保存版本。", clear_history: "清空版本记录", privacy_title: "隐私说明", shortcut_note: "快捷键：空格键开始/停止（编辑框未聚焦时）",
-    medical_note: "本工具仅辅助录入，提交前请由医生核对。", template_modal_title: "管理病历模板", new_template: "+ 新建模板",
+    medical_note: "本工具仅辅助录入，提交前请由医生核对。",
+    specialty_title: "我的专业", specialty_caption: "选择您所在的专业，启用对应的专业词库。设置只保存在本机。", include_draft: "试用尚未经医生审核的专业词库",
+    field_routing: "按字段归位", stop_service: "停止服务", template_modal_title: "管理病历模板", new_template: "+ 新建模板",
     template_name: "模板名称", template_prefix: "段落前缀", template_body: "模板内容", composite_template: "组合模板（插入时展开所有段落）",
     template_sections: "包含段落（逗号分隔）", save: "保存", cancel: "取消", feedback_title: "提交内测反馈", feedback_caption: "反馈默认只保存到本机服务，不会上传病历正文。请尽量不要填写患者姓名、身份证号、住院号等敏感信息。",
     feedback_category: "反馈类型", feedback_rating: "整体评分", feedback_message: "反馈内容", feedback_contact: "联系方式（选填）", diagnostics_summary: "将随反馈附带的诊断信息",
     save_feedback: "保存反馈", copy_diagnostics: "复制诊断信息", self_check_title: "环境自检", self_check_raw: "自检原始信息", rerun_self_check: "重新自检", pre_submit_title: "提交前核对清单", copy_after_check: "仍要复制全文", back_to_edit: "返回修改", placeholder_draft: "点击“开始听写”，或直接在这里输入和修改病历内容……",
-    autosave_on: "自动恢复已开启：草稿保存在本浏览器本地，不参与同步；录音仍不保存。", autosave_off: "默认不保存草稿和录音。只有开启自动恢复后，草稿才写入浏览器本地存储。"
+    autosave_on: "草稿已加密保存在本机，只有登录的您能看到，到时间自动删除，防止意外重启丢失；“退出登录”会立即清除。录音不保存。", autosave_off: "草稿没有保存：关闭页面或重启电脑后会丢失。录音不保存。"
   },
   "en-US": {
     app_title: "病历助手", subtitle: "Dictate, review, organize, then safely copy into the EHR.",
@@ -56,12 +58,14 @@ const I18N = {
     voice_commands: "Voice commands", command_note: "Short pauses add commas; longer pauses add periods. You may also say “period, comma, new line”.",
     hotwords_caption: "Built-in packs are enabled automatically. The editor below is for custom terms.", save_hotwords: "Save custom terms", export_hotwords: "Export packs", import_hotwords: "Import terms", history_caption: "Manual versions are stored only in this browser, up to 20.",
     history_empty: "No saved versions yet.", clear_history: "Clear versions", privacy_title: "Privacy", shortcut_note: "Shortcut: Space starts/stops when the editor is not focused.",
-    medical_note: "This tool assists data entry only. Clinicians must review before submission.", template_modal_title: "Manage templates", new_template: "+ New template",
+    medical_note: "This tool assists data entry only. Clinicians must review before submission.",
+    specialty_title: "My specialty", specialty_caption: "Pick your specialty to enable its vocabulary. Stored on this computer only.", include_draft: "Try specialty vocabulary that has not been physician-reviewed yet",
+    field_routing: "Route to fields", stop_service: "Stop service", template_modal_title: "Manage templates", new_template: "+ New template",
     template_name: "Template name", template_prefix: "Section prefix", template_body: "Template body", composite_template: "Composite template (expand all sections)",
     template_sections: "Included sections, separated by commas", save: "Save", cancel: "Cancel", feedback_title: "Submit beta feedback", feedback_caption: "Feedback is saved locally by default and does not upload clinical text. Avoid patient names, IDs, admission numbers, or other sensitive data.",
     feedback_category: "Category", feedback_rating: "Overall rating", feedback_message: "Feedback", feedback_contact: "Contact (optional)", diagnostics_summary: "Diagnostics included with feedback",
     save_feedback: "Save feedback", copy_diagnostics: "Copy diagnostics", self_check_title: "Environment self-check", self_check_raw: "Raw self-check data", rerun_self_check: "Run again", pre_submit_title: "Pre-submit checklist", copy_after_check: "Copy anyway", back_to_edit: "Back to edit", placeholder_draft: "Click “Start dictation”, or type and edit the clinical note here…",
-    autosave_on: "Draft restore is on: drafts are stored locally in this browser; audio is still not saved.", autosave_off: "Drafts and audio are not saved by default. Drafts are written to local browser storage only when restore is enabled."
+    autosave_on: "Drafts are saved encrypted on this computer, readable only after you log in, and deleted after a time limit so a restart does not lose them. Logging out clears them at once. Audio is not saved.", autosave_off: "Drafts are not saved: they are lost when the page closes or the computer restarts. Audio is not saved."
   }
 };
 let uiLanguage = "zh-CN";
@@ -82,6 +86,7 @@ function applyUILanguage(language) {
   els.draft.placeholder = tr("placeholder_draft");
   updateAsrProfileLabels();
   if (!recording) els.recordLabel.textContent = tr("start_recording");
+  if (typeof renderFieldBar === "function" && window.FieldRouter) renderFieldBar();
   els.privacyText.textContent = els.autosaveToggle?.checked ? tr("autosave_on") : tr("autosave_off");
 }
 function currentDictationLanguage() { return els.dictationLanguageSelect?.value === "en-US" ? "en-US" : "zh-CN"; }
@@ -98,6 +103,38 @@ function updateLanguageSpecificUI() {
   els.templateSelect.disabled = isEnglish;
   els.insertTemplateButton.disabled = isEnglish;
   if (isEnglish) setFeedback(uiLanguage === "en-US" ? "English dictation is beta and currently uses batch recognition after stopping." : "英文听写为 Beta，当前会在停止后进行批量识别。中文流式不受影响。");
+  if (isEnglish) verifyEnglishDictation();
+}
+
+// The offline package does not contain the English model, so the English choice is not offered unless the service
+// says it can do it (a package that includes the model shows it again).
+let englishDictationOffered = true;
+async function hideEnglishDictationIfUnavailable() {
+  try {
+    const response = await apiFetch(`${API_BASE}/health`, { cache: "no-store" });
+    const health = await response.json();
+    englishDictationOffered = health.english_dictation_available !== false;
+  } catch (error) { return; }
+  const option = els.dictationLanguageSelect.querySelector('option[value="en-US"]');
+  if (option) { option.hidden = !englishDictationOffered; option.disabled = !englishDictationOffered; }
+  const label = document.getElementById("dictationLanguageLabel");
+  if (label) label.hidden = !englishDictationOffered;          // a choice of one language is not shown
+}
+
+// English dictation needs a model the offline package does not always contain. Say so now, instead of failing
+// (or, before the service refused to download, hanging) when the doctor has already recorded something.
+async function verifyEnglishDictation() {
+  try {
+    const response = await apiFetch(`${API_BASE}/health`, { cache: "no-store" });
+    const health = await response.json();
+    if (health.english_dictation_available !== false) return;
+    els.dictationLanguageSelect.value = "zh-CN";
+    await storageSet({ [STORAGE.dictationLanguage]: "zh-CN" });
+    updateLanguageSpecificUI();
+    setFeedback(uiLanguage === "en-US"
+      ? "English dictation is not available: its model is not part of this installation. Chinese dictation is selected."
+      : "英文听写暂时不能用：英文识别模型没有随这个安装包提供。已切换回中文听写。", true);
+  } catch (error) { /* the service is not reachable: the normal status check reports that */ }
 }
 
 const DEFAULT_TEMPLATES = [
@@ -223,20 +260,103 @@ function buildPreSubmitIssues(text) {
     const values = uniqueMatches(text, rule.regex, rule.id === "must_review_negation" ? 20 : 12);
     if (values.length) issues.push({ ...rule, values });
   }
+  if (window.FieldRouter) {
+    const defs = fieldDefs();
+    const unassigned = window.FieldRouter.unassignedText(text, defs);
+    if (unassigned) {
+      issues.unshift({
+        id: "unassigned_text", label: "有内容未归入任何字段", labelEn: "Text not in any field",
+        detail: "下列内容在所有字段标题之前，没有归入主诉、现病史等字段。请移到对应字段，或确认可以保留。",
+        detailEn: "The text below sits above all field headings and belongs to no field. Move it into a field or confirm it can stay.",
+        severity: "high", values: [unassigned.length > 40 ? `${unassigned.slice(0, 40)}…` : unassigned]
+      });
+    }
+    const empty = window.FieldRouter.emptyFields(text, defs);
+    if (empty.length) {
+      issues.push({
+        id: "empty_fields", label: "字段标题下没有内容", labelEn: "Empty fields",
+        detail: "这些字段只有标题，没有内容。请补充，或删除标题。", detailEn: "These fields have a heading but no content. Fill them in or delete the heading.",
+        severity: "medium", values: empty
+      });
+    }
+  }
+  const unresolvedNumbers = activeNumberNotices(text);
+  if (unresolvedNumbers.length) {
+    issues.unshift({
+      id: "number_unresolved", label: "数字未转换，请核对", labelEn: "Numbers not converted - please check",
+      detail: "下列口述的数字有多种读法或无法确定，已保留原话，未自动转换。请手动改成准确的数值和单位。",
+      detailEn: "The dictated numbers below were ambiguous or unclear. They were left as spoken and not converted. Please correct the value and unit manually.",
+      severity: "high", values: unresolvedNumbers.map(notice => notice.source)
+    });
+  }
   const hasDose = issues.some(item => item.id === "drug_dose");
   const hasFreq = issues.some(item => item.id === "drug_frequency");
   const hasAction = issues.some(item => item.id === "prescription_action");
   if (hasDose && !hasFreq) {
-    issues.push({ id: "dose_without_frequency", label: "有剂量但未见频次", labelEn: "Dose without frequency", detail: "发现药物剂量，但未见 qd/bid/tid/qxh 等频次。请确认是否需要补充。", detailEn: "A dose was found but no common frequency was detected. Confirm whether a frequency is needed.", severity: "medium", values: [] });
+    issues.push({ id: "dose_without_frequency", label: "有剂量但未见频次", labelEn: "Dose without frequency", detail: "发现药物剂量，但未见 qd/bid/tid/qxh 等频次。请确认是否需要补充。", detailEn: "A dose was found but no common frequency was detected. Confirm whether a frequency is needed.", severity: "medium", values: issues.find(item => item.id === "drug_dose")?.values || [] });
   }
   if (hasAction && !hasDose) {
-    issues.push({ id: "action_without_dose", label: "有处方动作但未见剂量", labelEn: "Order action without dose", detail: "出现处方/医嘱动作，但未检测到明确剂量。请确认病历表述是否完整。", detailEn: "An order action was found without a clear dose. Verify the note is complete.", severity: "medium", values: [] });
+    issues.push({ id: "action_without_dose", label: "有处方动作但未见剂量", labelEn: "Order action without dose", detail: "出现处方/医嘱动作，但未检测到明确剂量。请确认病历表述是否完整。", detailEn: "An order action was found without a clear dose. Verify the note is complete.", severity: "medium", values: issues.find(item => item.id === "prescription_action")?.values || [] });
   }
   return issues;
 }
 
 function issueTitle(issue) { return uiLanguage === "en-US" ? (issue.labelEn || issue.label) : issue.label; }
 function issueDetail(issue) { return uiLanguage === "en-US" ? (issue.detailEn || issue.detail) : issue.detail; }
+
+// Clicking a review prompt (or one of its examples) selects that text in the draft and scrolls to it; clicking again goes
+// to the next place where it occurs. A value the doctor has already edited away cannot be found, and is said so.
+const locateCursor = { key: "", index: -1 };
+
+function draftOccurrences(text, values) {
+  const found = new Map();
+  for (const raw of values) {
+    const needle = String(raw).replace(/…$/, "");
+    if (!needle) continue;
+    for (const variant of [needle, `${needle}：`, `${needle}:`]) {
+      let at = text.indexOf(variant);
+      if (at < 0) continue;
+      while (at >= 0) {
+        if (!found.has(at)) found.set(at, { start: at, end: at + (variant === needle ? needle.length : needle.length) });
+        at = text.indexOf(variant, at + variant.length);
+      }
+      break;
+    }
+  }
+  return Array.from(found.values()).sort((a, b) => a.start - b.start);
+}
+
+// The vertical position of a character in the draft, found by laying the same text out in an invisible copy of the box.
+function draftOffsetTop(index) {
+  const box = els.draft, style = getComputedStyle(box), mirror = document.createElement("div");
+  for (const name of ["boxSizing", "width", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth", "borderBottomWidth",
+    "borderLeftWidth", "fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textIndent", "tabSize"]) mirror.style[name] = style[name];
+  Object.assign(mirror.style, { position: "absolute", visibility: "hidden", top: "0", left: "-9999px", whiteSpace: "pre-wrap", overflowWrap: "break-word", height: "auto" });
+  mirror.textContent = box.value.slice(0, index);
+  const marker = document.createElement("span");
+  marker.textContent = "​";
+  mirror.appendChild(marker);
+  document.body.appendChild(mirror);
+  const top = marker.offsetTop;
+  mirror.remove();
+  return top;
+}
+
+function locateInDraft(values, key) {
+  const spots = draftOccurrences(els.draft.value, values);
+  if (!spots.length) {
+    setFeedback("这段内容在草稿里已经找不到了（可能已被修改）。", true);
+    return false;
+  }
+  locateCursor.index = locateCursor.key === key ? (locateCursor.index + 1) % spots.length : 0;
+  locateCursor.key = key;
+  const spot = spots[locateCursor.index];
+  els.draft.focus();
+  els.draft.setSelectionRange(spot.start, spot.end);
+  els.draft.scrollTop = Math.max(0, draftOffsetTop(spot.start) - els.draft.clientHeight / 3);
+  setFeedback(spots.length > 1 ? `已定位到草稿中的第 ${locateCursor.index + 1} 处，共 ${spots.length} 处。再点一次看下一处。` : "已定位到草稿中的这一处。");
+  return true;
+}
 
 function renderIssueNode(issue, compact = false) {
   const node = document.createElement("div");
@@ -246,15 +366,28 @@ function renderIssueNode(issue, compact = false) {
   const detail = document.createElement("span");
   detail.textContent = issueDetail(issue);
   node.append(title, detail);
-  if (issue.values?.length) {
+  const values = issue.values || [];
+  const locate = (list, key) => {
+    if (!compact) document.getElementById("preSubmitModal")?.close();       // the checklist covers the draft
+    locateInDraft(list, key);
+  };
+  if (values.length) {
     const examples = document.createElement("div");
     examples.className = "risk-examples";
-    for (const value of issue.values.slice(0, compact ? 8 : 20)) {
+    for (const value of values.slice(0, compact ? 8 : 20)) {
       const code = document.createElement("code");
       code.textContent = value;
+      code.title = "点击在草稿中定位";
+      code.addEventListener("click", event => { event.stopPropagation(); locate([value], `${issue.id}:${value}`); });
       examples.appendChild(code);
     }
     node.appendChild(examples);
+    node.classList.add("locatable");
+    node.tabIndex = 0;
+    node.setAttribute("role", "button");
+    node.title = "点击在草稿中定位";
+    node.addEventListener("click", () => locate(values, issue.id));
+    node.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); locate(values, issue.id); } });
   }
   return node;
 }
@@ -304,20 +437,11 @@ async function copyDraftText(force = false) {
   );
 }
 
-async function storageGet(keys) {
-  if (globalThis.chrome?.storage?.local) return chrome.storage.local.get(keys);
-  const result = {};
-  for (const key of keys) { const value = localStorage.getItem(key); if (value !== null) result[key] = JSON.parse(value); }
-  return result;
-}
-async function storageSet(values) {
-  if (globalThis.chrome?.storage?.local) return chrome.storage.local.set(values);
-  for (const [key, value] of Object.entries(values)) localStorage.setItem(key, JSON.stringify(value));
-}
-async function storageRemove(keys) {
-  if (globalThis.chrome?.storage?.local) return chrome.storage.local.remove(keys);
-  for (const key of keys) localStorage.removeItem(key);
-}
+// The draft, versions and patient tabs are kept by the service, encrypted for the logged-in doctor and deleted after a
+// time limit; settings stay in the browser under a per-doctor prefix (auth.js).
+const storageGet = keys => Auth.storageGet(keys);
+const storageSet = values => Auth.storageSet(values);
+const storageRemove = keys => Auth.storageRemove(keys);
 function setFeedback(message, error = false) { els.feedback.textContent = message; els.feedback.style.color = error ? "#a33a37" : "#667a75"; }
 function pushUndo() { undoHistory.push(els.draft.value); if (undoHistory.length > 30) undoHistory.shift(); els.undoButton.disabled = false; }
 
@@ -327,6 +451,8 @@ function updateDraftMeta() {
   els.wordCount.textContent = `${text.replace(/\s/g, "").length}${unit}`;
   const issues = buildPreSubmitIssues(text);
   updateReviewPanelFromIssues(issues);
+  renderFieldBar();
+  renderPhoneticList();
   scheduleAutosave();
 }
 
@@ -338,12 +464,12 @@ function scheduleAutosave() {
 
 async function checkService() {
   try {
-    const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/health`, { cache: "no-store" });
     if (!response.ok) throw new Error();
     const data = await response.json();
     let config = null;
     try {
-      const configResponse = await fetch(`${API_BASE}/asr/config?profile=${encodeURIComponent(currentAsrProfile())}`, { cache: "no-store" });
+      const configResponse = await apiFetch(`${API_BASE}/asr/config?profile=${encodeURIComponent(currentAsrProfile())}`, { cache: "no-store" });
       if (configResponse.ok) config = await configResponse.json();
     } catch {}
     const activeHotwords = config?.active_hotwords ?? data.active_hotword_count ?? data.hotword_count ?? 0;
@@ -352,12 +478,136 @@ async function checkService() {
     els.statusDot.className = "status-dot online"; els.serviceStatus.textContent = "本地服务已连接";
     els.serviceDetail.textContent = `${data.model_loaded ? "模型已加载" : "首次识别时加载"} · ${profileLabel} · 已启用 ${activeHotwords}/${totalHotwords} 个热词`;
     els.recordButton.disabled = false;
+    setStopButtonVisible(true);
   } catch {
-    els.statusDot.className = "status-dot offline"; els.serviceStatus.textContent = "本地服务未启动";
-    els.serviceDetail.textContent = "请运行 start_server.bat"; els.recordButton.disabled = true;
+    els.statusDot.className = "status-dot offline"; els.serviceStatus.textContent = uiLanguage === "en-US" ? "Local service is not running" : "本地服务未启动";
+    els.serviceDetail.textContent = uiLanguage === "en-US" ? "Double-click the “病历助手” icon on the desktop to start it" : "请双击桌面“病历助手”图标启动服务";
+    els.recordButton.disabled = true;
+    setStopButtonVisible(false);
   }
 }
 
+// ---- stop the local service when the doctor is done ----
+function setStopButtonVisible(visible) {
+  const button = document.getElementById("stopServiceButton");
+  if (!button) return;
+  button.hidden = !visible;
+  if (visible) button.disabled = false;
+}
+
+async function stopService() {
+  const english = uiLanguage === "en-US";
+  const busy = recording || streamingMode;
+  const warning = busy ? (english ? "A dictation is in progress and will be interrupted.\n\n" : "当前正在听写，停止服务会中断它。\n\n") : "";
+  if (!window.confirm(warning + (english ? "Stop the local speech service?" : "确定要停止本地语音服务吗？\n草稿保留在页面中，需要时可重新启动服务。"))) return;
+  const button = document.getElementById("stopServiceButton");
+  if (button) button.disabled = true;
+  try {
+    if (recording) await stopRecording();
+    const response = await apiFetch(`${API_BASE}/service/shutdown`, { method: "POST", headers: { "X-Bingli-Control": "1" } });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    closeStreamingSocket();
+    setFeedback(english ? "Service stopped. Double-click the desktop icon to start it again." : "服务已停止。需要时双击桌面“病历助手”图标重新启动。");
+    setTimeout(checkService, 1500);
+  } catch (error) {
+    if (button) button.disabled = false;
+    setFeedback(`${english ? "Could not stop the service" : "停止服务失败"}：${error.message}。${english ? "Use the tray icon instead." : "可以改用屏幕右下角托盘图标中的“停止服务并退出”。"}`, true);
+  }
+}
+
+
+// Specialty selection. null = the doctor has not chosen yet, so the server default applies.
+let selectedSpecialties = null;
+let includeDraftPacks = false;
+let specialtyCatalog = [];
+
+function specialtyRequestParams() {
+  return {
+    specialties: selectedSpecialties === null ? undefined : selectedSpecialties.join(","),
+    include_draft: includeDraftPacks
+  };
+}
+
+function specialtyQueryString() {
+  const params = specialtyRequestParams();
+  const query = new URLSearchParams();
+  if (params.specialties !== undefined) query.set("specialties", params.specialties);
+  query.set("include_draft", String(params.include_draft));
+  return query.toString();
+}
+
+function renderSpecialties(data) {
+  const list = document.getElementById("specialtyList");
+  const box = document.getElementById("specialtyBox");
+  const hint = document.getElementById("specialtyHint");
+  if (!list) return;
+  specialtyCatalog = data?.specialties || [];
+  const effective = selectedSpecialties === null ? (data?.default || []) : selectedSpecialties;
+  const english = uiLanguage === "en-US";
+  const select = document.createElement("select");
+  select.id = "specialtySelect";
+  select.setAttribute("aria-label", "我的专业");
+  const addOption = (value, text) => { const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option); };
+  addOption("", english ? "Choose your specialty…" : "请选择专业…");
+  for (const item of specialtyCatalog) addOption(item.id, english ? (item.label_en || item.label) : item.label);
+  addOption("__none__", english ? "None (shared vocabulary only)" : "不选择（只用通用词库）");
+  select.value = selectedSpecialties === null ? "" : (selectedSpecialties.length === 0 ? "__none__" : selectedSpecialties[0]);
+  select.addEventListener("change", onSpecialtyChange);
+  const note = document.createElement("small");
+  note.className = "specialty-note";
+  const chosen = specialtyCatalog.find(item => item.id === select.value);
+  if (chosen) {
+    note.textContent = chosen.draft_pack_count > 0
+      ? (english ? `${chosen.draft_pack_count} pack(s) awaiting physician review` : `${chosen.draft_pack_count} 个词库待医生审核`)
+      : (english ? "Reviewed" : "已审核");
+  }
+  if (selectedSpecialties && selectedSpecialties.length > 1) note.textContent = `之前选了 ${selectedSpecialties.length} 个专业；重新选择后只保留一个。`;
+  list.replaceChildren(select, note);
+  const toggle = document.getElementById("includeDraftToggle");
+  if (toggle) toggle.checked = includeDraftPacks;
+  const needsChoice = selectedSpecialties === null;
+  box?.classList.toggle("needs-choice", needsChoice);
+  if (hint) {
+    hint.textContent = needsChoice
+      ? (english ? "Please pick your specialty. Until then the default (Infectious disease) vocabulary is used." : "请选择您的专业；在此之前使用默认的感染科词库。")
+      : (includeDraftPacks
+        ? (english ? "Unreviewed vocabulary is ON. Recognition may be less reliable; review results carefully." : "已开启未审核词库试用，识别结果请更仔细核对。")
+        : "");
+  }
+}
+
+async function loadSpecialties() {
+  try {
+    const response = await apiFetch(`${API_BASE}/specialties`, { cache: "no-store" });
+    if (!response.ok) throw new Error("读取专业失败");
+    renderSpecialties(await response.json());
+  } catch {
+    const list = document.getElementById("specialtyList");
+    if (list) list.textContent = uiLanguage === "en-US" ? "Local service unavailable." : "本地服务未连接，无法读取专业列表。";
+  }
+}
+
+async function onSpecialtyChange() {
+  const value = document.getElementById("specialtySelect")?.value ?? "";
+  selectedSpecialties = value === "" ? null : (value === "__none__" ? [] : [value]);
+  await storageSet({ [STORAGE.specialties]: selectedSpecialties });
+  await loadSpecialties();
+  renderFieldBar();
+  await loadHotwordPacks();
+  checkService();
+  if (selectedSpecialties === null) return setFeedback(uiLanguage === "en-US" ? "No specialty chosen: the default vocabulary is used." : "还没有选择专业，使用默认词库。");
+  setFeedback(selectedSpecialties.length
+    ? (uiLanguage === "en-US" ? "Specialty saved. It applies to the next dictation." : "已保存专业设置，下一次听写生效。")
+    : (uiLanguage === "en-US" ? "No specialty selected: only shared vocabulary is used." : "未选择任何专业：仅使用通用词库。"));
+}
+
+async function onIncludeDraftChange(event) {
+  includeDraftPacks = event.target.checked;
+  await storageSet({ [STORAGE.includeDraftPacks]: includeDraftPacks });
+  await loadSpecialties();
+  await loadHotwordPacks();
+  checkService();
+}
 
 function renderHotwordPacks(data) {
   const packs = data?.packs || [];
@@ -374,8 +624,12 @@ function renderHotwordPacks(data) {
     const meta = document.createElement("span");
     meta.textContent = `${pack.count} ${uiLanguage === "en-US" ? "terms" : "个词"} · ${pack.built_in ? (uiLanguage === "en-US" ? "built-in" : "内置") : (uiLanguage === "en-US" ? "custom" : "自定义")}`;
     const badge = document.createElement("span");
-    badge.className = "pack-badge";
-    badge.textContent = pack.enabled ? (uiLanguage === "en-US" ? "Enabled" : "已启用") : (uiLanguage === "en-US" ? "Disabled" : "未启用");
+    const isActive = pack.active !== undefined ? pack.active : pack.enabled;
+    const isDraft = pack.status === "draft";
+    badge.className = isDraft ? "pack-badge draft" : "pack-badge";
+    if (isActive) badge.textContent = isDraft ? (uiLanguage === "en-US" ? "Enabled · unreviewed draft" : "已启用 · 未审核草稿") : (uiLanguage === "en-US" ? "Enabled" : "已启用");
+    else badge.textContent = isDraft ? (uiLanguage === "en-US" ? "Not enabled · awaiting review" : "未启用 · 待医生审核") : (uiLanguage === "en-US" ? "Not used for your specialty" : "与所选专业无关");
+    node.classList.toggle("inactive", !isActive);
     node.append(title, meta, badge);
     return node;
   }));
@@ -383,7 +637,7 @@ function renderHotwordPacks(data) {
 
 async function loadHotwordPacks() {
   try {
-    const response = await fetch(`${API_BASE}/hotword-packs`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/hotword-packs?${specialtyQueryString()}`, { cache: "no-store" });
     if (!response.ok) throw new Error("读取词库包失败");
     const data = await response.json();
     renderHotwordPacks(data);
@@ -395,7 +649,7 @@ async function loadHotwordPacks() {
 
 async function exportHotwordPacks() {
   try {
-    const response = await fetch(`${API_BASE}/hotword-packs/export`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/hotword-packs/export`, { cache: "no-store" });
     if (!response.ok) throw new Error("导出失败");
     const data = await response.json();
     const stamp = new Date().toISOString().slice(0, 19).replaceAll(":", "-");
@@ -426,7 +680,7 @@ async function importHotwordFile(file) {
     payload = { text };
   }
   try {
-    const response = await fetch(`${API_BASE}/hotword-packs/import`, {
+    const response = await apiFetch(`${API_BASE}/hotword-packs/import`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -446,7 +700,7 @@ async function importHotwordFile(file) {
 
 async function loadHotwords() {
   try {
-    const response = await fetch(`${API_BASE}/hotwords`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/hotwords`, { cache: "no-store" });
     if (!response.ok) throw new Error("读取失败");
     const data = await response.json(); els.hotwordEditor.value = data.words.join("\n"); els.hotwordCount.textContent = `${data.count} 个`;
   } catch { els.hotwordCount.textContent = "服务未连接"; }
@@ -454,14 +708,93 @@ async function loadHotwords() {
 async function saveHotwords() {
   const words = els.hotwordEditor.value.split(/\r?\n/).map(v => v.trim()).filter(Boolean);
   try {
-    const response = await fetch(`${API_BASE}/hotwords`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ words }) });
+    const response = await apiFetch(`${API_BASE}/hotwords`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ words }) });
     const data = await response.json(); if (!response.ok) throw new Error(data.detail || "保存失败");
     els.hotwordEditor.value = data.words.join("\n"); els.hotwordCount.textContent = `${data.count} 个`;
     setFeedback(`已保存 ${data.count} 个本地热词，下一次识别生效。`); loadHotwordPacks(); checkService();
   } catch (error) { setFeedback(`热词保存失败：${error.message}`, true); }
 }
 
+// ---- field routing (extension/fields.js): dictated text goes under the matching heading ----
+let fieldRoutingEnabled = true;
+let currentFieldKey = null;
+
+function fieldDefs() {
+  return window.FieldRouter ? window.FieldRouter.activeDefs(selectedSpecialties === null ? ["infectious_disease"] : selectedSpecialties) : [];
+}
+
+function setCurrentField(key) {
+  currentFieldKey = key;
+  renderFieldBar();
+}
+
+function renderFieldBar() {
+  const bar = document.getElementById("fieldBar");
+  const chips = document.getElementById("fieldChips");
+  if (!bar || !chips || !window.FieldRouter) return;
+  const defs = fieldDefs();
+  const status = window.FieldRouter.fieldStatus(els.draft.value, defs);
+  const english = uiLanguage === "en-US";
+  bar.classList.toggle("off", !fieldRoutingEnabled);
+  chips.replaceChildren(...defs.map(def => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "field-chip";
+    chip.dataset.key = def.key;
+    chip.textContent = english ? def.labelEn : def.label;
+    const state = status[def.key];
+    if (state?.present) chip.classList.add(state.empty ? "empty-heading" : "filled");
+    if (def.key === currentFieldKey) chip.classList.add("current");
+    chip.setAttribute("aria-pressed", String(def.key === currentFieldKey));
+    return chip;
+  }));
+  const current = defs.find(def => def.key === currentFieldKey);
+  const label = document.getElementById("fieldCurrent");
+  if (label) {
+    label.textContent = !fieldRoutingEnabled ? ""
+      : current ? (english ? `Dictation goes to: ${current.labelEn}` : `听写内容写入：${current.label}`)
+      : (english ? "Say a field name (e.g. “chief complaint”) or pick one" : "说出字段名（如“主诉”）或点选字段");
+  }
+}
+
+function onFieldChipClick(event) {
+  const chip = event.target.closest(".field-chip");
+  if (!chip || !fieldRoutingEnabled) return;
+  const def = fieldDefs().find(item => item.key === chip.dataset.key);
+  if (!def) return;
+  if (currentFieldKey === def.key) { setCurrentField(null); return; }
+  const status = window.FieldRouter.fieldStatus(els.draft.value, fieldDefs());
+  if (!status[def.key]?.present) {            // show the heading so the doctor sees where dictation will go
+    pushUndo();
+    els.draft.value = window.FieldRouter.insertIntoField(els.draft.value, def, "", fieldDefs());
+    updateDraftMeta();
+  }
+  setCurrentField(def.key);
+}
+
+function followCaretToField() {
+  if (!fieldRoutingEnabled || !window.FieldRouter) return;
+  const key = window.FieldRouter.fieldAt(els.draft.value, els.draft.selectionStart, fieldDefs());
+  if (key && key !== currentFieldKey) setCurrentField(key);
+}
+
+// Returns true when the text was placed in a field.
+function routeIntoFields(text) {
+  if (!fieldRoutingEnabled || !window.FieldRouter || currentDictationLanguage() !== "zh-CN") return false;
+  const prefix = els.templateSelect.value;
+  const selected = fieldDefs().find(def => `${def.label}：` === prefix);
+  const state = { current: selected ? selected.key : currentFieldKey };
+  const result = window.FieldRouter.apply(els.draft.value, text.trim(), state, fieldDefs());
+  currentFieldKey = result.current;
+  if (!result.routed) { renderFieldBar(); return false; }
+  pushUndo();
+  els.draft.value = result.text;
+  updateDraftMeta();
+  return true;
+}
+
 function mergeText(text) {
+  if (routeIntoFields(text)) return;
   const prefix = els.templateSelect.value; let value = text.trim();
   if (prefix && !value.startsWith(prefix)) value = `${prefix}${value}`;
   pushUndo();
@@ -638,6 +971,7 @@ function restoreSlot(slotId) {
   if (!slot) return;
   activeSlotId = slot.id;
   els.draft.value = slot.draft || "";
+  currentFieldKey = null;
   savedHistory = slot.history || [];
   undoHistory = [];
   els.undoButton.disabled = true;
@@ -874,6 +1208,8 @@ function aggregateSegmentResults(results, audioSeconds, startedMs) {
       correction_count: correctionCount
     },
     corrections,
+    number_notices: results.flatMap(result => result.number_notices || []),
+    phonetic_suggestions: results.flatMap(result => result.phonetic_suggestions || []),
     segments: results
   };
 }
@@ -890,7 +1226,68 @@ function drawWaveBar(rms) {
   ctx.fillRect(w - 2, (h - barHeight) / 2, 2, barHeight);
 }
 
+// Numbers the service declined to convert (ambiguous blood pressure, malformed numerals ...).
+// A notice stays visible only while its source text is still in the draft.
+let numberNotices = [];
+function registerNumberNotices(notices) {
+  for (const notice of notices || []) {
+    if (notice?.source && !numberNotices.some(item => item.source === notice.source)) numberNotices.push(notice);
+  }
+  updateDraftMeta();
+}
+function activeNumberNotices(text) {
+  numberNotices = numberNotices.filter(notice => text.includes(notice.source));
+  return numberNotices;
+}
+
+// Words that sound like a known term (drug names ...) but are written differently. Only suggested: the doctor decides.
+let phoneticSuggestions = [];
+const dismissedPhonetic = new Set();
+function registerPhoneticSuggestions(items) {
+  for (const item of items || []) {
+    if (item?.from && Array.isArray(item.options) && item.options.length && !dismissedPhonetic.has(item.from)
+        && !phoneticSuggestions.some(known => known.from === item.from)) phoneticSuggestions.push(item);
+  }
+}
+function renderPhoneticList() {
+  const box = document.getElementById("phoneticBox"), list = document.getElementById("phoneticList");
+  if (!box || !list) return;
+  const text = els.draft.value;
+  phoneticSuggestions = phoneticSuggestions.filter(item => text.includes(item.from));
+  box.hidden = phoneticSuggestions.length === 0;
+  list.replaceChildren(...phoneticSuggestions.map(item => {
+    const row = document.createElement("div");
+    row.className = "phonetic-item";
+    const label = document.createElement("span");
+    label.textContent = `“${item.from}” 可能是：`;
+    row.append(label);
+    for (const option of item.options) {
+      const button = document.createElement("button");
+      button.type = "button"; button.textContent = option; button.title = `把“${item.from}”改为“${option}”`;
+      button.addEventListener("click", () => applyPhoneticSuggestion(item, option));
+      row.append(button);
+    }
+    const keep = document.createElement("button");
+    keep.type = "button"; keep.className = "ghost"; keep.textContent = "不用改";
+    keep.addEventListener("click", () => { dismissedPhonetic.add(item.from); phoneticSuggestions = phoneticSuggestions.filter(known => known !== item); renderPhoneticList(); });
+    row.append(keep);
+    return row;
+  }));
+}
+function applyPhoneticSuggestion(item, option) {
+  const at = els.draft.value.indexOf(item.from);
+  if (at < 0) return renderPhoneticList();
+  pushUndo();
+  els.draft.value = els.draft.value.slice(0, at) + option + els.draft.value.slice(at + item.from.length);
+  phoneticSuggestions = phoneticSuggestions.filter(known => known !== item);
+  updateDraftMeta();
+  setFeedback(`已把“${item.from}”改为“${option}”，可点击撤销恢复。`);
+}
+
 function renderRecognitionHints(result) {
+  registerNumberNotices(result?.number_notices);
+  registerPhoneticSuggestions(result?.phonetic_suggestions);
+  renderPhoneticList();
   if (!els.qualityHint) return;
   const parts = [];
   const metrics = result?.metrics || {};
@@ -1006,19 +1403,19 @@ function closeStreamingSocket() {
 
 async function connectStreaming() {
   if (currentDictationLanguage() !== "zh-CN") throw new Error("English streaming is not enabled yet");
-  const healthResp = await fetch(`${API_BASE}/health`, { cache: "no-store" });
+  const healthResp = await apiFetch(`${API_BASE}/health`, { cache: "no-store" });
   if (!healthResp.ok) throw new Error("本地服务不可用");
   const healthData = await healthResp.json();
   if (!healthData.streaming_supported) throw new Error("当前服务不支持流式识别");
 
-  ws = new WebSocket(WS_URL);
+  ws = new WebSocket(WS_URL, Auth.socketProtocols());
   let resolveReady, rejectReady, resolveFinal, rejectFinal;
   streamReadyPromise = new Promise((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
   streamFinalPromise = new Promise((resolve, reject) => { resolveFinal = resolve; rejectFinal = reject; });
   let finalReceived = false;
 
   ws.onopen = () => {
-    ws.send(JSON.stringify({ sample_rate: 16000, department: "infectious_disease", language: currentDictationLanguage(), profile: currentAsrProfile() }));
+    ws.send(JSON.stringify({ sample_rate: 16000, ...specialtyRequestParams(), language: currentDictationLanguage(), profile: currentAsrProfile() }));
   };
   ws.onmessage = event => {
     let msg;
@@ -1031,7 +1428,7 @@ async function connectStreaming() {
       els.partialDisplay.textContent = msg.text || "";
       els.partialDisplay.hidden = !msg.text;
     } else if (msg.type === "final") {
-      finalReceived = true; resolveFinal({ text: msg.text || "", raw_text: msg.raw_text || "", metrics: msg.metrics || null, corrections: msg.corrections || [] });
+      finalReceived = true; resolveFinal({ text: msg.text || "", raw_text: msg.raw_text || "", metrics: msg.metrics || null, corrections: msg.corrections || [], number_notices: msg.number_notices || [] });
     } else if (msg.type === "error") {
       const error = new Error(msg.detail || "流式识别失败");
       rejectReady(error); rejectFinal(error);
@@ -1216,12 +1613,14 @@ async function stopRecording() {
 async function transcribeAudioBlob(blob, { segmentIndex = 1, segmentCount = 1 } = {}) {
   const form = new FormData();
   form.append("file", blob, segmentCount > 1 ? `dictation-segment-${segmentIndex}.wav` : "dictation.wav");
-  form.append("department", currentDictationLanguage() === "zh-CN" ? "infectious_disease" : "general");
+  const specialtyParams = specialtyRequestParams();
+  if (specialtyParams.specialties !== undefined) form.append("specialties", specialtyParams.specialties);
+  form.append("include_draft", String(specialtyParams.include_draft));
   form.append("language", currentDictationLanguage());
   form.append("profile", currentAsrProfile());
   form.append("segment_index", String(segmentIndex));
   form.append("segment_count", String(segmentCount));
-  const response = await fetch(`${API_BASE}/transcribe`, { method: "POST", body: form });
+  const response = await apiFetch(`${API_BASE}/transcribe`, { method: "POST", body: form });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || "识别失败");
   return data;
@@ -1389,14 +1788,14 @@ async function runSelfCheck() {
   modal.showModal();
   const report = { generatedAt: new Date().toISOString(), server: null, browser: null };
   try {
-    const response = await fetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
     report.server = await response.json();
     if (!response.ok) throw new Error(report.server?.detail || "自检接口返回异常");
   } catch (error) {
     report.server = {
       overall: "fail",
       checks: [{ id: "service", label: "本地服务", status: "fail", detail: `无法连接 127.0.0.1:8765：${error.message}` }],
-      warnings: ["请确认 start_server.bat 已启动，并且浏览器可以访问本地服务。"]
+      warnings: ["请确认本地服务已启动（双击桌面“病历助手”图标），并且浏览器可以访问本地服务。"]
     };
   }
   report.browser = await collectBrowserDiagnostics();
@@ -1429,26 +1828,26 @@ async function collectFeedbackDiagnostics() {
     performance: null
   };
   try {
-    const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/health`, { cache: "no-store" });
     diagnostics.service = await response.json();
   } catch (error) {
     diagnostics.service = { error: error.message };
   }
   try {
-    const response = await fetch(`${API_BASE}/license/status`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/license/status`, { cache: "no-store" });
     diagnostics.license = await response.json();
   } catch (error) {
     diagnostics.license = { error: error.message };
   }
   diagnostics.browser = await collectBrowserDiagnostics();
   try {
-    const response = await fetch(`${API_BASE}/asr/performance`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/asr/performance`, { cache: "no-store" });
     diagnostics.performance = await response.json();
   } catch (error) {
     diagnostics.performance = { error: error.message };
   }
   try {
-    const response = await fetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
+    const response = await apiFetch(`${API_BASE}/diagnostics/self-check`, { cache: "no-store" });
     diagnostics.selfCheck = await response.json();
   } catch (error) {
     diagnostics.selfCheck = { error: error.message };
@@ -1477,7 +1876,7 @@ async function submitFeedback() {
     diagnostics: await collectFeedbackDiagnostics()
   };
   try {
-    const response = await fetch(`${API_BASE}/feedback`, {
+    const response = await apiFetch(`${API_BASE}/feedback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -1497,20 +1896,74 @@ async function copyFeedbackDiagnostics() {
   setFeedback("诊断信息已复制，可粘贴给开发者排查问题。");
 }
 
+// Select a word in the draft and add it to the doctor's own hotword list (used from the next dictation on).
+function selectedDraftWord() {
+  const { selectionStart: start, selectionEnd: end, value } = els.draft;
+  if (start === end) return "";
+  const word = value.slice(start, end).trim();
+  return /^[\u4e00-\u9fffA-Za-z0-9\-+·]{2,30}$/.test(word) ? word : "";
+}
+function updateAddHotwordButton() {
+  const button = document.getElementById("addHotwordButton");
+  if (!button) return;
+  const word = selectedDraftWord();
+  button.disabled = !word;
+  button.title = word ? `把“${word}”加入我的热词` : "先在草稿里选中一个词（2～30 个字，不含标点和空格）";
+}
+async function addSelectedWordToHotwords() {
+  const word = selectedDraftWord();
+  if (!word) return setFeedback("请先在草稿里选中一个词（2～30 个字，不含标点和空格）。", true);
+  try {
+    const current = await apiFetch(`${API_BASE}/hotwords`, { cache: "no-store" });
+    if (!current.ok) throw new Error("读取热词失败");
+    const words = (await current.json()).words || [];
+    if (words.includes(word)) return setFeedback(`“${word}”已经在我的热词里。`);
+    const saved = await apiFetch(`${API_BASE}/hotwords`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ words: [...words, word] }) });
+    if (!saved.ok) throw new Error((await saved.json().catch(() => ({}))).detail || "保存失败");
+    setFeedback(`已把“${word}”加入我的热词，下一次听写起生效。`);
+    loadHotwords(); loadHotwordPacks();
+  } catch (error) {
+    setFeedback(`加入热词失败：${error.message}`, true);
+  }
+}
+
 async function initialize() {
-  const stored = await storageGet([STORAGE.autosave, STORAGE.uiLanguage, STORAGE.dictationLanguage, STORAGE.asrProfile]);
-  els.autosaveToggle.checked = Boolean(stored[STORAGE.autosave]);
-  els.uiLanguageSelect.value = stored[STORAGE.uiLanguage] || "zh-CN";
-  els.dictationLanguageSelect.value = stored[STORAGE.dictationLanguage] || "zh-CN";
+  const stored = await storageGet([STORAGE.autosave, STORAGE.uiLanguage, STORAGE.dictationLanguage, STORAGE.asrProfile, STORAGE.specialties, STORAGE.includeDraftPacks]);
+  selectedSpecialties = Array.isArray(stored[STORAGE.specialties]) ? stored[STORAGE.specialties] : null;
+  includeDraftPacks = Boolean(stored[STORAGE.includeDraftPacks]);
+  fieldRoutingEnabled = stored[STORAGE.fieldRouting] !== false;
+  const routingToggle = document.getElementById("fieldRoutingToggle");
+  if (routingToggle) routingToggle.checked = fieldRoutingEnabled;
+  els.autosaveToggle.checked = stored[STORAGE.autosave] !== false;      // on unless the doctor switched it off
+  els.uiLanguageSelect.value = "zh-CN";      // the English interface is not offered for now (the texts remain for later)
+  await hideEnglishDictationIfUnavailable();
+  els.dictationLanguageSelect.value = stored[STORAGE.dictationLanguage] === "en-US" && englishDictationOffered ? "en-US" : "zh-CN";
   if (els.asrProfileSelect) els.asrProfileSelect.value = stored[STORAGE.asrProfile] || "balanced";
   applyUILanguage(els.uiLanguageSelect.value);
   updateLanguageSpecificUI();
   await loadPatientSlots();
   await loadTemplates();
-  updateDraftMeta(); checkService(); loadHotwords();
+  updateDraftMeta(); checkService(); loadHotwords(); loadSpecialties(); loadHotwordPacks();
+  if (selectedSpecialties === null) {
+    // First run: bring the specialty choice to the doctor's attention.
+    document.querySelector('.tab[data-tab="hotwords"]')?.click();
+    setFeedback(uiLanguage === "en-US" ? "Welcome. Please pick your specialty in the Hotwords tab." : "欢迎使用。请在右侧“热词”页选择您的专业。");
+  }
 }
 
-els.uiLanguageSelect.addEventListener("change", async () => { applyUILanguage(els.uiLanguageSelect.value); await storageSet({ [STORAGE.uiLanguage]: els.uiLanguageSelect.value }); updateLanguageSpecificUI(); loadHotwordPacks(); });
+document.getElementById("includeDraftToggle")?.addEventListener("change", onIncludeDraftChange);
+document.getElementById("addHotwordButton")?.addEventListener("click", addSelectedWordToHotwords);
+for (const name of ["select", "keyup", "mouseup", "input", "blur"]) els.draft.addEventListener(name, updateAddHotwordButton);
+document.getElementById("fieldChips")?.addEventListener("click", onFieldChipClick);
+document.getElementById("stopServiceButton")?.addEventListener("click", stopService);
+document.getElementById("fieldRoutingToggle")?.addEventListener("change", async event => {
+  fieldRoutingEnabled = event.target.checked;
+  await storageSet({ [STORAGE.fieldRouting]: fieldRoutingEnabled });
+  renderFieldBar();
+});
+els.draft.addEventListener("click", followCaretToField);
+els.draft.addEventListener("keyup", event => { if (!["Shift", "Control", "Alt", "Meta"].includes(event.key)) followCaretToField(); });
+els.uiLanguageSelect.addEventListener("change", async () => { applyUILanguage(els.uiLanguageSelect.value); await storageSet({ [STORAGE.uiLanguage]: els.uiLanguageSelect.value }); updateLanguageSpecificUI(); loadHotwordPacks(); loadSpecialties(); });
 els.dictationLanguageSelect.addEventListener("change", async () => { await storageSet({ [STORAGE.dictationLanguage]: els.dictationLanguageSelect.value }); updateLanguageSpecificUI(); });
 els.asrProfileSelect?.addEventListener("change", async () => { await storageSet({ [STORAGE.asrProfile]: currentAsrProfile() }); checkService(); setFeedback(`已切换识别模式：${els.asrProfileSelect.selectedOptions[0]?.textContent || currentAsrProfile()}`); });
 els.recordButton.addEventListener("click",()=>recording?stopRecording():startRecording()); els.draft.addEventListener("input",updateDraftMeta);
@@ -1535,7 +1988,7 @@ document.getElementById("tplComposite").addEventListener("change", e => { docume
 els.copyButton.addEventListener("click", async () => copyDraftText(false));
 els.clearButton.addEventListener("click",()=>{if(!els.draft.value)return;pushUndo();els.draft.value="";updateDraftMeta();setFeedback("草稿已清空，可点击撤销恢复。");});
 els.undoButton.addEventListener("click",()=>{if(!undoHistory.length)return;els.draft.value=undoHistory.pop();els.undoButton.disabled=undoHistory.length===0;updateDraftMeta();setFeedback("已撤销上一步。");});
-els.autosaveToggle.addEventListener("change",async()=>{await storageSet({[STORAGE.autosave]:els.autosaveToggle.checked});if(els.autosaveToggle.checked){saveCurrentSlotState();await persistPatientSlots();els.privacyText.textContent=tr("autosave_on");setFeedback("已开启本机草稿自动恢复。");}else{els.privacyText.textContent=tr("autosave_off");setFeedback("已关闭自动恢复。");}});
+els.autosaveToggle.addEventListener("change",async()=>{await storageSet({[STORAGE.autosave]:els.autosaveToggle.checked});if(els.autosaveToggle.checked){saveCurrentSlotState();await persistPatientSlots();els.privacyText.textContent=tr("autosave_on");setFeedback("已开启草稿自动保存。");}else{els.privacyText.textContent=tr("autosave_off");setFeedback("已关闭自动保存，已保存的草稿会被删除。");}Auth.touchWorkspace();});
 els.historyList.addEventListener("click",async event=>{const button=event.target.closest("button[data-id]");if(!button)return;const item=savedHistory.find(entry=>entry.id===button.dataset.id);if(button.dataset.action==="restore"&&item){pushUndo();els.draft.value=item.text;updateDraftMeta();setFeedback("已恢复所选版本。") }else if(button.dataset.action==="delete"){savedHistory=savedHistory.filter(entry=>entry.id!==button.dataset.id);await persistHistory();}});
 els.clearHistoryButton.addEventListener("click",async()=>{savedHistory=[];await persistHistory();setFeedback("本地版本记录已清空。");});
 document.getElementById("addPatientButton").addEventListener("click", () => {
@@ -1550,4 +2003,6 @@ document.getElementById("newPatientInput").addEventListener("blur", e => { if (e
 document.querySelectorAll(".tab").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(v=>v.classList.toggle("active",v===button));document.querySelectorAll(".tab-panel").forEach(panel=>panel.classList.toggle("active",panel.id===`${button.dataset.tab}Panel`));}));
 document.addEventListener("keydown",event=>{if(event.code==="Space"&&document.activeElement!==els.draft&&document.activeElement!==els.hotwordEditor&&document.activeElement?.tagName!=="SELECT"&&document.activeElement?.tagName!=="BUTTON"){event.preventDefault();if(!els.recordButton.disabled)(recording?stopRecording():startRecording())}});
 
-els.undoButton.disabled=true; initialize(); setInterval(checkService,15000);
+els.undoButton.disabled=true;
+Auth.configure({ isBusy: () => recording || streamingMode, persistEnabled: () => els.autosaveToggle.checked });
+Auth.start().then(() => { initialize(); setInterval(checkService, 15000); });

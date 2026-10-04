@@ -95,3 +95,14 @@ extension.pem
 # macOS packaging local staging
 packaging/macos/.venv-macos/
 packaging/macos/dist/
+
+# Evaluation: clinician recordings and run results are sensitive and large
+evaluation/datasets/**/audio/
+evaluation/datasets/**/*.wav
+evaluation/results/
+
+# private keys (e.g. the extension signing key) never belong in the repository
+*.pem
+
+# patient report images used for local OCR experiments (never commit)
+samples/

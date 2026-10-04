@@ -23,6 +23,27 @@ $python = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $python)) { $python = "python" }
 & $python -B -m py_compile (Join-Path $serverDir "app.py")
 
+Write-Host "Running regression tests..."
+Push-Location $ProjectRoot
+try {
+  & $python -X utf8 -m unittest discover -s tests -t .
+  if ($LASTEXITCODE -ne 0) { throw "Regression tests failed" }
+} finally { Pop-Location }
+
+Write-Host "Running JavaScript tests..."
+node --check (Join-Path $extensionDir "fields.js") | Out-Host
+node --check (Join-Path $extensionDir "miner_logic.js") | Out-Host
+node --check (Join-Path $extensionDir "miner.js") | Out-Host
+node --check (Join-Path $extensionDir "auth_logic.js") | Out-Host
+node --check (Join-Path $extensionDir "auth.js") | Out-Host
+node --check (Join-Path $extensionDir "report_logic.js") | Out-Host
+node --check (Join-Path $extensionDir "report.js") | Out-Host
+node --test (Join-Path $ProjectRoot "tests/js/fields.test.js") | Out-Host
+node --test (Join-Path $ProjectRoot "tests/js/miner_logic.test.js") | Out-Host
+node --test (Join-Path $ProjectRoot "tests/js/auth_logic.test.js") | Out-Host
+node --test (Join-Path $ProjectRoot "tests/js/report_logic.test.js") | Out-Host
+if ($LASTEXITCODE -ne 0) { throw "JavaScript tests failed" }
+
 Write-Host "Checking productization docs..."
 $required = @(
   "docs\PRIVACY_POLICY_DRAFT.md",

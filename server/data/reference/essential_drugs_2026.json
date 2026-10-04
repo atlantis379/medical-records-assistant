@@ -1,0 +1,5575 @@
+{
+ "source": "国家基本药物目录（2026年版），中华人民共和国国家卫生健康委员会",
+ "tier": "A",
+ "classification": {
+  "part1": "按临床药理学分类（目录原文）",
+  "part2": "按功能分类（目录原文）"
+ },
+ "drugs": [
+  {
+   "name": "丁卡因",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "局部麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "丁苯酞",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "丁螺环酮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "七氟烷",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "全身麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "三氧化二砷（亚砷酸）",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "丙戊酸钠",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "丙泊酚",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "全身麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "丙硫氧嘧啶",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "甲状腺激素及抗甲状腺药",
+   "also_in": []
+  },
+  {
+   "name": "丙酚替诺福韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "丙酸氟替卡松",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": [
+    "耳鼻喉科用药/"
+   ]
+  },
+  {
+   "name": "丙酸睾酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雄激素及同化激素",
+   "also_in": []
+  },
+  {
+   "name": "两性霉素B",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗真菌药",
+   "also_in": []
+  },
+  {
+   "name": "中/长链脂肪乳",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "肠外营养药",
+   "also_in": []
+  },
+  {
+   "name": "乌拉地尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "乙胺嘧啶",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗疟药",
+   "also_in": []
+  },
+  {
+   "name": "乙酰半胱氨酸",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "祛痰药",
+   "also_in": []
+  },
+  {
+   "name": "乙酰唑胺",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "青光眼用药",
+   "also_in": []
+  },
+  {
+   "name": "乙酰胺",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "鼠药解毒药",
+   "also_in": []
+  },
+  {
+   "name": "乳果糖",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "泻药及止泻药",
+   "also_in": []
+  },
+  {
+   "name": "乳酶生",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "助消化药",
+   "also_in": []
+  },
+  {
+   "name": "乳酸钠林格",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "酸碱平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "二甲双胍",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "五氟利多",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "亚叶酸钙",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "亚甲蓝",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "亚硝酸盐中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "人促红素",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "人干扰素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "人生长激素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "下丘脑垂体激素及其类似物",
+   "also_in": []
+  },
+  {
+   "name": "人粒细胞刺激因子",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "他克莫司",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "他氟前列素",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "青光眼用药",
+   "also_in": []
+  },
+  {
+   "name": "他莫昔芬",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤激素类",
+   "also_in": []
+  },
+  {
+   "name": "伊伐布雷定",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心力衰竭药",
+   "also_in": []
+  },
+  {
+   "name": "伊布利特",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "伊曲康唑",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗真菌药",
+   "also_in": []
+  },
+  {
+   "name": "伊马替尼",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "伯氨喹",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗疟药",
+   "also_in": []
+  },
+  {
+   "name": "低分子量肝素",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "佐匹克隆",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "镇静催眠药",
+   "also_in": []
+  },
+  {
+   "name": "依托泊苷",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤抗生素",
+   "also_in": []
+  },
+  {
+   "name": "依折麦布",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "调脂及抗动脉粥样硬化药",
+   "also_in": []
+  },
+  {
+   "name": "依沙吖啶",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "其他",
+   "also_in": [
+    "妇产科用药/子宫收缩药"
+   ]
+  },
+  {
+   "name": "依达拉奉右莰醇",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "依那普利",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "倍他司汀",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "克拉霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "大环内酯类",
+   "also_in": []
+  },
+  {
+   "name": "克林霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "其他抗生素",
+   "also_in": []
+  },
+  {
+   "name": "克霉唑",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "凝血酶",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "利伐沙班",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "利培酮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "利多卡因",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "局部麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "利妥昔单抗",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "利巴韦林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "利拉鲁肽",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "利格列汀",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "利福平",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "别嘌醇",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "抗痛风药",
+   "also_in": []
+  },
+  {
+   "name": "加替沙星",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "劳拉西泮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "匹维溴铵",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": []
+  },
+  {
+   "name": "十一酸睾酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雄激素及同化激素",
+   "also_in": []
+  },
+  {
+   "name": "华法林",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "单硝酸异山梨酯",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "卡前列甲酯",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "卡培他滨",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "卡托普利",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "卡泊芬净",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗真菌药",
+   "also_in": []
+  },
+  {
+   "name": "卡铂",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "卡马西平",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "厄贝沙坦",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "去乙酰毛花苷",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心力衰竭药",
+   "also_in": []
+  },
+  {
+   "name": "去氨加压素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "下丘脑垂体激素及其类似物",
+   "also_in": []
+  },
+  {
+   "name": "去甲肾上腺素",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "双歧杆菌三联活菌",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "微生态制剂",
+   "also_in": []
+  },
+  {
+   "name": "双歧杆菌四联活菌",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "微生态制剂",
+   "also_in": []
+  },
+  {
+   "name": "双氯芬酸钠",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "口服补液盐",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "可待因",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "镇咳药",
+   "also_in": []
+  },
+  {
+   "name": "可的松",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "右佐匹克隆",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "镇静催眠药",
+   "also_in": []
+  },
+  {
+   "name": "右旋糖酐铁",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "右美沙芬",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "镇咳药",
+   "also_in": []
+  },
+  {
+   "name": "叶酸",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "司普奇拜单抗",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "其他",
+   "also_in": [
+    "耳鼻喉科用药/"
+   ]
+  },
+  {
+   "name": "司维拉姆",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "司美格鲁肽",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "司莫司汀",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "烷化剂",
+   "also_in": []
+  },
+  {
+   "name": "吉西他滨",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "吉非替尼",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "吗啡",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "镇痛药",
+   "also_in": []
+  },
+  {
+   "name": "吗替麦考酚酯",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "吡喹酮",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗血吸虫病药",
+   "also_in": []
+  },
+  {
+   "name": "吡格列酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "吲哚布芬",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗血小板药",
+   "also_in": []
+  },
+  {
+   "name": "吲哚美辛",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "吲达帕胺",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "呋喃妥因",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "硝基呋喃类",
+   "also_in": []
+  },
+  {
+   "name": "呋塞米",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "咖啡因",
+   "part": "part1",
+   "category": "儿科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "咪康唑",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "抗感染药",
+   "also_in": [
+    "妇产科用药/其他"
+   ]
+  },
+  {
+   "name": "咪达唑仑",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "镇静催眠药",
+   "also_in": []
+  },
+  {
+   "name": "哌唑嗪",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "哌拉西林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "哌拉西林钠他唑巴坦钠",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "哌替啶",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "镇痛药",
+   "also_in": []
+  },
+  {
+   "name": "哌甲酯",
+   "part": "part1",
+   "category": "儿科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "唑吡坦",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "镇静催眠药",
+   "also_in": []
+  },
+  {
+   "name": "喷托维林",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "镇咳药",
+   "also_in": []
+  },
+  {
+   "name": "喹硫平",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "噻吗洛尔",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "青光眼用药",
+   "also_in": []
+  },
+  {
+   "name": "噻托溴铵",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "国家免疫规划用疫苗",
+   "part": "part1",
+   "category": "生物制品",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "地塞米松",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "肾上腺皮质激素类药",
+   "also_in": []
+  },
+  {
+   "name": "地尔硫䓬",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "地屈孕酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "地芬尼多",
+   "part": "part1",
+   "category": "耳鼻喉科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "地衣芽孢杆菌活菌",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "微生态制剂",
+   "also_in": []
+  },
+  {
+   "name": "地西泮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": [
+    "治疗精神障碍药/镇静催眠药"
+   ]
+  },
+  {
+   "name": "地诺孕素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "地高辛",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心力衰竭药",
+   "also_in": []
+  },
+  {
+   "name": "坦度螺酮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "坦洛新（坦索罗辛）",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "良性前列腺增生用药",
+   "also_in": []
+  },
+  {
+   "name": "垂体后叶注射液",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "埃克替尼",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "培哚普利叔丁胺",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "培美曲塞",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "培门冬酶",
+   "part": "part1",
+   "category": "儿科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "复合磷酸氢钾",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "矿物质",
+   "also_in": []
+  },
+  {
+   "name": "复方托吡卡胺",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "复方氢氧化铝",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "复方氨基酸18AA",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "肠外营养药",
+   "also_in": []
+  },
+  {
+   "name": "复方氯化钠",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "复方甘草",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "镇咳药",
+   "also_in": []
+  },
+  {
+   "name": "复方甲氧那明",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "镇咳药",
+   "also_in": []
+  },
+  {
+   "name": "多塞平",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "多奈哌齐",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗痴呆药",
+   "also_in": []
+  },
+  {
+   "name": "多巴丝肼",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": []
+  },
+  {
+   "name": "多巴胺",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "多巴酚丁胺",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "多柔比星",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤抗生素",
+   "also_in": []
+  },
+  {
+   "name": "多潘立酮",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": []
+  },
+  {
+   "name": "多烯磷脂酰胆碱",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "肝病治疗药",
+   "also_in": []
+  },
+  {
+   "name": "多种维生素（12）",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "维生素",
+   "also_in": []
+  },
+  {
+   "name": "多西环素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "四环素类",
+   "also_in": []
+  },
+  {
+   "name": "夫西地酸",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "其他抗生素",
+   "also_in": []
+  },
+  {
+   "name": "头孢他啶",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢克肟",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢呋辛",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢唑林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢拉定",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢曲松",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "头孢氨苄",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "头孢菌素类",
+   "also_in": []
+  },
+  {
+   "name": "奋乃静",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "奥卡西平",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "奥司他韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "奥希替尼",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "奥拉帕利",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "奥氮平",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "奥沙利铂",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "奥美拉唑",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "孟鲁司特",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "对乙酰氨基酚",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "小檗碱",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "其他抗菌药",
+   "also_in": []
+  },
+  {
+   "name": "尼可刹米",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "中枢兴奋药",
+   "also_in": []
+  },
+  {
+   "name": "尼可地尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "尼尔雌醇",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "尼群地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "尼莫地平",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "尼达尼布",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "尿激酶",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "尿素",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "角质溶解药",
+   "also_in": []
+  },
+  {
+   "name": "山莨菪碱",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": []
+  },
+  {
+   "name": "左乙拉西坦",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "左氧氟沙星",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "喹诺酮类",
+   "also_in": [
+    "眼科用药/抗感染药"
+   ]
+  },
+  {
+   "name": "左氨氯地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "左甲状腺素钠",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "甲状腺激素及抗甲状腺药",
+   "also_in": []
+  },
+  {
+   "name": "巯嘌呤",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "布地奈德",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "布地奈德福莫特罗",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "布地格福",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "布比卡因",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "局部麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "布洛芬",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "帕利哌酮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "帕罗西汀",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "平阳霉素",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤抗生素",
+   "also_in": []
+  },
+  {
+   "name": "庆大霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "氨基糖苷类",
+   "also_in": []
+  },
+  {
+   "name": "康柏西普",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "开塞露",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "泻药及止泻药",
+   "also_in": []
+  },
+  {
+   "name": "异丙嗪",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "异丙托溴铵",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "异丙肾上腺素",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "异环磷酰胺",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "烷化剂",
+   "also_in": []
+  },
+  {
+   "name": "德谷胰岛素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "恩他卡朋",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": []
+  },
+  {
+   "name": "恩替卡韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "恩格列净",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "戊乙奎醚",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "有机磷酸酯类中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "托拉塞米",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "托法替布",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "抗狂犬病血清",
+   "part": "part1",
+   "category": "生物制品",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "抗蛇毒血清",
+   "part": "part1",
+   "category": "生物制品",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "拉莫三嗪",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "拉贝洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "整蛋白型肠内营养剂（粉剂）",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "肠内营养药",
+   "also_in": []
+  },
+  {
+   "name": "文拉法辛",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "新斯的明",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗重症肌无力药",
+   "also_in": []
+  },
+  {
+   "name": "昂丹司琼",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "止吐药",
+   "also_in": []
+  },
+  {
+   "name": "普拉克索",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": []
+  },
+  {
+   "name": "普瑞巴林",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "镇痛药",
+   "also_in": []
+  },
+  {
+   "name": "普罗帕酮",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "普萘洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "曲妥珠单抗",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "曲安奈德益康唑",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "曲美他嗪",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "更昔洛韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "替格瑞洛",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗血小板药",
+   "also_in": []
+  },
+  {
+   "name": "替硝唑",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "硝基咪唑类",
+   "also_in": []
+  },
+  {
+   "name": "替米沙坦",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "替莫唑胺",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "烷化剂",
+   "also_in": []
+  },
+  {
+   "name": "替诺福韦二吡呋酯",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "来曲唑",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤激素类",
+   "also_in": []
+  },
+  {
+   "name": "来氟米特",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "枯草杆菌二联活菌",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "微生态制剂",
+   "also_in": []
+  },
+  {
+   "name": "枸橼酸铋钾",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "柔红霉素",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤抗生素",
+   "also_in": []
+  },
+  {
+   "name": "柳氮磺吡啶",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "治疗炎性肠病药",
+   "also_in": []
+  },
+  {
+   "name": "格列吡嗪",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "格列喹酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "格列本脲",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "格列美脲",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "格列齐特",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "桉柠蒎",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "祛痰药",
+   "also_in": []
+  },
+  {
+   "name": "比索洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "毛果芸香碱",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "青光眼用药",
+   "also_in": []
+  },
+  {
+   "name": "氟哌啶醇",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "氟尿嘧啶",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "氟康唑",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗真菌药",
+   "also_in": []
+  },
+  {
+   "name": "氟桂利嗪",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "氟比洛芬酯",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "氟西汀",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "氟马西尼",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "鼠药解毒药",
+   "also_in": []
+  },
+  {
+   "name": "氢化可的松",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "肾上腺皮质激素类药",
+   "also_in": [
+    "皮肤科用药/肾上腺皮质激素类药"
+   ]
+  },
+  {
+   "name": "氢氯噻嗪",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "氧氟沙星",
+   "part": "part1",
+   "category": "耳鼻喉科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "氨氯地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "氨溴索",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "祛痰药",
+   "also_in": []
+  },
+  {
+   "name": "氨甲环酸",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "氨甲苯酸",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "氨磺必利",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "氨苄西林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "氨苯砜",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗结核病药",
+   "also_in": []
+  },
+  {
+   "name": "氨苯蝶啶",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "氨茶碱",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "氯丙嗪",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "氯化琥珀胆碱",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "肌肉松弛药",
+   "also_in": []
+  },
+  {
+   "name": "氯化钠",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "氯化钾",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "氯吡格雷",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗血小板药",
+   "also_in": []
+  },
+  {
+   "name": "氯喹",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗疟药",
+   "also_in": []
+  },
+  {
+   "name": "氯氮平",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "氯硝西泮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "氯米帕明",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "氯胺酮",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "全身麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "氯苯那敏",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "氯解磷定",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "有机磷酸酯类中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "氯雷他定",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "氯霉素",
+   "part": "part1",
+   "category": "眼科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "水合氯醛",
+   "part": "part1",
+   "category": "儿科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "水杨酸",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "角质溶解药",
+   "also_in": []
+  },
+  {
+   "name": "水飞蓟素",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "肝病治疗药",
+   "also_in": []
+  },
+  {
+   "name": "汉防己甲素",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "沙丁胺醇",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "法莫替丁",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "波生坦",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "泰它西普",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "泼尼松",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "肾上腺皮质激素类药",
+   "also_in": []
+  },
+  {
+   "name": "洛哌丁胺",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "泻药及止泻药",
+   "also_in": []
+  },
+  {
+   "name": "洛索洛芬钠",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "洛贝林",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "中枢兴奋药",
+   "also_in": []
+  },
+  {
+   "name": "溴吡斯的明",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗重症肌无力药",
+   "also_in": []
+  },
+  {
+   "name": "溴己新",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "祛痰药",
+   "also_in": []
+  },
+  {
+   "name": "溴隐亭",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": [
+    "妇产科用药/其他"
+   ]
+  },
+  {
+   "name": "炉甘石",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "熊去氧胆酸",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "利胆药",
+   "also_in": []
+  },
+  {
+   "name": "牛肺表面活性剂",
+   "part": "part1",
+   "category": "儿科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "特拉唑嗪",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "良性前列腺增生用药",
+   "also_in": []
+  },
+  {
+   "name": "特比萘芬",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "环丙沙星",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "喹诺酮类",
+   "also_in": []
+  },
+  {
+   "name": "环孢素",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "环磷酰胺",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "烷化剂",
+   "also_in": []
+  },
+  {
+   "name": "琥珀酸亚铁",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "瑞格列奈",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "瑞舒伐他汀",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "调脂及抗动脉粥样硬化药",
+   "also_in": []
+  },
+  {
+   "name": "瑞芬太尼",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "全身麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "甘油果糖",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "甘精胰岛素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "甘草酸二铵",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "肝病治疗药",
+   "also_in": []
+  },
+  {
+   "name": "甘露醇",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "脑血管病用药及降颅压药",
+   "also_in": []
+  },
+  {
+   "name": "生长抑素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "下丘脑垂体激素及其类似物",
+   "also_in": []
+  },
+  {
+   "name": "甲巯咪唑",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "甲状腺激素及抗甲状腺药",
+   "also_in": []
+  },
+  {
+   "name": "甲氧氯普胺",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": []
+  },
+  {
+   "name": "甲氨蝶呤",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "甲泼尼龙",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "肾上腺皮质激素类药",
+   "also_in": []
+  },
+  {
+   "name": "甲状腺片",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "甲状腺激素及抗甲状腺药",
+   "also_in": []
+  },
+  {
+   "name": "甲硝唑",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "硝基咪唑类",
+   "also_in": [
+    "妇产科用药/其他",
+    "抗寄生虫病药/抗阿米巴病药及抗滴虫病药"
+   ]
+  },
+  {
+   "name": "甲羟孕酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "甲萘氢醌",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "甲钴胺",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "癸氟奋乃静",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "白消安",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "烷化剂",
+   "also_in": []
+  },
+  {
+   "name": "石杉碱甲",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗痴呆药",
+   "also_in": []
+  },
+  {
+   "name": "破伤风人免疫球蛋白",
+   "part": "part1",
+   "category": "生物制品",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "破伤风抗毒素",
+   "part": "part1",
+   "category": "生物制品",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "硝普钠",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "硝苯地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": [
+    "心血管系统用药/抗高血压药"
+   ]
+  },
+  {
+   "name": "硝酸异山梨酯",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "硝酸甘油",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心绞痛药",
+   "also_in": []
+  },
+  {
+   "name": "硫代硫酸钠",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "氰化物中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "硫唑嘌呤",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "硫酸亚铁",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "硫酸钡",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "造影剂",
+   "also_in": []
+  },
+  {
+   "name": "硫酸镁",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "硼替佐米",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "碘佛醇",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "造影剂",
+   "also_in": []
+  },
+  {
+   "name": "碘化油",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "造影剂",
+   "also_in": []
+  },
+  {
+   "name": "碘海醇",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "造影剂",
+   "also_in": []
+  },
+  {
+   "name": "碘解磷定",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "有机磷酸酯类中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "碳酸氢钠",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "酸碱平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "碳酸锂",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗躁狂药",
+   "also_in": []
+  },
+  {
+   "name": "磷霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "其他抗生素",
+   "also_in": []
+  },
+  {
+   "name": "磺胺嘧啶",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "磺胺类",
+   "also_in": []
+  },
+  {
+   "name": "磺胺嘧啶银",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "秋水仙碱",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "抗痛风药",
+   "also_in": []
+  },
+  {
+   "name": "米力农",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心力衰竭药",
+   "also_in": []
+  },
+  {
+   "name": "米氮平",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "米索前列醇",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "米诺环素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "四环素类",
+   "also_in": []
+  },
+  {
+   "name": "米非司酮",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "精氨酸",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "肝病治疗药",
+   "also_in": []
+  },
+  {
+   "name": "糠酸莫米松",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "肾上腺皮质激素类药",
+   "also_in": [
+    "耳鼻喉科用药/"
+   ]
+  },
+  {
+   "name": "索他洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "索磷布韦维帕他韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "紫杉醇",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤植物成分药",
+   "also_in": []
+  },
+  {
+   "name": "红霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "大环内酯类",
+   "also_in": [
+    "皮肤科用药/抗感染药",
+    "眼科用药/抗感染药"
+   ]
+  },
+  {
+   "name": "纳洛酮",
+   "part": "part1",
+   "category": "解毒药",
+   "subcategory": "阿片类中毒解毒药",
+   "also_in": []
+  },
+  {
+   "name": "绒促性素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "下丘脑垂体激素及其类似物",
+   "also_in": []
+  },
+  {
+   "name": "结核病用药",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗结核病药",
+   "also_in": []
+  },
+  {
+   "name": "结核菌素纯蛋白衍生物",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "维A酸",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": [
+    "皮肤科用药/其他"
+   ]
+  },
+  {
+   "name": "维库溴铵",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "肌肉松弛药",
+   "also_in": []
+  },
+  {
+   "name": "维拉帕米",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "维生素C",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "维生素",
+   "also_in": []
+  },
+  {
+   "name": "缩宫素",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "缬沙坦",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "缬沙坦氨氯地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "罗哌卡因",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "局部麻醉药",
+   "also_in": []
+  },
+  {
+   "name": "罗库溴铵",
+   "part": "part1",
+   "category": "麻醉药",
+   "subcategory": "肌肉松弛药",
+   "also_in": []
+  },
+  {
+   "name": "罗沙司他",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "美司钠",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤治疗用解毒药",
+   "also_in": []
+  },
+  {
+   "name": "美托洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "美沙拉秦（嗪）",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": []
+  },
+  {
+   "name": "美西律",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "羟基脲",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "羟氯喹",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗疟药",
+   "also_in": [
+    "镇痛、解热、抗炎、抗风湿、抗痛风药/解热镇痛、抗炎、抗风湿药"
+   ]
+  },
+  {
+   "name": "羟甲唑啉",
+   "part": "part1",
+   "category": "耳鼻喉科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "羟考酮",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "镇痛药",
+   "also_in": []
+  },
+  {
+   "name": "羧甲司坦",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "祛痰药",
+   "also_in": []
+  },
+  {
+   "name": "联苯双酯",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "肝病治疗药",
+   "also_in": []
+  },
+  {
+   "name": "聚乙二醇",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "泻药及止泻药",
+   "also_in": []
+  },
+  {
+   "name": "肝素",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "肾上腺素",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "胞磷胆碱钠",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "中枢兴奋药",
+   "also_in": []
+  },
+  {
+   "name": "胰岛素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "胰酶",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "助消化药",
+   "also_in": []
+  },
+  {
+   "name": "胶体果胶铋",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "胺碘酮",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "脂肪乳氨基酸葡萄糖",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "肠外营养药",
+   "also_in": []
+  },
+  {
+   "name": "腹膜透析液",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "透析用药",
+   "also_in": []
+  },
+  {
+   "name": "腺苷钴胺",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗贫血药",
+   "also_in": []
+  },
+  {
+   "name": "舍曲林",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "舒必利",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "艾司唑仑",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "艾司奥美拉唑",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "艾司洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "艾司西酞普兰",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "艾曲泊帕乙醇胺",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "艾滋病用药",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": []
+  },
+  {
+   "name": "芬太尼",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "镇痛药",
+   "also_in": []
+  },
+  {
+   "name": "苄星青霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "苯唑西林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "苯妥英钠",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "苯巴比妥",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗癫痫药",
+   "also_in": []
+  },
+  {
+   "name": "苯海拉明",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "苯海索",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": []
+  },
+  {
+   "name": "苯溴马隆",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "抗痛风药",
+   "also_in": []
+  },
+  {
+   "name": "茚达特罗格隆溴铵",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "茶碱",
+   "part": "part1",
+   "category": "呼吸系统用药",
+   "subcategory": "平喘药",
+   "also_in": []
+  },
+  {
+   "name": "莫匹罗星",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "抗感染药",
+   "also_in": []
+  },
+  {
+   "name": "莫沙必利",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": []
+  },
+  {
+   "name": "莫西沙星",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "喹诺酮类",
+   "also_in": []
+  },
+  {
+   "name": "莫雷西嗪",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "葡萄糖",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "葡萄糖氯化钠",
+   "part": "part1",
+   "category": "调节水、电解质及酸碱平衡药",
+   "subcategory": "水、电解质平衡调节药",
+   "also_in": []
+  },
+  {
+   "name": "葡萄糖酸钙",
+   "part": "part1",
+   "category": "维生素、矿物质类药",
+   "subcategory": "矿物质",
+   "also_in": []
+  },
+  {
+   "name": "葡萄糖酸锑钠",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗利什曼原虫病药",
+   "also_in": []
+  },
+  {
+   "name": "蒙脱石",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "泻药及止泻药",
+   "also_in": []
+  },
+  {
+   "name": "螺内酯",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "血友病用药",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "西替利嗪",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "西格列汀",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "西洛他唑",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗血小板药",
+   "also_in": []
+  },
+  {
+   "name": "西那卡塞",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "抗甲状旁腺药",
+   "also_in": []
+  },
+  {
+   "name": "诺氟沙星",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "喹诺酮类",
+   "also_in": []
+  },
+  {
+   "name": "贝伐珠单抗",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤靶向药",
+   "also_in": []
+  },
+  {
+   "name": "赖诺普利",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "赛庚啶",
+   "part": "part1",
+   "category": "抗变态反应药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "辛伐他汀",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "调脂及抗动脉粥样硬化药",
+   "also_in": []
+  },
+  {
+   "name": "达格列净",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "达比加群酯",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "抗凝血药及溶栓药",
+   "also_in": []
+  },
+  {
+   "name": "避孕药",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "其他",
+   "also_in": []
+  },
+  {
+   "name": "酚妥拉明",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "金刚烷胺",
+   "part": "part1",
+   "category": "神经系统用药",
+   "subcategory": "抗震颤麻痹药",
+   "also_in": []
+  },
+  {
+   "name": "钆布醇",
+   "part": "part1",
+   "category": "诊断用药",
+   "subcategory": "造影剂",
+   "also_in": []
+  },
+  {
+   "name": "铝碳酸镁",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "长春新碱",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤植物成分药",
+   "also_in": []
+  },
+  {
+   "name": "门冬胰岛素",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "门冬酰胺酶",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "间羟胺",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗休克药",
+   "also_in": []
+  },
+  {
+   "name": "阿仑膦酸钠",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "钙代谢调节药及抗骨质疏松药",
+   "also_in": []
+  },
+  {
+   "name": "阿卡波糖",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "胰岛素及降血糖药",
+   "also_in": []
+  },
+  {
+   "name": "阿司匹林",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": [
+    "血液系统用药/抗血小板药"
+   ]
+  },
+  {
+   "name": "阿奇霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "大环内酯类",
+   "also_in": []
+  },
+  {
+   "name": "阿托伐他汀",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "调脂及抗动脉粥样硬化药",
+   "also_in": []
+  },
+  {
+   "name": "阿托品",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "胃肠解痉药及胃动力药",
+   "also_in": [
+    "眼科用药/其他"
+   ]
+  },
+  {
+   "name": "阿昔洛韦",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "抗病毒药",
+   "also_in": [
+    "皮肤科用药/抗感染药",
+    "眼科用药/抗感染药"
+   ]
+  },
+  {
+   "name": "阿普唑仑",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗焦虑药",
+   "also_in": []
+  },
+  {
+   "name": "阿替洛尔",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗心律失常药",
+   "also_in": []
+  },
+  {
+   "name": "阿法骨化醇",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "钙代谢调节药及抗骨质疏松药",
+   "also_in": []
+  },
+  {
+   "name": "阿立哌唑",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "阿米卡星",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "氨基糖苷类",
+   "also_in": []
+  },
+  {
+   "name": "阿米替林",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗抑郁药",
+   "also_in": []
+  },
+  {
+   "name": "阿糖胞苷",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗代谢药",
+   "also_in": []
+  },
+  {
+   "name": "阿苯达唑",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "驱肠虫药",
+   "also_in": []
+  },
+  {
+   "name": "阿莫西林",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "阿莫西林克拉维酸钾",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "阿达木单抗",
+   "part": "part1",
+   "category": "免疫系统用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "雌二醇",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "雷尼替丁",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "雷贝拉唑",
+   "part": "part1",
+   "category": "消化系统用药",
+   "subcategory": "抗酸药及抗溃疡病药",
+   "also_in": []
+  },
+  {
+   "name": "青蒿素类药物",
+   "part": "part1",
+   "category": "抗寄生虫病药",
+   "subcategory": "抗疟药",
+   "also_in": []
+  },
+  {
+   "name": "青霉素",
+   "part": "part1",
+   "category": "抗微生物药",
+   "subcategory": "青霉素类",
+   "also_in": []
+  },
+  {
+   "name": "青霉胺",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "解热镇痛、抗炎、抗风湿药",
+   "also_in": [
+    "解毒药/鼠药解毒药"
+   ]
+  },
+  {
+   "name": "非奈利酮",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "利尿药及脱水药",
+   "also_in": []
+  },
+  {
+   "name": "非布司他",
+   "part": "part1",
+   "category": "镇痛、解热、抗炎、抗风湿、抗痛风药",
+   "subcategory": "抗痛风药",
+   "also_in": []
+  },
+  {
+   "name": "非洛地平",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "抗高血压药",
+   "also_in": []
+  },
+  {
+   "name": "非诺贝特",
+   "part": "part1",
+   "category": "心血管系统用药",
+   "subcategory": "调脂及抗动脉粥样硬化药",
+   "also_in": []
+  },
+  {
+   "name": "非那雄胺",
+   "part": "part1",
+   "category": "泌尿系统用药",
+   "subcategory": "良性前列腺增生用药",
+   "also_in": []
+  },
+  {
+   "name": "顺铂",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "其他抗肿瘤药",
+   "also_in": []
+  },
+  {
+   "name": "高三尖杉酯碱",
+   "part": "part1",
+   "category": "抗肿瘤药",
+   "subcategory": "抗肿瘤植物成分药",
+   "also_in": []
+  },
+  {
+   "name": "鱼石脂",
+   "part": "part1",
+   "category": "皮肤科用药",
+   "subcategory": "角质溶解药",
+   "also_in": []
+  },
+  {
+   "name": "鱼精蛋白",
+   "part": "part1",
+   "category": "血液系统用药",
+   "subcategory": "促凝血药",
+   "also_in": []
+  },
+  {
+   "name": "鲁拉西酮",
+   "part": "part1",
+   "category": "治疗精神障碍药",
+   "subcategory": "抗精神病药",
+   "also_in": []
+  },
+  {
+   "name": "麦角新碱",
+   "part": "part1",
+   "category": "妇产科用药",
+   "subcategory": "子宫收缩药",
+   "also_in": []
+  },
+  {
+   "name": "麻黄碱",
+   "part": "part1",
+   "category": "耳鼻喉科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "黄体酮",
+   "part": "part1",
+   "category": "激素及影响内分泌药",
+   "subcategory": "雌激素、孕激素及抗孕激素",
+   "also_in": []
+  },
+  {
+   "name": "一清颗粒（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "七十味珍珠丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "七厘散（胶囊）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "三九胃泰颗粒（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "三金片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "丹参注射液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "丹栀逍遥丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "丹珍头痛胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "乌灵胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "乌鸡白凤丸（胶囊、片）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "九味羌活丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "乳块消颗粒（胶囊、片）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "散结剂",
+   "also_in": []
+  },
+  {
+   "name": "乳癖消颗粒（胶囊、片）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "散结剂",
+   "also_in": []
+  },
+  {
+   "name": "二母宁嗽丸（颗粒、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "云南白药（胶囊、膏、酊",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "五灵胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "五苓散（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "京万红软膏",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "活血化瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "仙灵骨葆胶囊（片）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "伤科接骨片",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "保和丸（颗粒、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "消导剂",
+   "also_in": []
+  },
+  {
+   "name": "保妇康栓",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "保济丸（口服液）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "健儿消食口服液",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "健脾生血颗粒（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "元胡止痛片（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "克痢痧胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "八珍丸（颗粒、胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "八珍益母丸（胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "六味地黄丸（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "六味安消散（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "消导剂",
+   "also_in": []
+  },
+  {
+   "name": "六神丸（胶囊、凝胶）",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "养心定悸胶囊（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "养心氏片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "养血清脑丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "养阴清肺丸（膏、颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "内消瘰疬丸",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "冠心苏合丸（胶囊、软胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "冰硼散",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "加味左金丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "十滴水",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "升血小板胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "止血剂",
+   "also_in": []
+  },
+  {
+   "name": "华佗再造丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "华蟾素片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "参松养心胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "参芪降糖颗粒（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "参苓白术散（丸、颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "参麦注射液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "双石通淋胶囊",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "双黄连合剂（口服液、颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "口炎清颗粒",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "口腔溃疡散",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "和血明目片",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "唐草片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "四妙丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "四磨汤口服液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "消导剂",
+   "also_in": []
+  },
+  {
+   "name": "四神丸（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "固本咳喘片（颗粒、胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "地奥心血康胶囊（软胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "地榆升白片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "止血剂",
+   "also_in": []
+  },
+  {
+   "name": "地榆槐角丸",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "坤宁颗粒（口服液）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "坤泰胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "复方丹参片（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "复方伤痛胶囊",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "复方南星止痛膏",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "复方斑蝥胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "复方苁蓉益智胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "复方血栓通胶囊（片）",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "复方银花解毒颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "复方风湿宁胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "复方黄柏液涂剂（复方",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "复方黄连素片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "复方黄黛片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "大黄䗪虫丸（片、胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "天王补心丸（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "天芪降糖胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "如意金黄散",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "妇炎消胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "妇科十味片",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "妇科千金片（胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "季德胜蛇药片",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "安宫止血颗粒",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "安宫牛黄丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "安神补心六味丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "安胃疡胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "安脑丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "定坤丹",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "宫炎平片（胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "宫瘤清胶囊（颗粒）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "散结剂",
+   "also_in": []
+  },
+  {
+   "name": "宽胸气雾剂",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "寒喘祖帕颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿化食丸（口服液）",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "消导剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿定喘口服液",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿宝泰康颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿柴桂退热颗粒（口服液）",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿泻速停颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿消积止咳口服液",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿热速清口服液（颗粒）",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿肺咳颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿肺热咳喘颗粒（口服液）",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿豉翘清热颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿青翘颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小儿黄龙颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "小柴胡颗粒（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "小活络丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "小金丸（胶囊、片）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "温经理气活血剂",
+   "also_in": []
+  },
+  {
+   "name": "少腹逐瘀丸（颗粒、胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "尪痹颗粒（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "尿毒清颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "尿通卡克乃其片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "川芎茶调丸（散、颗粒、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "平消胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "康复新液",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "康妇消炎栓",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "康妇炎胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "强力定眩片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "归脾丸（合剂）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "心可舒胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "急支糖浆（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "恒古骨伤愈合剂",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "感冒清热颗粒（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "扶正化瘀片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "护肝片（颗粒、胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "排石颗粒",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "接骨七厘散（丸、片）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "摩罗丹",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "救心丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "散结镇痛胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "散结剂",
+   "also_in": []
+  },
+  {
+   "name": "明目上清丸（片）",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "明目地黄丸",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "普乐安胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "更年安片（胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "木丹颗粒",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "活血化瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "杏贝止咳颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "杞菊地黄丸（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "松龄血脉康胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "板蓝根颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "枣仁安神颗粒（胶囊、液）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "枳术宽中胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "柏子养心丸（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "柴胡注射液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "柴银颗粒（口服液）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "桂枝茯苓丸（胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "散结剂",
+   "also_in": []
+  },
+  {
+   "name": "桂龙咳喘宁胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "槐角丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "止血剂",
+   "also_in": []
+  },
+  {
+   "name": "橘红丸（颗粒、胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "止血祛瘀明目片",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "正天丸（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "正柴胡饮颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "正清风痛宁缓释片（片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "气滞胃痛颗粒（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "津力达颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "活心丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "活血止痛散（胶囊、软胶囊）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "济生肾气丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "海昆肾喜胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "消渴丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "消炎利胆片（颗粒、胶囊）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "消痛贴膏",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "消银颗粒（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "润燥止痒胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "润肺膏",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "清咽滴丸",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "清宣止咳颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "清开灵颗粒（胶囊、软胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "清热八味胶囊（散、丸）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "清热解毒颗粒（口服液）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "湿润烧伤膏",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "滋肾育胎丸",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "滑膜炎颗粒（片）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "灯盏生脉胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "灯盏花素片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "灵泽片",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "活血化瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "热炎宁合剂",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "牛黄上清丸（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "牛黄清感胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "牛黄解毒丸（胶囊、软胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "狗皮膏",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "独一味胶囊（片）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "玄麦甘桔颗粒（胶囊）",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "玉屏风颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "玉泉胶囊（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "珍珠明目滴眼液",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "珍黄安宫片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "理中丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "甘桔冰梅片",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "甜梦胶囊（口服液）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "生脉饮（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "生血宝合剂（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "疏风解毒胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "瘀血痹胶囊（颗粒、片剂）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "癃清片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "癃闭舒胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "白灵片（胶囊）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "活血化瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "百令胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "百蕊颗粒",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "益心舒颗粒（胶囊、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "益母草膏（颗粒、胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "益气和胃胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "益气维血胶囊（片、颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "盘龙七片",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "知柏地黄丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "石斛夜光丸",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "礞石滚痰丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "祖卡木颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "稳心颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "红金消结胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": [
+    "外科用药/温经理气活血剂"
+   ]
+  },
+  {
+   "name": "缩泉丸（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "固涩剂",
+   "also_in": []
+  },
+  {
+   "name": "耳聋左慈丸",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "耳病",
+   "also_in": []
+  },
+  {
+   "name": "肛泰栓（软膏）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "肤痔清软膏",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "肺力咳合剂（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "肾炎康复片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "肾衰宁胶囊（片、颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "胃复春片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "胃苏颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "脉管复康片（胶囊）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "活血化瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "脉络宁注射液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "脉血康胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "脑安颗粒（胶囊、片、滴丸）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "脑心通丸（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "腰痹通胶囊",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "舒筋活血丸（片）",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "舒肝解郁胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "艾附暖宫丸",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "芍麻止痉颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "安神剂",
+   "also_in": []
+  },
+  {
+   "name": "芎菊上清丸（颗粒、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "芪参益气滴丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "芪苈强心胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "花红片（颗粒、胶囊）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "苏合香丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "开窍剂",
+   "also_in": []
+  },
+  {
+   "name": "苏黄止咳胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "茜芷胶囊",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "茵栀黄口服液（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "荆花胃康胶丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "荆防颗粒（合剂）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "荜铃胃痛颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "荷丹片（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "调脂剂",
+   "also_in": []
+  },
+  {
+   "name": "葆宫止血颗粒",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "理血剂",
+   "also_in": []
+  },
+  {
+   "name": "藿胆丸（片、滴丸）",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "藿香正气水（口服液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "蛇胆川贝液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "蛤蚧定喘丸（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "血塞通胶囊（软胶囊、滴丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "血府逐瘀丸（片、口服液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "血栓心脉宁胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "血脂康胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "调脂剂",
+   "also_in": []
+  },
+  {
+   "name": "补中益气丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "补肺活血胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "补血益母丸（颗粒）",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "西帕依固龈液",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "西黄丸（胶囊）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "温经理气活血剂",
+   "also_in": []
+  },
+  {
+   "name": "解郁除烦胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "诺迪康胶囊（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "贞芪扶正颗粒（胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "辛夷鼻炎丸",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "辛芩颗粒",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "连翘败毒丸（膏、片）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "连花清瘟胶囊（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "追风透骨丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "逍遥丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "通关藤（消癌平）片（胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "通天口服液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "通宣理肺丸（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "化痰、止咳、平喘剂",
+   "also_in": []
+  },
+  {
+   "name": "通心络胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "通窍耳聋丸",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "耳病",
+   "also_in": []
+  },
+  {
+   "name": "通络祛痛膏",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "速效救心丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "都梁滴丸（软胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "治风剂",
+   "also_in": []
+  },
+  {
+   "name": "醒脾养儿颗粒",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "金刚藤糖浆",
+   "part": "part2",
+   "category": "妇科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "金匮肾气丸（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "金叶败毒颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "金嗓散结胶囊（颗粒、丸）",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "金振口服液",
+   "part": "part2",
+   "category": "儿科用药",
+   "subcategory": "止咳剂",
+   "also_in": []
+  },
+  {
+   "name": "金水宝胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "金芪降糖片（胶囊、颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "金花清感颗粒",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "金蝉止痒胶囊",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "金钱胆通颗粒",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "银丹心脑通软胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "银屑胶囊（颗粒）",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "银杏叶胶囊（片、滴丸）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "银翘解毒丸（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "银花泌炎灵片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "银黄口服液（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "防风通圣丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "解表剂",
+   "also_in": []
+  },
+  {
+   "name": "附子理中丸（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "除湿止痒软膏",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "障眼明片（胶囊）",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "雷公藤多苷片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "颈复康颗粒",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "颈舒颗粒",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "颠茄片",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "理气剂",
+   "also_in": []
+  },
+  {
+   "name": "风湿液",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "风湿骨痛胶囊（片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "香砂六君丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "扶正剂",
+   "also_in": []
+  },
+  {
+   "name": "香砂养胃丸（颗粒、片）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "香砂平胃丸（颗粒）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "温里剂",
+   "also_in": []
+  },
+  {
+   "name": "香菊胶囊（片）",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "香连丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "马应龙八宝眼膏",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "马应龙麝香痔疮膏",
+   "part": "part2",
+   "category": "外科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "骨痛灵酊",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "鳖甲煎丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "麝香保心丸",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛瘀剂",
+   "also_in": []
+  },
+  {
+   "name": "麝香追风止痛膏",
+   "part": "part2",
+   "category": "骨伤科用药",
+   "subcategory": "",
+   "also_in": []
+  },
+  {
+   "name": "麻仁润肠丸（软胶囊）",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "泻下剂",
+   "also_in": []
+  },
+  {
+   "name": "黄氏响声丸",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "咽喉、口腔病",
+   "also_in": []
+  },
+  {
+   "name": "黄葵胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "祛湿剂",
+   "also_in": []
+  },
+  {
+   "name": "黄连上清丸（颗粒、胶囊",
+   "part": "part2",
+   "category": "内科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "黄连羊肝丸",
+   "part": "part2",
+   "category": "眼科用药",
+   "subcategory": "清热剂",
+   "also_in": []
+  },
+  {
+   "name": "鼻渊通窍颗粒",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "鼻炎康片",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  },
+  {
+   "name": "鼻窦炎口服液",
+   "part": "part2",
+   "category": "耳鼻喉科用药",
+   "subcategory": "鼻病",
+   "also_in": []
+  }
+ ],
+ "unplaced": [
+  {
+   "name": "复方磺胺甲噁（）唑",
+   "part": "part1"
+  },
+  {
+   "name": "碳酸钙D",
+   "part": "part1"
+  },
+  {
+   "name": "维生素B",
+   "part": "part1"
+  },
+  {
+   "name": "维生素D",
+   "part": "part1"
+  },
+  {
+   "name": "维生素K",
+   "part": "part1"
+  },
+  {
+   "name": "羟乙基淀粉130/0.",
+   "part": "part1"
+  },
+  {
+   "name": "衍生物",
+   "part": "part1"
+  },
+  {
+   "name": "重组人组织型纤溶酶原激酶",
+   "part": "part1"
+  },
+  {
+   "name": "强力枇杷膏（蜜炼）、强力",
+   "part": "part2"
+  },
+  {
+   "name": "枇杷露",
+   "part": "part2"
+  },
+  {
+   "name": "用血栓通（冻干）",
+   "part": "part2"
+  },
+  {
+   "name": "血栓通胶囊（注射液）、注射",
+   "part": "part2"
+  }
+ ]
+}

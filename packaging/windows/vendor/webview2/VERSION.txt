@@ -1,0 +1,1 @@
+Microsoft.Web.WebView2 1.0.2739.15 (NuGet, net462 + win-x64 loader). Redistributed under the licence in LICENSE.txt.

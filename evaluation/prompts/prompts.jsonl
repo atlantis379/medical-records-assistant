@@ -1,0 +1,37 @@
+# 朗读稿（虚构病例，不含任何真实患者信息）。spoken = 朗读文字；reference = 期望写入病历的文字；状态：草稿，待医生审核。
+{"id": "r01", "specialty": "respiratory_critical_care", "spoken": "主诉，反复咳嗽、咳痰三年，加重一周，伴气促。", "reference": "主诉：反复咳嗽、咳痰3年，加重1周，伴气促。", "tags": ["field", "terms"]}
+{"id": "r02", "specialty": "respiratory_critical_care", "spoken": "现病史，患者三年前无明显诱因出现咳嗽、咳痰，咳白色泡沫痰，痰量约五十毫升。", "reference": "现病史：患者3年前无明显诱因出现咳嗽、咳痰，咳白色泡沫痰，痰量约 50 mL。", "tags": ["field", "units"]}
+{"id": "r03", "specialty": "respiratory_critical_care", "spoken": "查体，体温三十六点八摄氏度，脉搏八十次每分，呼吸二十次每分，血压一百二十八十毫米汞柱。", "reference": "查体：体温36.8℃，脉搏80次/分，呼吸20次/分，血压120/80mmHg。", "tags": ["field", "numbers", "vitals", "bp"]}
+{"id": "r04", "specialty": "respiratory_critical_care", "spoken": "血氧饱和度百分之九十二，吸氧每分钟三升。", "reference": "血氧饱和度92%，吸氧 3 L/min。", "tags": ["numbers", "vitals"]}
+{"id": "r05", "specialty": "respiratory_critical_care", "spoken": "双肺呼吸音粗，可闻及少量湿啰音，未闻及干啰音及哮鸣音。", "reference": "双肺呼吸音粗，可闻及少量湿啰音，未闻及干啰音及哮鸣音。", "tags": ["negation", "terms"]}
+{"id": "r06", "specialty": "respiratory_critical_care", "spoken": "患者无发热，无胸痛，无咯血，无夜间阵发性呼吸困难。", "reference": "患者无发热，无胸痛，无咯血，无夜间阵发性呼吸困难。", "tags": ["negation"]}
+{"id": "r07", "specialty": "respiratory_critical_care", "spoken": "动脉血气分析，pH七点三五，二氧化碳分压五十毫米汞柱，氧分压六十毫米汞柱。", "reference": "动脉血气分析：pH 7.35，二氧化碳分压 50mmHg，氧分压 60mmHg。", "tags": ["numbers", "gas"]}
+{"id": "r08", "specialty": "respiratory_critical_care", "spoken": "氧合指数二百五十，考虑中度急性呼吸窘迫综合征。", "reference": "氧合指数 250，考虑中度急性呼吸窘迫综合征。", "tags": ["numbers", "terms"]}
+{"id": "r09", "specialty": "respiratory_critical_care", "spoken": "予无创呼吸机辅助通气，吸入氧浓度百分之五十，呼气末正压五厘米水柱。", "reference": "予无创呼吸机辅助通气，吸入氧浓度 50%，呼气末正压 5 cmH2O。", "tags": ["numbers", "vent"]}
+{"id": "r10", "specialty": "respiratory_critical_care", "spoken": "有创机械通气，潮气量四百五十毫升，呼吸频率十六次每分，平台压二十五厘米水柱。", "reference": "有创机械通气，潮气量 450 mL，呼吸频率16次/分，平台压 25 cmH2O。", "tags": ["numbers", "vent"]}
+{"id": "r11", "specialty": "respiratory_critical_care", "spoken": "胸部CT提示右肺上叶磨玻璃结节，直径八毫米，纵隔淋巴结肿大。", "reference": "胸部CT提示右肺上叶磨玻璃结节，直径 8 mm，纵隔淋巴结肿大。", "tags": ["numbers", "terms"]}
+{"id": "r12", "specialty": "respiratory_critical_care", "spoken": "甲泼尼龙四十毫克，每日一次，静脉滴注。", "reference": "甲泼尼龙 40 mg qd，静脉滴注。", "tags": ["drugs", "numbers"]}
+{"id": "o01", "specialty": "orthopedics", "spoken": "主诉，摔伤后左髋部疼痛伴活动受限两小时。", "reference": "主诉：摔伤后左髋部疼痛伴活动受限2小时。", "tags": ["field", "terms"]}
+{"id": "o02", "specialty": "orthopedics", "spoken": "专科检查，左髋部压痛，叩击痛阳性，左下肢外旋畸形，纵向叩击痛阳性。", "reference": "专科检查：左髋部压痛，叩击痛阳性，左下肢外旋畸形，纵向叩击痛阳性。", "tags": ["field", "negation", "terms"]}
+{"id": "o03", "specialty": "orthopedics", "spoken": "左膝关节肿胀，浮髌试验阳性，屈曲一百二十度，伸直零度。", "reference": "左膝关节肿胀，浮髌试验阳性，屈曲120°，伸直0°。", "tags": ["rom", "negation"]}
+{"id": "o04", "specialty": "orthopedics", "spoken": "腰椎间盘突出症，直腿抬高试验七十度阳性，加强试验阴性。", "reference": "腰椎间盘突出症，直腿抬高试验70°阳性，加强试验阴性。", "tags": ["rom", "negation"]}
+{"id": "o05", "specialty": "orthopedics", "spoken": "左下肢肌力四级，右下肢肌力五级，感觉未见异常。", "reference": "左下肢肌力四级，右下肢肌力五级，感觉未见异常。", "tags": ["negation"]}
+{"id": "o06", "specialty": "orthopedics", "spoken": "足背动脉搏动可，末梢血运好，皮温正常。", "reference": "足背动脉搏动可，末梢血运好，皮温正常。", "tags": ["terms"]}
+{"id": "o07", "specialty": "orthopedics", "spoken": "右桡骨远端骨折，行切开复位内固定术。", "reference": "右桡骨远端骨折，行切开复位内固定术。", "tags": ["terms"]}
+{"id": "o08", "specialty": "orthopedics", "spoken": "骨密度T值负二点八，诊断骨质疏松症。", "reference": "骨密度T值 -2.8，诊断骨质疏松症。", "tags": ["numbers"]}
+{"id": "o09", "specialty": "orthopedics", "spoken": "股骨颈骨折，拟行全髋关节置换术。", "reference": "股骨颈骨折，拟行全髋关节置换术。", "tags": ["terms"]}
+{"id": "o10", "specialty": "orthopedics", "spoken": "术后予利伐沙班十毫克，每日一次，口服，预防深静脉血栓。", "reference": "术后予利伐沙班 10 mg qd，口服，预防深静脉血栓。", "tags": ["drugs", "numbers"]}
+{"id": "o11", "specialty": "orthopedics", "spoken": "术后疼痛视觉模拟评分三分，予塞来昔布二百毫克，每日两次。", "reference": "术后疼痛视觉模拟评分3分，予塞来昔布 200 mg bid。", "tags": ["drugs", "numbers"]}
+{"id": "o12", "specialty": "orthopedics", "spoken": "肿块大小三乘二厘米，质硬，边界不清。", "reference": "肿块大小 3×2 cm，质硬，边界不清。", "tags": ["numbers"]}
+{"id": "i01", "specialty": "infectious_disease", "spoken": "患者发热五天，最高体温三十九摄氏度。", "reference": "患者发热5天，最高体温39℃。", "tags": ["numbers", "vitals"]}
+{"id": "i02", "specialty": "infectious_disease", "spoken": "外院血培养提示肺炎克雷伯菌，予美罗培南治疗。", "reference": "外院血培养提示肺炎克雷伯菌，予美罗培南治疗。", "tags": ["drugs", "terms"]}
+{"id": "i03", "specialty": "infectious_disease", "spoken": "白细胞十二点三乘十的九次方每升，中性粒细胞比例百分之八十五点三。", "reference": "白细胞 12.3×10^9/L，中性粒细胞比例 85.3%。", "tags": ["numbers", "lab"]}
+{"id": "i04", "specialty": "infectious_disease", "spoken": "C反应蛋白一百二十毫克每升，降钙素原二点五纳克每毫升。", "reference": "C反应蛋白 120 mg/L，降钙素原 2.5 ng/mL。", "tags": ["numbers", "lab"]}
+{"id": "i05", "specialty": "infectious_disease", "spoken": "肌酐八十八微摩尔每升，尿素氮五点二毫摩尔每升。", "reference": "肌酐 88 μmol/L，尿素氮 5.2 mmol/L。", "tags": ["numbers", "lab"]}
+{"id": "i06", "specialty": "infectious_disease", "spoken": "头孢曲松二克，每日一次，静脉滴注。", "reference": "头孢曲松 2 g qd，静脉滴注。", "tags": ["drugs", "numbers"]}
+{"id": "i07", "specialty": "infectious_disease", "spoken": "万古霉素一克，每十二小时一次。", "reference": "万古霉素 1 g q12h。", "tags": ["drugs", "numbers"]}
+{"id": "i08", "specialty": "infectious_disease", "spoken": "否认肝炎、结核等传染病史，否认手术、外伤史。", "reference": "否认肝炎、结核等传染病史，否认手术、外伤史。", "tags": ["negation", "history"]}
+{"id": "i09", "specialty": "infectious_disease", "spoken": "病原学检查，血mNGS提示曲霉菌。", "reference": "病原学检查：血mNGS提示曲霉菌。", "tags": ["field", "terms"]}
+{"id": "i10", "specialty": "infectious_disease", "spoken": "伏立康唑二百毫克，每十二小时一次，口服。", "reference": "伏立康唑 200 mg q12h，口服。", "tags": ["drugs", "numbers"]}
+{"id": "i11", "specialty": "infectious_disease", "spoken": "血压一百三十到一百四十，八十到九十毫米汞柱。", "reference": "血压130-140/80-90mmHg。", "tags": ["bp", "numbers"]}
+{"id": "i12", "specialty": "infectious_disease", "spoken": "无发热，无咳嗽，无腹泻。", "reference": "无发热，无咳嗽，无腹泻。", "tags": ["negation"]}
